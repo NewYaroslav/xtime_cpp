@@ -23,8 +23,17 @@
 */
 
 #include "xtime.hpp"
+#include "stdio.h"
+#include "string.h"
+#include <ctime>
 
 namespace FunctionsForTime {
+
+    unsigned long long getUnixTime() {
+        time_t rawtime;
+        time(&rawtime);
+        return (unsigned long long)rawtime;
+    }
 
     unsigned long long getUnixTime(int day, int month, int year, int hour, int minutes, int seconds) {
         unsigned long long _secs;
@@ -100,6 +109,10 @@ namespace FunctionsForTime {
         }
     }
 
+    cTime::cTime(std::string strISOformattedUTCdatetime) {
+        converISO(strISOformattedUTCdatetime, *this);
+    }
+
     unsigned long long cTime::getUnixTime() {
         unsigned long long _secs;
         long _mon, _year;
@@ -152,6 +165,36 @@ namespace FunctionsForTime {
             month = _mon + 1;
             day = _days - lmos[_mon] + 1;
         }
+    }
+
+    void cTime::print() {
+        printf("%.2d.%.2d.%.4d %.2d:%.2d:%.2d\n",day,month,year,hour,minutes,seconds);
+    }
+
+    std::string cTime::getStr() {
+        char text[512];
+        memset(text, 0, 512);
+        sprintf(text,"%.2d.%.2d.%.4d %.2d:%.2d:%.2d",day,month,year,hour,minutes,seconds);
+        return std::string(text);
+    }
+
+    bool converISO(std::string strISOformattedUTCdatetime, cTime& t) {
+        std::string& word = strISOformattedUTCdatetime;
+        // находим дату и время
+        t.year = atoi(word.substr(0, 4).c_str());
+        t.month = atoi(word.substr(5, 2).c_str());
+        t.day = atoi(word.substr(8, 2).c_str());
+        t.hour = atoi(word.substr(11, 2).c_str());
+        t.minutes = atoi(word.substr(14, 2).c_str());
+        t.seconds = atoi(word.substr(17, 2).c_str());
+        int gh = atoi(word.substr(20, 2).c_str());
+        int gm = atoi(word.substr(23, 2).c_str());
+        int offset = gh * 3600 + gm * 60;
+        unsigned long long timestamp = t.getUnixTime();
+        if(word.substr(19, 1) == "+") timestamp -= offset;
+        else if(word.substr(19, 1) == "-") timestamp += offset;
+        t.setUnixTime(timestamp);
+        return true;
     }
 
     unsigned long long getUnixTime(cTime& timedata) {
@@ -224,4 +267,14 @@ namespace FunctionsForTime {
         return getWday(temp.day, temp.month, temp.year);
     }
 
+    void printDateAndTime(unsigned long long unix) {
+        cTime t(unix);
+        t.print();
+    }
+
+    std::string getStrTime() {
+        cTime t;
+        t.setUnixTime(getUnixTime());
+        return t.getStr();
+    }
 }
