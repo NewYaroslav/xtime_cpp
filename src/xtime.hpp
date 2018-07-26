@@ -113,6 +113,21 @@ namespace FunctionsForTime {
          * \return строка, содержащая дату и время
          */
         std::string getStr();
+
+        /** \brief Получить день недели
+         * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+         */
+        int getWday();
+
+        /** \brief Проверка високосного года
+         * \return вернет true, если год високосный
+         */
+        bool isLeapYear();
+
+        /** \brief Получить количество дней в текущем месяце
+         * \return количество дней
+         */
+        int getNumDaysCurrentMonth();
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса cTime
@@ -162,6 +177,37 @@ namespace FunctionsForTime {
      * \param unix время в формате timestamp
      */
     void printDateAndTime(unsigned long long unix);
+
+    /** \brief Проверка високосного года
+     * \param year год
+     * \return вернет true, если год високосный
+     */
+    bool isLeapYear(int year);
+
+    /** \brief Получить количество дней в месяце
+     * \param month месяц
+     * \param year год
+     * \return количество дней в месяце
+     */
+    int getNumDaysMonth(int month, int year);
+
+    /** \brief Переводит время GMT во время CET
+     * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
+     * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
+     * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
+     * \param gmt Время GMT
+     * \return время CET
+     */
+    unsigned long long convertGmtToCet(unsigned long long gmt);
+
+    /** \brief Переводит время CET во время GMT
+     * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
+     * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
+     * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
+     * \param cet Время CET
+     * \return время GMT
+     */
+    unsigned long long convertCetToGmt(unsigned long long cet);
 }
 
 #endif // XTIME_HPP_INCLUDED
