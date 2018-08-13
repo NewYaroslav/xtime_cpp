@@ -470,4 +470,9 @@ namespace xtime {
         }
         return cet - ONE_HOUR; // зимнее время
     }
+
+    std::string getStrTime(unsigned long long timestamp) {
+        DateTime iTime(timestamp);
+        return iTime.getStr();
+    }
 }
