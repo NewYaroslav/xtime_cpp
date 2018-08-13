@@ -27,7 +27,7 @@
 #include "string.h"
 #include <ctime>
 
-namespace FunctionsForTime {
+namespace xtime {
 
     unsigned long long getUnixTime() {
         time_t rawtime;
@@ -56,9 +56,9 @@ namespace FunctionsForTime {
         return _secs;
     }
 
-    cTime::cTime() {};
+    DateTime::DateTime() {};
 
-    cTime::cTime(int day, int month, int year) {
+    DateTime::DateTime(int day, int month, int year) {
         cTime::day = day;
         cTime::month = month;
         cTime::year = year;
@@ -67,7 +67,7 @@ namespace FunctionsForTime {
         cTime::seconds = 0;
     }
 
-    cTime::cTime(int day, int month, int year, int hour, int minutes, int seconds) {
+    DateTime::DateTime(int day, int month, int year, int hour, int minutes, int seconds) {
         cTime::day = day;
         cTime::month = month;
         cTime::year = year;
@@ -76,7 +76,7 @@ namespace FunctionsForTime {
         cTime::seconds = seconds;
     }
 
-    cTime::cTime(unsigned long long timestamp) {
+    DateTime::DateTime(unsigned long long timestamp) {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -109,11 +109,11 @@ namespace FunctionsForTime {
         }
     }
 
-    cTime::cTime(std::string strISOformattedUTCdatetime) {
+    DateTime::DateTime(std::string strISOformattedUTCdatetime) {
         converISO(strISOformattedUTCdatetime, *this);
     }
 
-    unsigned long long cTime::getUnixTime() {
+    unsigned long long DateTime::getUnixTime() {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -134,7 +134,7 @@ namespace FunctionsForTime {
         return _secs;
     }
 
-    void cTime::setUnixTime(unsigned long long timestamp) {
+    void DateTime::setUnixTime(unsigned long long timestamp) {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -167,30 +167,30 @@ namespace FunctionsForTime {
         }
     }
 
-    void cTime::print() {
+    void DateTime::print() {
         printf("%.2d.%.2d.%.4d %.2d:%.2d:%.2d\n",day,month,year,hour,minutes,seconds);
     }
 
-    std::string cTime::getStr() {
+    std::string DateTime::getStr() {
         char text[512];
         memset(text, 0, 512);
         sprintf(text,"%.2d.%.2d.%.4d %.2d:%.2d:%.2d",day,month,year,hour,minutes,seconds);
         return std::string(text);
     }
 
-    int cTime::getWday() {
-        return FunctionsForTime::getWday(day, month, year);
+    int DateTime::getWday() {
+        return xtime::getWday(day, month, year);
     }
 
-    bool cTime::isLeapYear() {
-        return FunctionsForTime::isLeapYear(year);
+    bool DateTime::isLeapYear() {
+        return xtime::isLeapYear(year);
     }
 
-    int cTime::getNumDaysCurrentMonth() {
+    int DateTime::getNumDaysCurrentMonth() {
         return getNumDaysMonth(month, year);
     }
 
-    bool converISO(std::string strISOformattedUTCdatetime, cTime& t) {
+    bool converISO(std::string strISOformattedUTCdatetime, DateTime& t) {
         std::string& word = strISOformattedUTCdatetime;
         // находим дату и время
         t.year = atoi(word.substr(0, 4).c_str());
@@ -209,7 +209,7 @@ namespace FunctionsForTime {
         return true;
     }
 
-    unsigned long long getUnixTime(cTime& timedata) {
+    unsigned long long getUnixTime(DateTime& timedata) {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -230,8 +230,8 @@ namespace FunctionsForTime {
         return _secs;
     }
 
-    cTime getTime(unsigned long long timestamp) {
-        cTime outTime;
+    DateTime getTime(unsigned long long timestamp) {
+        DateTime outTime;
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -275,24 +275,24 @@ namespace FunctionsForTime {
     }
 
     int getWday(unsigned long long unix) {
-        cTime temp = getTime(unix);
+        DateTime temp = getTime(unix);
         return getWday(temp.day, temp.month, temp.year);
     }
 
     void printDateAndTime(unsigned long long unix) {
-        cTime t(unix);
+        DateTime t(unix);
         t.print();
     }
 
     std::string getStrTime() {
-        cTime t;
+        DateTime t;
         t.setUnixTime(getUnixTime());
         return t.getStr();
     }
 
     bool isDayOff(unsigned long long unix) {
         int wday = getWday(unix);
-        if(wday == FunctionsForTime::SUN || wday == FunctionsForTime::SAT) {
+        if(wday == xtime::SUN || wday == xtime::SAT) {
             return true;
         }
         return false;
@@ -321,7 +321,7 @@ namespace FunctionsForTime {
         const int NEW_SUMMER_HOUR = 1;
         const int MONTH_MARSH = 3;
         const int MONTH_OCTOBER = 10;
-        cTime iTime(gmt);
+        DateTime iTime(gmt);
         int maxDays = iTime.getNumDaysCurrentMonth();
         if(iTime.year < 2002) {
             // До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -399,7 +399,7 @@ namespace FunctionsForTime {
         const int NEW_SUMMER_HOUR = 1;
         const int MONTH_MARSH = 3;
         const int MONTH_OCTOBER = 10;
-        cTime iTime(cet);
+        DateTime iTime(cet);
         int maxDays = iTime.getNumDaysCurrentMonth();
 
         if(iTime.year < 2002) {

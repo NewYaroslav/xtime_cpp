@@ -28,7 +28,7 @@
 #include <string>
 
 //functions for working with time
-namespace FunctionsForTime {
+namespace xtime {
 
     /** \brief Получить время и дату компьютера в виде строки
      * \return строка, содержащая время
@@ -53,7 +53,7 @@ namespace FunctionsForTime {
 
     /** \brief Класс для хранения времени
      */
-    class cTime {
+    class DateTime {
         public:
         char seconds;   /**< секунды */
         char minutes;   /**< минуты */
@@ -64,7 +64,7 @@ namespace FunctionsForTime {
 
         /** \brief Конструктор класса без начальной инициализации времени
          */
-        cTime();
+        DateTime();
 
         /** \brief Инициализация с указанием времени
          * Секунды, минуты и час будут инициализированы нулевым значением
@@ -72,7 +72,7 @@ namespace FunctionsForTime {
          * \param month месяц
          * \param year год
          */
-        cTime(int day, int month, int year);
+        DateTime(int day, int month, int year);
 
         /** \brief Инициализация с указанием времени и даты
          * \param day день
@@ -82,18 +82,18 @@ namespace FunctionsForTime {
          * \param minutes минуты
          * \param seconds секунды
          */
-        cTime(int day, int month, int year, int hour, int minutes, int seconds);
+        DateTime(int day, int month, int year, int hour, int minutes, int seconds);
 
         /** \brief Инициализация с указанием unix-времени
          * \param timestamp unix-время
          */
-        cTime(unsigned long long timestamp);
+        DateTime(unsigned long long timestamp);
 
         /** \brief Инициализация с указанием unix-времени в формате ISO
          * Пример формата ISO: 2013-12-06T15:23:01+00:00
          * \param timestamp unix-время
          */
-        cTime(std::string strISOformattedUTCdatetime);
+        DateTime(std::string strISOformattedUTCdatetime);
 
         /** \brief Получить Unix-время
          * \return Unix-время
@@ -130,24 +130,24 @@ namespace FunctionsForTime {
         int getNumDaysCurrentMonth();
     };
 
-    /** \brief Конвертировать строку в формате ISO в данные класса cTime
+    /** \brief Конвертировать строку в формате ISO в данные класса DateTime
      * \param strISOformattedUTCdatetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
-     * \param t класс времени и даты cTime, который будет заполнен.
+     * \param t класс времени и даты DateTime, который будет заполнен.
      * \return вернет true
      */
-    bool converISO(std::string strISOformattedUTCdatetime, cTime& t);
+    bool converISO(std::string strISOformattedUTCdatetime, DateTime& t);
 
     /** \brief Получить unix время
      * \param timedata стандартное время
      * \return unix время
      */
-    unsigned long long getUnixTime(cTime& timedata);
+    unsigned long long getUnixTime(DateTime& timedata);
 
     /** \brief Получить стандартное время
      * \param timestamp unix время
      * \return стандартное время
      */
-    cTime getTime(unsigned long long timestamp);
+    DateTime getTime(unsigned long long timestamp);
 
     enum eWday {
         SUN = 0,    /**< Воскресенье */
@@ -215,5 +215,8 @@ namespace FunctionsForTime {
      */
     unsigned long long convertCetToGmt(unsigned long long cet);
 }
+
+#define FunctionsForTime xtime
+#define cTime DateTime
 
 #endif // XTIME_HPP_INCLUDED
