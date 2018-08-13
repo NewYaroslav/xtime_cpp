@@ -192,7 +192,7 @@ namespace FunctionsForTime {
 
     bool converISO(std::string strISOformattedUTCdatetime, cTime& t) {
         std::string& word = strISOformattedUTCdatetime;
-        // находим дату и время
+        // РЅР°С…РѕРґРёРј РґР°С‚Сѓ Рё РІСЂРµРјСЏ
         t.year = atoi(word.substr(0, 4).c_str());
         t.month = atoi(word.substr(5, 2).c_str());
         t.day = atoi(word.substr(8, 2).c_str());
@@ -290,6 +290,14 @@ namespace FunctionsForTime {
         return t.getStr();
     }
 
+    bool isDayOff(unsigned long long unix) {
+        int wday = getWday(unix);
+        if(wday == FunctionsForTime::SUN || wday == FunctionsForTime::SAT) {
+            return true;
+        }
+        return false;
+    }
+
     bool isLeapYear(int year) {
         if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
         return false;
@@ -316,72 +324,72 @@ namespace FunctionsForTime {
         cTime iTime(gmt);
         int maxDays = iTime.getNumDaysCurrentMonth();
         if(iTime.year < 2002) {
-            // До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
-            // а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
-            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // летнее время
+            // Р”Рѕ 2002 РіРѕРґР° РІ Р•РІСЂРѕРїРµ РїРµСЂРµС…РѕРґ РЅР° Р»РµС‚РЅРµРµ РІСЂРµРјСЏ РѕСЃСѓС‰РµСЃС‚РІР»СЏР»СЃСЏ РІ РїРѕСЃР»РµРґРЅРµРµ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ РјР°СЂС‚Р° РІ 2:00 РїРµСЂРµРІРѕРґРѕРј С‡Р°СЃРѕРІ РЅР° 1 С‡Р°СЃ РІРїРµСЂС‘Рґ
+            // Р° РѕР±СЂР°С‚РЅС‹Р№ РїРµСЂРµС…РѕРґ РѕСЃСѓС‰РµСЃС‚РІР»СЏР»СЃСЏ РІ РїРѕСЃР»РµРґРЅРµРµ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ РѕРєС‚СЏР±СЂСЏ РІ 3:00 РїРµСЂРµРІРѕРґРѕРј РЅР° 1 С‡Р°СЃ РЅР°Р·Р°Рґ
+            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                 return gmt + ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour + 1 >= OLD_START_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // летнее время
-                            return gmt + ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour + 1 >= OLD_START_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
+                            return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return gmt + ONE_HOUR; // зимнее время
+                        return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return gmt + ONE_HOUR * 2; // летнее время
+                return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
             } else
             if(iTime.month == MONTH_OCTOBER) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour + 2 >= OLD_STOP_SUMMER_HOUR) return gmt + ONE_HOUR; // зимнее время
-                            return gmt + ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour + 2 >= OLD_STOP_SUMMER_HOUR) return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
+                            return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return gmt + ONE_HOUR * 2; // летнее время
+                        return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return gmt + ONE_HOUR; // зимнее время
+                return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
             }
-            return gmt + ONE_HOUR; // зимнее время
+            return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
         } else {
-            // Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // летнее время
+            // РќР°С‡РёРЅР°СЏ СЃ 2002 РіРѕРґР°, СЃРѕРіР»Р°СЃРЅРѕ РґРёСЂРµРєС‚РёРІРµ Р•РЎ(2000/84/EC) РІ Р•РІСЂРѕРїРµ РїРµСЂРµС…РѕРґ РЅР° Р»РµС‚РЅРµРµ РІСЂРµРјСЏ РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ РІ 01:00 РїРѕ Р“СЂРёРЅРІРёС‡Сѓ.
+            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                 return gmt + ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour >= NEW_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // летнее время
-                            return gmt + ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour >= NEW_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
+                            return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return gmt + ONE_HOUR; // зимнее время
+                        return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return gmt + ONE_HOUR * 2; // летнее время
+                return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
             } else
             if(iTime.month == MONTH_OCTOBER) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour >= NEW_SUMMER_HOUR) return gmt + ONE_HOUR; // зимнее время
-                            return gmt + ONE_HOUR * 2; // летнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour >= NEW_SUMMER_HOUR) return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
+                            return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                         }
-                        return gmt + ONE_HOUR * 2; // летнее время
+                        return gmt + ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return gmt + ONE_HOUR; // зимнее время
+                return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
             }
-            return gmt + ONE_HOUR; // зимнее время
+            return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
         }
-        return gmt + ONE_HOUR; // зимнее время
+        return gmt + ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
     }
 
     unsigned long long convertCetToGmt(unsigned long long cet) {
@@ -393,72 +401,73 @@ namespace FunctionsForTime {
         const int MONTH_OCTOBER = 10;
         cTime iTime(cet);
         int maxDays = iTime.getNumDaysCurrentMonth();
+
         if(iTime.year < 2002) {
-            // До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
-            // а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
-            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // летнее время
+            // Р”Рѕ 2002 РіРѕРґР° РІ Р•РІСЂРѕРїРµ РїРµСЂРµС…РѕРґ РЅР° Р»РµС‚РЅРµРµ РІСЂРµРјСЏ РѕСЃСѓС‰РµСЃС‚РІР»СЏР»СЃСЏ РІ РїРѕСЃР»РµРґРЅРµРµ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ РјР°СЂС‚Р° РІ 2:00 РїРµСЂРµРІРѕРґРѕРј С‡Р°СЃРѕРІ РЅР° 1 С‡Р°СЃ РІРїРµСЂС‘Рґ
+            // Р° РѕР±СЂР°С‚РЅС‹Р№ РїРµСЂРµС…РѕРґ РѕСЃСѓС‰РµСЃС‚РІР»СЏР»СЃСЏ РІ РїРѕСЃР»РµРґРЅРµРµ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ РѕРєС‚СЏР±СЂСЏ РІ 3:00 РїРµСЂРµРІРѕРґРѕРј РЅР° 1 С‡Р°СЃ РЅР°Р·Р°Рґ
+            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                 return cet - ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour >= OLD_START_SUMMER_HOUR) return cet - ONE_HOUR * 2; // летнее время
-                            return cet - ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour >= OLD_START_SUMMER_HOUR) return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
+                            return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return cet - ONE_HOUR; // зимнее время
+                        return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return cet - ONE_HOUR * 2; // летнее время
+                return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
             } else
             if(iTime.month == MONTH_OCTOBER) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour >= OLD_STOP_SUMMER_HOUR) return cet - ONE_HOUR; // зимнее время
-                            return cet - ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour >= OLD_STOP_SUMMER_HOUR) return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
+                            return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return cet - ONE_HOUR * 2; // летнее время
+                        return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return cet - ONE_HOUR; // зимнее время
+                return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
             }
-            return cet - ONE_HOUR; // зимнее время
+            return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
         } else {
-            // Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // летнее время
+            // РќР°С‡РёРЅР°СЏ СЃ 2002 РіРѕРґР°, СЃРѕРіР»Р°СЃРЅРѕ РґРёСЂРµРєС‚РёРІРµ Р•РЎ(2000/84/EC) РІ Р•РІСЂРѕРїРµ РїРµСЂРµС…РѕРґ РЅР° Р»РµС‚РЅРµРµ РІСЂРµРјСЏ РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ РІ 01:00 РїРѕ Р“СЂРёРЅРІРёС‡Сѓ.
+            if(iTime.month > MONTH_MARSH && iTime.month < MONTH_OCTOBER) { // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                 return cet - ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour - 2 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR * 2; // летнее время
-                            return cet - ONE_HOUR; // зимнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour - 2 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
+                            return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                         }
-                        return cet - ONE_HOUR; // зимнее время
+                        return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return cet - ONE_HOUR * 2; // летнее время
+                return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
             } else
             if(iTime.month == MONTH_OCTOBER) {
                 for(int d = maxDays; d >= iTime.day; d--) {
                     int _wday = getWday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
-                        if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour - 1 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR; // зимнее время
-                            return cet - ONE_HOUR * 2; // летнее время
+                        if(d == iTime.day) { // РµСЃР»Рё СЃРµР№С‡Р°СЃ РІРѕСЃРєСЂРµСЃРµРЅСЊРµ
+                            if(iTime.hour - 1 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
+                            return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                         }
-                        return cet - ONE_HOUR * 2; // летнее время
+                        return cet - ONE_HOUR * 2; // Р»РµС‚РЅРµРµ РІСЂРµРјСЏ
                     }
                 }
-                return cet - ONE_HOUR; // зимнее время
+                return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
             }
-            return cet - ONE_HOUR; // зимнее время
+            return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
         }
-        return cet - ONE_HOUR; // зимнее время
+        return cet - ONE_HOUR; // Р·РёРјРЅРµРµ РІСЂРµРјСЏ
     }
 }
