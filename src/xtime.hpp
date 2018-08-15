@@ -29,14 +29,14 @@
 
 //functions for working with time
 namespace xtime {
-
-    /** \brief Получить время и дату компьютера в виде строки
-     * \param timestamp unix время
+	
+	/** \brief Получить время и дату в виде строки
      * \return строка, содержащая время
      */
     std::string getStrTime(unsigned long long timestamp);
 
-    /** \brief Получить время и дату в виде строки
+    /** \brief Получить время и дату компьютера в виде строки
+     * \param timestamp unix время
      * \return строка, содержащая время
      */
     std::string getStrTime();
