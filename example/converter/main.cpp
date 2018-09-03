@@ -25,5 +25,14 @@ int main() {
     std::cout << "cet: " << iExampleTime2.getStr() << std::endl;
     xtime::cTime iExampleTime3(xtime::convertCetToGmt(iExampleTime2.getUnixTime()));
     std::cout << "gmt: " << iExampleTime3.getStr() << std::endl;
+
+    unsigned long long lastGmt = xtime::getUnixTime();
+    while(1) {
+        unsigned long long unix = xtime::getUnixTime();
+        if(unix != lastGmt) {
+            std::cout << "pc gmt: " << unix << "\r";
+            lastGmt = unix;
+        }
+    }
     return 0;
 }

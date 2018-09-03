@@ -32,7 +32,11 @@ namespace xtime {
     unsigned long long getUnixTime() {
         time_t rawtime;
         time(&rawtime);
-        return (unsigned long long)rawtime;
+        struct tm* ptm;
+
+        ptm = gmtime(&rawtime);
+        DateTime iTime(ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+        return iTime.getUnixTime();
     }
 
     unsigned long long getUnixTime(int day, int month, int year, int hour, int minutes, int seconds) {
