@@ -1,12 +1,15 @@
-## xtime_cpp
+## xtime
 Простая C++ библиотека  для работы с временем и датой
+
+## Как установить?
+Просто добавьте файлы xtime.hpp и xtime.cpp в проект
 
 ## Функции библиотеки:
 + Получить Unix-время из даты и стандартного времени
 ```
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
-unsigned long long unixEpoch = getUnixTime(24, 5, 2018, 23, 59, 59);
+xtime::xtime_timestamp unixEpoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
 ```
 + Класс для хранения времени
 ```
@@ -25,7 +28,7 @@ iTime = DateTime(24,5,2018, 0, 0, 0);
 // Или инициализируем Unix epoch или Unix time или POSIX time или Unix timestamp
 unsigned long long unixEpoch = 1527120000;
 
-iTime.setUnixTime(unixEpoch);
+iTime.set_unix_timestamp(unixEpoch);
 
 // Переменные класса DateTime
 iTime.day = 24; // день
@@ -36,27 +39,27 @@ iTime.minutes = 0; // минуты
 iTime.seconds = 0; // секунды
 
 // Получить Unix epoch или Unix time или POSIX time или Unix timestamp 
-unixEpoch = iTime.getUnixTime();
+unixEpoch = iTime.get_unix_timestamp();
 
 // Вывести время и дату на экран
 iTime.print();
 
 // Получить дату и время в виде строки
-std::string str = iTime.getStr(); // В строке будет 24.05.2018 00:00:00
+std::string str = iTime.get_str_date_time(); // В строке будет 24.05.2018 00:00:00
 ```
 + Получить стандартное время
 ```
 using namespace xtime;
 
-unsigned long long unixEpoch = 1527120000;
-DateTime iTime = getTime(unixEpoch);
+xtime::xtime_timestamp unixEpoch = 1527120000;
+DateTime iTime = convert_timestamp_to_datetime(unixEpoch);
 ```
 + Получить день недели
 ```
 using namespace xtime;
 
 // Получить номер дня недели
-int wday = getWday(24,5,2018);
+int wday = get_weekday(24,5,2018);
 
 if(wday == SUN) std::cout << "SUN" << std::endl; // Если функция вернула 0 или Воскресенье
 else if(wday == MON) std::cout << "MON" << std::endl; // Если функция вернула 1 или Понедельник
@@ -65,14 +68,14 @@ else if(wday == WED) std::cout << "WED" << std::endl;
 else if(wday == FRI) std::cout << "FRI" << std::endl;
 else if(wday == SAT) std::cout << "SAT" << std::endl;
 
-unsigned long long unixEpoch = 1527120000;
+xtime::xtime_timestamp unixEpoch = 1527120000;
 
 // Второй вариант функции для определения дня недели
-wday = getWday(1527120000);
+wday = get_weekday(1527120000);
 
 // Получить день недели через функцию класса DateTime
 DateTime iTime(24,5,2018);
-wday = iTime.getWday();
+wday = iTime.get_weekday();
 ```
 + Конвертировать строку в формате ISO в данные класса DateTime
 ```
@@ -80,7 +83,7 @@ using namespace xtime;
 
 DateTime iTime;
 std::string strISOformattedUTCdatetime = "2013-12-06T15:23:01+00:00";
-if(converISO(strISOformattedUTCdatetime, iTime) == true) {
+if(convert_iso(strISOformattedUTCdatetime, iTime) == true) {
   iTime.print();
 }
 ```
@@ -89,20 +92,20 @@ if(converISO(strISOformattedUTCdatetime, iTime) == true) {
 using namespace xtime;
 // получаем время GMT для примера
 DateTime startTime(20,3,2018);
-unsigned long long startGMT = startTime.getUnixTime();
+xtime::xtime_timestamp startGMT = startTime.get_unix_timestamp();
 // переводим время GMT во время CET
-DateTime realCET(convertGmtToCet(startGMT));
+DateTime realCET(convert_gmt_to_cet(startGMT));
 realCET.print();
 // переводим время CET во время GMT
-DateTime realGMT(convertCetToGmt(realCET.getUnixTime()));
+DateTime realGMT(convert_cet_to_gmt(realCET.get_unix_timestamp()));
 realGMT.print();
 ```
 + Получить Unix-время компьютера
 ```
 using namespace xtime;
 
-unsigned long long t = getUnixTime();
-std::string str = getStrTime(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
+unsigned long long t = get_unix_timestamp();
+std::string str = get_str_unix_date_time(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
 ```
 + Получить количество дней в месяце
 ```
@@ -110,25 +113,25 @@ using namespace xtime;
 
 int month = 2;
 int year = 2018;
-std::cout << getNumDaysMonth(month, year) << std::endl;
+std::cout << get_num_days_month(month, year) << std::endl;
 
 DateTime iTime(20,3,2018);
 
 // Получить количество дней в текущем (март) месяце
-std::cout << iTime.getNumDaysCurrentMonth() << std::endl;
+std::cout << iTime.get_num_days_current_month() << std::endl;
 ```
 + Проверка високосного года
 ```
 using namespace xtime;
 
 int year = 2018;
-if(isLeapYear(year)) {
+if(is_leap_year(year)) {
 	// если год високосный, то условие сработает
 }
 
 DateTime iTime(20,3,2018);
 
-if(iTime.isLeapYear()) {
+if(iTime.is_leap_year()) {
 	// если год високосный, то условие сработает
 }
 ```

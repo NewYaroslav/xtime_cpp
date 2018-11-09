@@ -1,8 +1,7 @@
 #ifndef XTIME_OLD_HPP_INCLUDED
 #define XTIME_OLD_HPP_INCLUDED
 
-#define getStrTime get_str_date_time
-#define getStrTime get_str_date_time
+#define getStrTime get_str_unix_date_time
 #define getWday get_weekday
 #define getUnixTime get_unix_timestamp
 #define setUnixTime set_unix_timestamp
