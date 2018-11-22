@@ -103,15 +103,15 @@ namespace xtime {
          */
         DateTime(std::string str_iso_formatted_utc_datetime);
 
-        /** \brief Получить Unix-время
-         * \return Unix-время
+        /** \brief Получить время
+         * \return timestamp
          */
-        xtime_timestamp get_unix_timestamp();
+        xtime_timestamp get_timestamp();
 
-        /** \brief Установить unix-время
+        /** \brief Установить время
          * \param timestamp unix-время
          */
-        void set_unix_timestamp(xtime_timestamp timestamp);
+        void set_timestamp(xtime_timestamp timestamp);
 
         /** \brief Вывести время и дату на экран
          */
