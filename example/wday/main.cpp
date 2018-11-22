@@ -6,8 +6,8 @@ using namespace std;
 int main()
 {
     xtime::DateTime iTime(9, 10, 2018);
-    unsigned long long time = iTime.getUnixTime();
+    unsigned long long time = iTime.get_timestamp();
 
-    cout << "wday " << xtime::getWday(time) << endl;
+    cout << "wday " << xtime::get_weekday(time) << endl;
     return 0;
 }

@@ -36,7 +36,7 @@ namespace xtime {
 
         ptm = gmtime(&rawtime);
         DateTime iTime(ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-        return iTime.get_unix_timestamp();
+        return iTime.get_timestamp();
     }
 
     xtime_timestamp get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds) {
@@ -117,7 +117,7 @@ namespace xtime {
         convert_iso(str_iso_formatted_utc_datetime, *this);
     }
 
-    xtime_timestamp DateTime::get_unix_timestamp() {
+    xtime_timestamp DateTime::get_timestamp() {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -138,7 +138,7 @@ namespace xtime {
         return _secs;
     }
 
-    void DateTime::set_unix_timestamp(unsigned long long timestamp) {
+    void DateTime::set_timestamp(unsigned long long timestamp) {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -206,10 +206,10 @@ namespace xtime {
         int gh = atoi(word.substr(20, 2).c_str());
         int gm = atoi(word.substr(23, 2).c_str());
         int offset = gh * 3600 + gm * 60;
-        unsigned long long timestamp = t.get_unix_timestamp();
+        unsigned long long timestamp = t.get_timestamp();
         if(word.substr(19, 1) == "+") timestamp -= offset;
         else if(word.substr(19, 1) == "-") timestamp += offset;
-        t.set_unix_timestamp(timestamp);
+        t.set_timestamp(timestamp);
         return true;
     }
 
@@ -290,7 +290,7 @@ namespace xtime {
 
     std::string get_str_unix_date_time() {
         DateTime t;
-        t.set_unix_timestamp(get_unix_timestamp());
+        t.set_timestamp(get_unix_timestamp());
         return t.get_str_date_time();
     }
 
