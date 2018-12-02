@@ -1,7 +1,7 @@
 /*
 * xtime_cpp - Library for work with time.
 *
-* Copyright (c) 2018 Yaroslav Barabanov. Email: elektroyar@yandex.ru
+* Copyright (c) 2018 Elektro Yar. Email: git.electroyar@gmail.com
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -30,12 +30,18 @@
 //functions for working with time
 namespace xtime {
 
-    typedef unsigned long long xtime_timestamp;
+    typedef unsigned long long timestamp_type;
+	
+	enum {
+		SEC_MINUTE = 60,
+		SEC_HOUR = 3600,
+		SEC_DAY = 86400,
+	};
 
     /** \brief Получить время и дату в виде строки
      * \return строка, содержащая время
      */
-    std::string get_str_unix_date_time(xtime_timestamp timestamp);
+    std::string get_str_unix_date_time(timestamp_type timestamp);
 
     /** \brief Получить время и дату компьютера в виде строки
      * \param timestamp unix время
@@ -46,7 +52,7 @@ namespace xtime {
     /** \brief Получить Unix-время компьютера
      * \return Unix-время
      */
-    xtime_timestamp get_unix_timestamp();
+    timestamp_type get_unix_timestamp();
 
     /** \brief Получить Unix-время из даты и стандартного времени
      * \param day день
@@ -57,7 +63,7 @@ namespace xtime {
      * \param seconds секунды
      * \return Unix-время
      */
-    xtime_timestamp get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds);
+    timestamp_type get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds);
 
     /** \brief Класс для хранения времени
      */
@@ -95,7 +101,7 @@ namespace xtime {
         /** \brief Инициализация с указанием unix-времени
          * \param timestamp unix-время
          */
-        DateTime(xtime_timestamp timestamp);
+        DateTime(timestamp_type timestamp);
 
         /** \brief Инициализация с указанием unix-времени в формате ISO
          * Пример формата ISO: 2013-12-06T15:23:01+00:00
@@ -106,12 +112,12 @@ namespace xtime {
         /** \brief Получить время
          * \return timestamp
          */
-        xtime_timestamp get_timestamp();
+        timestamp_type get_timestamp();
 
         /** \brief Установить время
          * \param timestamp unix-время
          */
-        void set_timestamp(xtime_timestamp timestamp);
+        void set_timestamp(timestamp_type timestamp);
 
         /** \brief Вывести время и дату на экран
          */
@@ -149,13 +155,13 @@ namespace xtime {
      * \param timedata стандартное время
      * \return unix время
      */
-    xtime_timestamp get_unix_timestamp(DateTime& timedata);
+    timestamp_type get_unix_timestamp(DateTime& timedata);
 
     /** \brief Преобразовать unix-время в класс DateTime
      * \param timestamp unix-время
      * \return класс DateTime
      */
-    DateTime convert_timestamp_to_datetime(xtime_timestamp timestamp);
+    DateTime convert_timestamp_to_datetime(timestamp_type timestamp);
 
     enum eWday {
         SUN = 0,    /**< Воскресенье */
@@ -179,18 +185,18 @@ namespace xtime {
      * \param timestamp Unix-время
      * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
      */
-    int get_weekday(xtime_timestamp timestamp);
+    int get_weekday(timestamp_type timestamp);
 
     /** \brief Напечатать дату и время
      * \param timestamp Unix-время
      */
-    void print_date_time(xtime_timestamp timestamp);
+    void print_date_time(timestamp_type timestamp);
 
     /** \brief Проверить, приходится ли данна дата на выходной день (суббота и воскресение)
      * \param timestamp Unix-время
      * \return вернет true если выходной день
      */
-    bool is_day_off(xtime_timestamp timestamp);
+    bool is_day_off(timestamp_type timestamp);
 
     /** \brief Проверка високосного года
      * \param year год
@@ -212,7 +218,7 @@ namespace xtime {
      * \param gmt Время GMT
      * \return время CET
      */
-    xtime_timestamp convert_gmt_to_cet(xtime_timestamp gmt);
+    timestamp_type convert_gmt_to_cet(timestamp_type gmt);
 
     /** \brief Переводит время CET во время GMT
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -221,7 +227,7 @@ namespace xtime {
      * \param cet Время CET
      * \return время GMT
      */
-    xtime_timestamp convert_cet_to_gmt(xtime_timestamp cet);
+    timestamp_type convert_cet_to_gmt(timestamp_type cet);
 }
 
 #endif // XTIME_HPP_INCLUDED

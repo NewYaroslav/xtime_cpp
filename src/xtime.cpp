@@ -1,7 +1,7 @@
 /*
 * xtime_cpp - Library for work with time.
 *
-* Copyright (c) 2018 Yaroslav Barabanov. Email: elektroyar@yandex.ru
+* Copyright (c) 2018 Elektro Yar. Email: git.electroyar@gmail.com
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 
 namespace xtime {
 
-    xtime_timestamp get_unix_timestamp() {
+    timestamp_type get_unix_timestamp() {
         time_t rawtime;
         time(&rawtime);
         struct tm* ptm;
@@ -39,8 +39,8 @@ namespace xtime {
         return iTime.get_timestamp();
     }
 
-    xtime_timestamp get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds) {
-        xtime_timestamp _secs;
+    timestamp_type get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds) {
+        timestamp_type _secs;
         long _mon, _year;
         long _days;
         _mon = month - 1;
@@ -80,8 +80,8 @@ namespace xtime {
         DateTime::seconds = seconds;
     }
 
-    DateTime::DateTime(xtime_timestamp timestamp) {
-        xtime_timestamp _secs;
+    DateTime::DateTime(timestamp_type timestamp) {
+        timestamp_type _secs;
         long _mon, _year;
         long _days;
         long i;
@@ -117,7 +117,7 @@ namespace xtime {
         convert_iso(str_iso_formatted_utc_datetime, *this);
     }
 
-    xtime_timestamp DateTime::get_timestamp() {
+    timestamp_type DateTime::get_timestamp() {
         unsigned long long _secs;
         long _mon, _year;
         long _days;
@@ -213,8 +213,8 @@ namespace xtime {
         return true;
     }
 
-    xtime_timestamp get_unix_timestamp(DateTime& timedata) {
-        xtime_timestamp _secs;
+    timestamp_type get_unix_timestamp(DateTime& timedata) {
+        timestamp_type _secs;
         long _mon, _year;
         long _days;
         _mon = timedata.month - 1;
@@ -234,9 +234,9 @@ namespace xtime {
         return _secs;
     }
 
-    DateTime convert_timestamp_to_datetime(xtime_timestamp timestamp) {
+    DateTime convert_timestamp_to_datetime(timestamp_type timestamp) {
         DateTime outTime;
-        xtime_timestamp _secs;
+        timestamp_type _secs;
         long _mon, _year;
         long _days;
         long i;
@@ -278,12 +278,12 @@ namespace xtime {
         return R % 7;
     }
 
-    int get_weekday(xtime_timestamp timestamp) {
+    int get_weekday(timestamp_type timestamp) {
         DateTime temp = convert_timestamp_to_datetime(timestamp);
         return get_weekday(temp.day, temp.month, temp.year);
     }
 
-    void print_date_time(xtime_timestamp timestamp) {
+    void print_date_time(timestamp_type timestamp) {
         DateTime t(timestamp);
         t.print();
     }
@@ -294,7 +294,7 @@ namespace xtime {
         return t.get_str_date_time();
     }
 
-    bool is_day_off(xtime_timestamp timestamp) {
+    bool is_day_off(timestamp_type timestamp) {
         int wday = get_weekday(timestamp);
         if(wday == xtime::SUN || wday == xtime::SAT) {
             return true;
@@ -318,8 +318,8 @@ namespace xtime {
         }
     }
 
-    xtime_timestamp convert_gmt_to_cet(xtime_timestamp gmt) {
-        const xtime_timestamp ONE_HOUR = 3600;
+    timestamp_type convert_gmt_to_cet(timestamp_type gmt) {
+        const timestamp_type ONE_HOUR = 3600;
         const int OLD_START_SUMMER_HOUR = 2;
         const int OLD_STOP_SUMMER_HOUR = 3;
         const int NEW_SUMMER_HOUR = 1;
@@ -396,8 +396,8 @@ namespace xtime {
         return gmt + ONE_HOUR; // зимнее время
     }
 
-    xtime_timestamp convert_cet_to_gmt(xtime_timestamp cet) {
-        const xtime_timestamp ONE_HOUR = 3600;
+    timestamp_type convert_cet_to_gmt(timestamp_type cet) {
+        const timestamp_type ONE_HOUR = 3600;
         const int OLD_START_SUMMER_HOUR = 2;
         const int OLD_STOP_SUMMER_HOUR = 3;
         const int NEW_SUMMER_HOUR = 1;
@@ -475,7 +475,7 @@ namespace xtime {
         return cet - ONE_HOUR; // зимнее время
     }
 
-    std::string get_str_unix_date_time(xtime_timestamp timestamp) {
+    std::string get_str_unix_date_time(timestamp_type timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_date_time();
     }
