@@ -13,11 +13,7 @@
 ```C++
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
-<<<<<<< HEAD
 xtime::timestamp_type epoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
-=======
-unsigned long long unixEpoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
->>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 ```
 + Класс для хранения времени
 ```C++
@@ -61,9 +57,6 @@ using namespace xtime;
 
 <<<<<<< HEAD
 xtime::timestamp_type unixEpoch = 1527120000;
-=======
-unsigned long long unixEpoch = 1527120000;
->>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 DateTime iTime = convert_timestamp_to_datetime(unixEpoch);
 ```
 + Получить день недели
@@ -80,11 +73,7 @@ else if(wday == WED) std::cout << "WED" << std::endl;
 else if(wday == FRI) std::cout << "FRI" << std::endl;
 else if(wday == SAT) std::cout << "SAT" << std::endl;
 
-<<<<<<< HEAD
 xtime::timestamp_type unixEpoch = 1527120000;
-=======
-unsigned long long unixEpoch = 1527120000;
->>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 
 // Второй вариант функции для определения дня недели
 wday = get_weekday(unixEpoch);
@@ -110,9 +99,6 @@ using namespace xtime;
 DateTime startTime(20,3,2018);
 <<<<<<< HEAD
 xtime::timestamp_type startGMT = startTime.get_unix_timestamp();
-=======
-unsigned long long startGMT = startTime.get_unix_timestamp();
->>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 // переводим время GMT во время CET
 DateTime realCET(convert_gmt_to_cet(startGMT));
 realCET.print();
