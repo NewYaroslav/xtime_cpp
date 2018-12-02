@@ -1,7 +1,7 @@
 ## xtime
 Простая C++ библиотека  для работы с временем и датой
 
-### Резюме
+### Описание
 
 Данная библиотека позволяет удобно и быстро работать с временем. Например, можно легко преобразовать дату в timestamp, или сделать обратную операцию. Можно легко получить реальное GMT время, преобразовать GMT в CET и обратно, узнать день недели, количество дней в месяце и т.д.
 
@@ -13,7 +13,11 @@
 ```C++
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
+<<<<<<< HEAD
 xtime::timestamp_type epoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
+=======
+unsigned long long unixEpoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
+>>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 ```
 + Класс для хранения времени
 ```C++
@@ -55,7 +59,11 @@ std::string str = iTime.get_str_date_time(); // В строке будет 24.05
 ```C++
 using namespace xtime;
 
+<<<<<<< HEAD
 xtime::timestamp_type unixEpoch = 1527120000;
+=======
+unsigned long long unixEpoch = 1527120000;
+>>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 DateTime iTime = convert_timestamp_to_datetime(unixEpoch);
 ```
 + Получить день недели
@@ -72,7 +80,11 @@ else if(wday == WED) std::cout << "WED" << std::endl;
 else if(wday == FRI) std::cout << "FRI" << std::endl;
 else if(wday == SAT) std::cout << "SAT" << std::endl;
 
+<<<<<<< HEAD
 xtime::timestamp_type unixEpoch = 1527120000;
+=======
+unsigned long long unixEpoch = 1527120000;
+>>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 
 // Второй вариант функции для определения дня недели
 wday = get_weekday(unixEpoch);
@@ -96,7 +108,11 @@ if(convert_iso(strISOformattedUTCdatetime, iTime) == true) {
 using namespace xtime;
 // получаем время GMT для примера
 DateTime startTime(20,3,2018);
+<<<<<<< HEAD
 xtime::timestamp_type startGMT = startTime.get_unix_timestamp();
+=======
+unsigned long long startGMT = startTime.get_unix_timestamp();
+>>>>>>> 816a7da497d8eb83fb14f4ad5424dfe3797e4392
 // переводим время GMT во время CET
 DateTime realCET(convert_gmt_to_cet(startGMT));
 realCET.print();
