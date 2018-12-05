@@ -5,6 +5,12 @@ using namespace std;
 
 int main() {
     xtime::DateTime iStartTime(27,10,2018, 23, 0, 0);
+
+    xtime::timestamp_type time_data = 0;
+    //xtime::convert_str_to_timestamp("27_10_2018-23:0:0", time_data);
+    std::cout << xtime::convert_str_to_timestamp("2018_10_27", time_data) << std::endl;
+    std::cout << "convert_str_to_timestamp: " << xtime::get_str_unix_date_time(time_data) << std::endl;
+
     xtime::timestamp_type cetTime = iStartTime.get_timestamp();
     for(xtime::timestamp_type t0 = cetTime; t0 < cetTime + xtime::SEC_MINUTE*240; t0 += xtime::SEC_MINUTE) {
        xtime::DateTime iGmtTime(xtime::convert_cet_to_gmt(t0));
