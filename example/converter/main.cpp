@@ -8,7 +8,7 @@ int main() {
 
     xtime::timestamp_type time_data = 0;
     //xtime::convert_str_to_timestamp("27_10_2018-23:0:0", time_data);
-    std::cout << xtime::convert_str_to_timestamp("2018_10_27", time_data) << std::endl;
+    std::cout << xtime::convert_str_to_timestamp("2018-11-30 20:30:00", time_data) << std::endl;
     std::cout << "convert_str_to_timestamp: " << xtime::get_str_unix_date_time(time_data) << std::endl;
 
     xtime::timestamp_type cetTime = iStartTime.get_timestamp();

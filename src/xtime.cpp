@@ -195,6 +195,12 @@ namespace xtime {
                 return get_num_days_month(month, year);
         }
 
+        void DateTime::set_start_day() {
+                hour = 0;
+                minutes = 0;
+                seconds = 0;
+        }
+
         bool convert_iso(std::string str_iso_formatted_utc_datetime, DateTime& t) {
                 std::string& word = str_iso_formatted_utc_datetime;
                 try {
@@ -227,7 +233,7 @@ namespace xtime {
                         std::vector<std::string> output_list;
                         std::size_t start_pos = 0;
                         while(true) {
-                                std::size_t found_beg = str.find_first_of("/\\_:-.", start_pos);
+                                std::size_t found_beg = str.find_first_of("/\\_:-. ", start_pos);
                                 if(found_beg != std::string::npos) {
                                         std::size_t len = found_beg - start_pos;
                                         if(len > 0)

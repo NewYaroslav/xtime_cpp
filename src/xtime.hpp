@@ -142,6 +142,11 @@ namespace xtime {
                  * \return количество дней
                  */
                 int get_num_days_current_month();
+
+                /** \brief Установить начало дня
+                 * Данная функция устанавливает час, минуту и секунду дня в 0
+                 */
+                void set_start_day();
         };
 
         /** \brief Конвертировать строку в формате ISO в данные класса DateTime
