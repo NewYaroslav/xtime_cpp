@@ -27,6 +27,7 @@
 #include "string.h"
 #include <ctime>
 #include <vector>
+#include <stdlib.h>
 
 namespace xtime {
 
@@ -82,36 +83,7 @@ namespace xtime {
         }
 
         DateTime::DateTime(timestamp_type timestamp) {
-                timestamp_type _secs;
-                long _mon, _year;
-                long _days;
-                long i;
-
-                _secs = timestamp;
-                const long _TBIAS_DAYS = 25567;
-                _days = _TBIAS_DAYS;
-
-                _days += _secs / 86400; _secs = _secs % 86400;
-                hour = _secs / 3600; _secs %= 3600;
-                minutes = _secs / 60; seconds = _secs % 60;
-                const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-                const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-
-                for (_year = _days / 365; _days < (i = (((_year - 1) / 4) + ((((_year) & 03) || ((_year) == 0)) ? mos[0] : lmos[0]) + 365*_year)); ) { --_year; }
-                _days -= i;
-                const long _TBIAS_YEAR = 1900;
-                year = _year + _TBIAS_YEAR;
-
-                if(((_year) & 03) || ((_year) == 0)) {
-                        // mos
-                        for (_mon = 12; _days < mos[--_mon]; );
-                        month = _mon + 1;
-                        day = _days - mos[_mon] + 1;
-                } else {
-                        for (_mon = 12; _days < lmos[--_mon]; );
-                        month = _mon + 1;
-                        day = _days - lmos[_mon] + 1;
-                }
+                set_timestamp(timestamp);
         }
 
         DateTime::DateTime(std::string str_iso_formatted_utc_datetime) {
@@ -139,38 +111,37 @@ namespace xtime {
                 return _secs;
         }
 
-    void DateTime::set_timestamp(unsigned long long timestamp) {
-        unsigned long long _secs;
-        long _mon, _year;
-        long _days;
-        long i;
+        void DateTime::set_timestamp(timestamp_type timestamp) {
+                unsigned long long _secs;
+                long _mon, _year;
+                long _days;
+                long i;
 
-        _secs = timestamp;
-        const long _TBIAS_DAYS = 25567;
-        _days = _TBIAS_DAYS;
+                _secs = timestamp;
+                const long _TBIAS_DAYS = 25567;
+                _days = _TBIAS_DAYS;
 
-        _days += _secs / 86400; _secs = _secs % 86400;
-        hour = _secs / 3600; _secs %= 3600;
-        minutes = _secs / 60; seconds = _secs % 60;
-        const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-        const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+                _days += _secs / 86400; _secs = _secs % 86400;
+                hour = _secs / 3600; _secs %= 3600;
+                minutes = _secs / 60; seconds = _secs % 60;
+                const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+                const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
-        for (_year = _days / 365; _days < (i = (((_year - 1) / 4) + ((((_year) & 03) || ((_year) == 0)) ? mos[0] : lmos[0]) + 365*_year)); ) { --_year; }
-        _days -= i;
-        const long _TBIAS_YEAR = 1900;
-        year = _year + _TBIAS_YEAR;
+                for (_year = _days / 365; _days < (i = (((_year - 1) / 4) + ((((_year) & 03) || ((_year) == 0)) ? mos[0] : lmos[0]) + 365*_year)); ) { --_year; }
+                _days -= i;
+                const long _TBIAS_YEAR = 1900;
+                year = _year + _TBIAS_YEAR;
 
-        if(((_year) & 03) || ((_year) == 0)) {
-            // mos
-            for (_mon = 12; _days < mos[--_mon]; );
-            month = _mon + 1;
-            day = _days - mos[_mon] + 1;
-        } else {
-            for (_mon = 12; _days < lmos[--_mon]; );
-            month = _mon + 1;
-            day = _days - lmos[_mon] + 1;
+                if(((_year) & 03) || ((_year) == 0)) {
+                        for (_mon = 12; _days < mos[--_mon]; );
+                                month = _mon + 1;
+                        day = _days - mos[_mon] + 1;
+                } else {
+                        for (_mon = 12; _days < lmos[--_mon]; );
+                                month = _mon + 1;
+                        day = _days - lmos[_mon] + 1;
+                }
         }
-    }
 
         void DateTime::print() {
                 printf("%.2d.%.2d.%.4d %.2d:%.2d:%.2d\n",day,month,year,hour,minutes,seconds);
@@ -195,15 +166,14 @@ namespace xtime {
                 return get_num_days_month(month, year);
         }
 
-        void DateTime::set_start_day() {
-                hour = 0;
-                minutes = 0;
-                seconds = 0;
+        void DateTime::set_end_month() {
+                set_end_day();
+                day = get_num_days_month(month, year);
         }
 
         bool convert_iso(std::string str_iso_formatted_utc_datetime, DateTime& t) {
                 std::string& word = str_iso_formatted_utc_datetime;
-                try {
+                if(word.size() >= 26) {
                         // находим дату и время
                         t.year = atoi(word.substr(0, 4).c_str());
                         t.month = atoi(word.substr(5, 2).c_str());
@@ -220,71 +190,62 @@ namespace xtime {
                         t.set_timestamp(timestamp);
                         return true;
                 }
-                catch(...) {
-
-                }
                 return false;
         }
 
         bool convert_str_to_timestamp(std::string str, timestamp_type& t) {
                 int day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
-                try {
-                        str += "_";
-                        std::vector<std::string> output_list;
-                        std::size_t start_pos = 0;
-                        while(true) {
-                                std::size_t found_beg = str.find_first_of("/\\_:-. ", start_pos);
-                                if(found_beg != std::string::npos) {
-                                        std::size_t len = found_beg - start_pos;
-                                        if(len > 0)
-                                                output_list.push_back(str.substr(start_pos, len));
-                                        start_pos = found_beg + 1;
-                                } else break;
-                        }
+				str += "_";
+				std::vector<std::string> output_list;
+				std::size_t start_pos = 0;
+				while(true) {
+						std::size_t found_beg = str.find_first_of("/\\_:-. ", start_pos);
+						if(found_beg != std::string::npos) {
+								std::size_t len = found_beg - start_pos;
+								if(len > 0)
+										output_list.push_back(str.substr(start_pos, len));
+								start_pos = found_beg + 1;
+						} else break;
+				}
 
-                        if(output_list.size() >= 3) {
-                                if(output_list[0].size() >= 4) {
-                                        year = atoi(output_list[0].c_str());
-                                        month = atoi(output_list[1].c_str());
-                                        day = atoi(output_list[2].c_str());
-                                } else
-                                if(output_list[2].size() >= 4) {
-                                        day = atoi(output_list[0].c_str());
-                                        month = atoi(output_list[1].c_str());
-                                        year = atoi(output_list[2].c_str());
-                                } else {
-                                        hour = atoi(output_list[0].c_str());
-                                        minutes = atoi(output_list[1].c_str());
-                                        seconds = atoi(output_list[2].c_str());
-                                        if(output_list.size() == 6) {
-                                                day = atoi(output_list[0].c_str());
-                                                month = atoi(output_list[1].c_str());
-                                                year = atoi(output_list[2].c_str());
-                                        } else {
-                                                return false;
-                                        }
-                                }
-                                if(output_list.size() == 6) {
-                                        hour = atoi(output_list[3].c_str());
-                                        minutes = atoi(output_list[4].c_str());
-                                        seconds = atoi(output_list[5].c_str());
-                                }
-                        } else {
-                                return false;
-                        }
-                        if(day >= 32 || day <= 0 || minutes >= 60 ||
-                                seconds >= 60 || hour >= 24 ||
-                                year < 1970 || month > 12 || month <= 0) {
-                                return false;
-                        }
+				if(output_list.size() >= 3) {
+						if(output_list[0].size() >= 4) {
+								year = atoi(output_list[0].c_str());
+								month = atoi(output_list[1].c_str());
+								day = atoi(output_list[2].c_str());
+						} else
+						if(output_list[2].size() >= 4) {
+								day = atoi(output_list[0].c_str());
+								month = atoi(output_list[1].c_str());
+								year = atoi(output_list[2].c_str());
+						} else {
+								hour = atoi(output_list[0].c_str());
+								minutes = atoi(output_list[1].c_str());
+								seconds = atoi(output_list[2].c_str());
+								if(output_list.size() == 6) {
+										day = atoi(output_list[0].c_str());
+										month = atoi(output_list[1].c_str());
+										year = atoi(output_list[2].c_str());
+								} else {
+										return false;
+								}
+						}
+						if(output_list.size() == 6) {
+								hour = atoi(output_list[3].c_str());
+								minutes = atoi(output_list[4].c_str());
+								seconds = atoi(output_list[5].c_str());
+						}
+				} else {
+						return false;
+				}
+				if(day >= 32 || day <= 0 || minutes >= 60 ||
+						seconds >= 60 || hour >= 24 ||
+						year < 1970 || month > 12 || month <= 0) {
+						return false;
+				}
 
-                        t = get_unix_timestamp(day, month, year, hour, minutes, seconds);
-                        return true;
-                }
-                catch(...) {
-
-                }
-                return false;
+				t = get_unix_timestamp(day, month, year, hour, minutes, seconds);
+				return true;
         }
 
         timestamp_type get_unix_timestamp(DateTime& timedata) {

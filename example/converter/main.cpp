@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
     xtime::DateTime iStartTime(27,10,2018, 23, 0, 0);
-
+    iStartTime = xtime::DateTime(iStartTime.get_timestamp());
     xtime::timestamp_type time_data = 0;
     //xtime::convert_str_to_timestamp("27_10_2018-23:0:0", time_data);
     std::cout << xtime::convert_str_to_timestamp("2018-11-30 20:30:00", time_data) << std::endl;
@@ -33,7 +33,7 @@ int main() {
     while(1) {
         unsigned long long unix = xtime::get_unix_timestamp();
         if(unix != lastGmt) {
-            std::cout << "pc gmt: " << unix << "\r";
+            std::cout << "pc gmt: " << unix << " " << xtime::get_str_unix_date_time() << "\r";
             lastGmt = unix;
         }
     }

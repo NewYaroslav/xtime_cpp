@@ -27,11 +27,11 @@
 
 #include <string>
 
-//functions for working with time
 namespace xtime {
 
         typedef unsigned long long timestamp_type;
 
+        /// Количество секунд в минуте, часе и т.д.
         enum {
                 SEC_MINUTE = 60,
                 SEC_HOUR = 3600,
@@ -75,6 +75,34 @@ namespace xtime {
                 char day;       /**< день */
                 char month;     /**< месяц */
                 short year;     /**< год */
+
+                /** \brief Установить начало дня
+                 * Данная функция устанавливает час, минуту и секунду дня в 0
+                 */
+                inline void set_beg_day() {
+                        seconds = 0;
+                        minutes = 0;
+                        hour = 0;
+                }
+
+                /** \brief Установить конец дня
+                 */
+                inline void set_end_day() {
+                        seconds = 59;
+                        minutes = 59;
+                        hour = 23;
+                }
+
+                /** \brief Установить начало месяца
+                 */
+                inline void set_beg_month() {
+                        set_beg_day();
+                        day = 1;
+                }
+
+                /** \brief Установить конец месяца
+                 */
+                void set_end_month();
 
                 /** \brief Конструктор класса без начальной инициализации времени
                  */
@@ -142,11 +170,6 @@ namespace xtime {
                  * \return количество дней
                  */
                 int get_num_days_current_month();
-
-                /** \brief Установить начало дня
-                 * Данная функция устанавливает час, минуту и секунду дня в 0
-                 */
-                void set_start_day();
         };
 
         /** \brief Конвертировать строку в формате ISO в данные класса DateTime
