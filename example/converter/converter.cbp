@@ -37,7 +37,6 @@
 		</Compiler>
 		<Unit filename="../../src/xtime.cpp" />
 		<Unit filename="../../src/xtime.hpp" />
-		<Unit filename="../../src/xtime_old.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

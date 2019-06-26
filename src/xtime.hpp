@@ -33,40 +33,43 @@ namespace xtime {
 
         /// Количество секунд в минуте, часе и т.д.
         enum {
-                SEC_MINUTE = 60,
-                SEC_HOUR = 3600,
-                SEC_DAY = 86400,
+                SECONDS_IN_MINUTE = 60,	///< Количество секунд в одной минуте
+                SECONDS_IN_HOUR = 3600,	///< Количество секунд в одном часе
+                SECONDS_IN_DAY = 86400,	///< Количество секунд в одном дне
+                MINUTES_IN_HOUR = 60,   ///< Количество минут в одном часе
+                MINUTES_IN_DAY = 1440,  ///< Количество минут в одном дне
+                HOURS_IN_DAY = 24,      ///< Количество часов в одном дне
         };
 
         /** \brief Получить время и дату в виде строки
-        * \return строка, содержащая время
-        */
+         * \return строка, содержащая время
+         */
         std::string get_str_unix_date_time(timestamp_type timestamp);
 
         /** \brief Получить время и дату компьютера в виде строки
-        * \param timestamp unix время
-        * \return строка, содержащая время
-        */
+         * \param timestamp unix время
+         * \return строка, содержащая время
+         */
         std::string get_str_unix_date_time();
 
         /** \brief Получить Unix-время компьютера
-        * \return Unix-время
-        */
+         * \return Unix-время
+         */
         timestamp_type get_unix_timestamp();
 
         /** \brief Получить Unix-время из даты и стандартного времени
-        * \param day день
-        * \param month месяц
-        * \param year год
-        * \param hour час
-        * \param minutes минуты
-        * \param seconds секунды
-        * \return Unix-время
-        */
+         * \param day день
+         * \param month месяц
+         * \param year год
+         * \param hour час
+         * \param minutes минуты
+         * \param seconds секунды
+         * \return Unix-время
+         */
         timestamp_type get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds);
 
         /** \brief Класс для хранения времени
-        */
+         */
         class DateTime {
                 public:
                 char seconds;   /**< секунды */
@@ -173,10 +176,10 @@ namespace xtime {
         };
 
         /** \brief Конвертировать строку в формате ISO в данные класса DateTime
-        * \param str_iso_formatted_utc_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
-        * \param t класс времени и даты DateTime, который будет заполнен.
-        * \return вернет true если преобразование завершилось успешно
-        */
+         * \param str_iso_formatted_utc_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
+         * \param t класс времени и даты DateTime, который будет заполнен.
+         * \return вернет true если преобразование завершилось успешно
+         */
         bool convert_iso(std::string str_iso_formatted_utc_datetime, DateTime& t);
 
         /** \brief Преобразует строку, полученную функцией get_str_unix_date_time или методом get_str_date_time
@@ -188,82 +191,110 @@ namespace xtime {
         bool convert_str_to_timestamp(std::string str, timestamp_type& t);
 
         /** \brief Получить unix время
-        * \param timedata стандартное время
-        * \return unix время
-        */
+         * \param timedata стандартное время
+         * \return unix время
+         */
         timestamp_type get_unix_timestamp(DateTime& timedata);
 
         /** \brief Преобразовать unix-время в класс DateTime
-        * \param timestamp unix-время
-        * \return класс DateTime
-        */
+         * \param timestamp unix-время
+         * \return класс DateTime
+         */
         DateTime convert_timestamp_to_datetime(timestamp_type timestamp);
 
+        /// Скоращенные имена дней неделии
         enum eWday {
-                SUN = 0,    /**< Воскресенье */
-                MON,        /**< Понедельник */
-                TUS,        /**< Вторник */
-                WED,        /**< Среда */
-                THU,        /**< Четверг */
-                FRI,        /**< Пятница */
-                SAT,        /**< Суббота */
+                SUN = 0,    ///< Воскресенье
+                MON,        ///< Понедельник
+                TUS,        ///< Вторник
+                WED,        ///< Среда
+                THU,        ///< Четверг
+                FRI,        ///< Пятница
+                SAT,        ///< Суббота
         };
 
         /** \brief Получить день недели
-        * \param day день
-        * \param month месяц
-        * \param year год
-        * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
-        */
+         * \param day день
+         * \param month месяц
+         * \param year год
+         * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+         */
         int get_weekday(int day, int month, int year);
 
         /** \brief Получить день недели
-        * \param timestamp Unix-время
-        * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
-        */
+         * \param timestamp Unix-время
+         * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+         */
         int get_weekday(timestamp_type timestamp);
 
         /** \brief Напечатать дату и время
-        * \param timestamp Unix-время
-        */
+         * \param timestamp Unix-время
+         */
         void print_date_time(timestamp_type timestamp);
 
         /** \brief Проверить, приходится ли данна дата на выходной день (суббота и воскресение)
-        * \param timestamp Unix-время
-        * \return вернет true если выходной день
-        */
+         * \param timestamp Unix-время
+         * \return вернет true если выходной день
+         */
         bool is_day_off(timestamp_type timestamp);
 
         /** \brief Проверка високосного года
-        * \param year год
-        * \return вернет true, если год високосный
-        */
+         * \param year год
+         * \return вернет true, если год високосный
+         */
         bool is_leap_year(int year);
 
         /** \brief Получить количество дней в месяце
-        * \param month месяц
-        * \param year год
-        * \return количество дней в месяце
-        */
+         * \param month месяц
+         * \param year год
+         * \return количество дней в месяце
+         */
         int get_num_days_month(int month, int year);
 
         /** \brief Переводит время GMT во время CET
-        * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
-        * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
-        * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-        * \param gmt Время GMT
-        * \return время CET
-        */
+         * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
+         * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
+         * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
+         * \param gmt Время GMT
+         * \return время CET
+         */
         timestamp_type convert_gmt_to_cet(timestamp_type gmt);
 
         /** \brief Переводит время CET во время GMT
-        * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
-        * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
-        * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-        * \param cet Время CET
-        * \return время GMT
-        */
+         * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
+         * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
+         * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
+         * \param cet Время CET
+         * \return время GMT
+         */
         timestamp_type convert_cet_to_gmt(timestamp_type cet);
+
+        /** \brief Получить минуту дня
+         * Данная функция вернет от 0 до 1439 (минуту дня)
+         * \param timestamp временная метка
+         * \return минута дня
+         */
+        inline int get_minute_day(timestamp_type timestamp) {
+                return (timestamp / 60) % MINUTES_IN_DAY;
+        }
+
+        /** \brief Получить час дня
+         * Данная функция вернет от 0 до 23 (час дня)
+         * \param timestamp временная метка
+         * \return час дня
+         */
+        inline int get_hour_day(timestamp_type timestamp) {
+                return (timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY;
+        }
+
+        /** \brief Получить секунду дня
+         * Данная функция вернет от 0 до 86399 (секунда дня)
+         * \param timestamp временная метка
+         * \return секунда дня
+         */
+        inline int get_second_day(timestamp_type timestamp) {
+                return timestamp % SECONDS_IN_DAY;
+        }
 }
 
 #endif // XTIME_HPP_INCLUDED
