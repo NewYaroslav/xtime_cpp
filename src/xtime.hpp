@@ -33,12 +33,18 @@ namespace xtime {
 
         /// Количество секунд в минуте, часе и т.д.
         enum {
-                SECONDS_IN_MINUTE = 60,	///< Количество секунд в одной минуте
-                SECONDS_IN_HOUR = 3600,	///< Количество секунд в одном часе
-                SECONDS_IN_DAY = 86400,	///< Количество секунд в одном дне
-                MINUTES_IN_HOUR = 60,   ///< Количество минут в одном часе
-                MINUTES_IN_DAY = 1440,  ///< Количество минут в одном дне
-                HOURS_IN_DAY = 24,      ///< Количество часов в одном дне
+                SECONDS_IN_MINUTE = 60,	    ///< Количество секунд в одной минуте
+                SECONDS_IN_HALF_HOUR = 1800,///< Количество секунд в получасе
+                SECONDS_IN_HOUR = 3600,	    ///< Количество секунд в одном часе
+                SECONDS_IN_DAY = 86400,	    ///< Количество секунд в одном дне
+                MINUTES_IN_HOUR = 60,       ///< Количество минут в одном часе
+                MINUTES_IN_DAY = 1440,      ///< Количество минут в одном дне
+                HOURS_IN_DAY = 24,          ///< Количество часов в одном дне
+                MONTHS_IN_YEAR = 12,        ///< Количество месяцев в году
+                DAYS_IN_LEAP_YEAR = 366,    ///< Количество дней в високосом году
+                DAYS_IN_YEAR = 365,         ///< Количество дней в году
+                FIRST_YEAR_UNIX = 1970,     ///< Год начала UNIX времени
+                MAX_DAY_MONTH = 31,         ///< Максимальное количество дней в месяце
         };
 
         /** \brief Получить время и дату в виде строки
@@ -295,6 +301,75 @@ namespace xtime {
         inline int get_second_day(timestamp_type timestamp) {
                 return timestamp % SECONDS_IN_DAY;
         }
+
+        /** \brief Проверить начало получаса
+         * \param timestamp временная метка
+         * \return вернет true, если начало получаса
+         */
+        bool is_beg_half_hour(timestamp_type timestamp);
+
+        /** \brief Проверить начало часа
+         * \param timestamp временная метка
+         * \return вернет true, если начало часа
+         */
+        bool is_beg_hour(timestamp_type timestamp);
+
+        /** \brief Проверить начало дня
+         * \param timestamp временная метка
+         * \return вернет true, если начало дня
+         */
+        bool is_beg_day(timestamp_type timestamp);
+
+        /** \brief Проверить начало недели
+         * Если день воскресенье, функция вернет true
+         * \warning Данная функция проверят только день! Она не проверяет секунды, минуты, часы
+         * \param timestamp временная метка
+         * \return вернет true, если начало недели
+         */
+        bool is_beg_week(timestamp_type timestamp);
+
+        /** \brief Проверить начало месяца
+         * Если первый день месяца, функция вернет true
+         * \warning Данная функция проверят только день! Она не проверяет секунды, минуты, часы
+         * \param timestamp временная метка
+         * \return вернет true, если начало месяца
+         */
+        bool is_beg_month(timestamp_type timestamp);
+
+        /** \brief Проверить конец месяца
+         * Если последний день месяца, функция вернет true
+         * \warning Данная функция проверят только день! Она не проверяет секунды, минуты, часы
+         * \param timestamp временная метка
+         * \return вернет true, если конец месяца
+         */
+        bool is_end_month(timestamp_type timestamp);
+
+        /** \brief Проверить корректность даты
+         * \param day день
+         * \param month месяц
+         * \param year год
+         * \return вернет true, если заданная дата возможна
+         */
+        bool is_correct_date(int day, int month, int year);
+
+        /** \brief Проверить корректность времени
+         * \param hour час
+         * \param minutes минуты
+         * \param seconds секунды
+         * \return вернет true, если заданное время корректно
+         */
+        bool is_correct_time(int hour, int minutes, int seconds);
+
+        /** \brief Проверить корректность даты и времени
+         * \param day день
+         * \param month месяц
+         * \param year год
+         * \param hour час
+         * \param minutes минуты
+         * \param seconds секунды
+         * \return вернет true, если заданное время корректно
+         */
+        bool is_correct_date_time(int day, int month, int year, int hour, int minutes, int seconds);
 }
 
 #endif // XTIME_HPP_INCLUDED

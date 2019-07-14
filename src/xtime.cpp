@@ -517,4 +517,51 @@ namespace xtime {
                 DateTime iTime(timestamp);
                 return iTime.get_str_date_time();
         }
+
+        bool is_beg_half_hour(timestamp_type timestamp) {
+            return timestamp % SECONDS_IN_HALF_HOUR == 0 ? true : false;
+        }
+
+        bool is_beg_hour(timestamp_type timestamp) {
+            return timestamp % SECONDS_IN_HOUR == 0 ? true : false;
+        }
+
+        bool is_beg_day(timestamp_type timestamp) {
+            return timestamp % SECONDS_IN_DAY == 0 ? true : false;
+        }
+
+        bool is_beg_week(timestamp_type timestamp) {
+            return get_weekday(timestamp) == SUN ? true : false;
+        }
+
+        bool is_beg_month(timestamp_type timestamp) {
+            DateTime iTime(timestamp);
+            return (iTime.day == 1) ? true : false;
+        }
+
+        bool is_end_month(timestamp_type timestamp) {
+            DateTime iTime(timestamp);
+            return (iTime.day == iTime.get_num_days_current_month()) ? true : false;
+        }
+
+        bool is_correct_date(int day, int month, int year) {
+            if(day < 1 || day > MAX_DAY_MONTH) return false;
+            if(month > MONTHS_IN_YEAR || month < 1) return false;
+            if(year < FIRST_YEAR_UNIX) return false;
+            if(day > get_num_days_month(month, year)) return false;
+            return true;
+        }
+
+        bool is_correct_time(int hour, int minutes, int seconds) {
+            if(hour < 0 || hour > 23) return false;
+            if(minutes < 0 || minutes > 59) return false;
+            if(seconds < 0 || seconds > 59) return false;
+            return true;
+        }
+
+        bool is_correct_date_time(int day, int month, int year, int hour, int minutes, int seconds) {
+            if(!is_correct_date(day, month, year)) return false;
+            if(!is_correct_time(hour, minutes, seconds)) return false;
+            return true;
+        }
 }
