@@ -302,6 +302,15 @@ namespace xtime {
                 return timestamp % SECONDS_IN_DAY;
         }
 
+        /** \brief Получить день
+         * Данная функция вернет день, начиная с начала UNIX времени
+         * \param timestamp временная метка
+         * \return день с начала UNIX времени
+         */
+        inline int get_day(timestamp_type timestamp) {
+                return (timestamp / SECONDS_IN_DAY);
+        }
+
         /** \brief Проверить начало получаса
          * \param timestamp временная метка
          * \return вернет true, если начало получаса
