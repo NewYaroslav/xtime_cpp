@@ -31,7 +31,7 @@
 
 namespace xtime {
 
-        timestamp_type get_unix_timestamp() {
+        timestamp_t get_unix_timestamp() {
                 time_t rawtime;
                 time(&rawtime);
                 struct tm* ptm;
@@ -41,8 +41,8 @@ namespace xtime {
                 return iTime.get_timestamp();
         }
 
-        timestamp_type get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds) {
-                timestamp_type _secs;
+        timestamp_t get_unix_timestamp(int day, int month, int year, int hour, int minutes, int seconds) {
+                timestamp_t _secs;
                 long _mon, _year;
                 long _days;
                 _mon = month - 1;
@@ -82,7 +82,7 @@ namespace xtime {
                 DateTime::seconds = seconds;
         }
 
-        DateTime::DateTime(timestamp_type timestamp) {
+        DateTime::DateTime(timestamp_t timestamp) {
                 set_timestamp(timestamp);
         }
 
@@ -90,7 +90,7 @@ namespace xtime {
                 convert_iso(str_iso_formatted_utc_datetime, *this);
         }
 
-        timestamp_type DateTime::get_timestamp() {
+        timestamp_t DateTime::get_timestamp() {
                 unsigned long long _secs;
                 long _mon, _year;
                 long _days;
@@ -111,7 +111,7 @@ namespace xtime {
                 return _secs;
         }
 
-        void DateTime::set_timestamp(timestamp_type timestamp) {
+        void DateTime::set_timestamp(timestamp_t timestamp) {
                 unsigned long long _secs;
                 long _mon, _year;
                 long _days;
@@ -193,7 +193,7 @@ namespace xtime {
                 return false;
         }
 
-        bool convert_str_to_timestamp(std::string str, timestamp_type& t) {
+        bool convert_str_to_timestamp(std::string str, timestamp_t& t) {
                 int day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
 				str += "_";
 				std::vector<std::string> output_list;
@@ -248,8 +248,8 @@ namespace xtime {
 				return true;
         }
 
-        timestamp_type get_unix_timestamp(DateTime& timedata) {
-                timestamp_type _secs;
+        timestamp_t get_unix_timestamp(DateTime& timedata) {
+                timestamp_t _secs;
                 long _mon, _year;
                 long _days;
                 _mon = timedata.month - 1;
@@ -269,9 +269,9 @@ namespace xtime {
                 return _secs;
         }
 
-        DateTime convert_timestamp_to_datetime(timestamp_type timestamp) {
+        DateTime convert_timestamp_to_datetime(timestamp_t timestamp) {
                 DateTime outTime;
-                timestamp_type _secs;
+                timestamp_t _secs;
                 long _mon, _year;
                 long _days;
                 long i;
@@ -313,12 +313,12 @@ namespace xtime {
                 return R % 7;
         }
 
-        int get_weekday(timestamp_type timestamp) {
+        int get_weekday(timestamp_t timestamp) {
                 DateTime temp = convert_timestamp_to_datetime(timestamp);
                 return get_weekday(temp.day, temp.month, temp.year);
         }
 
-        void print_date_time(timestamp_type timestamp) {
+        void print_date_time(timestamp_t timestamp) {
                 DateTime t(timestamp);
                 t.print();
         }
@@ -329,7 +329,7 @@ namespace xtime {
                 return t.get_str_date_time();
         }
 
-        bool is_day_off(timestamp_type timestamp) {
+        bool is_day_off(timestamp_t timestamp) {
                 int wday = get_weekday(timestamp);
                 if(wday == xtime::SUN || wday == xtime::SAT) {
                         return true;
@@ -354,8 +354,8 @@ namespace xtime {
                 }
         }
 
-        timestamp_type convert_gmt_to_cet(timestamp_type gmt) {
-                const timestamp_type ONE_HOUR = 3600;
+        timestamp_t convert_gmt_to_cet(timestamp_t gmt) {
+                const timestamp_t ONE_HOUR = 3600;
                 const int OLD_START_SUMMER_HOUR = 2;
                 const int OLD_STOP_SUMMER_HOUR = 3;
                 const int NEW_SUMMER_HOUR = 1;
@@ -434,8 +434,8 @@ namespace xtime {
                 return gmt + ONE_HOUR; // зимнее время
         }
 
-    timestamp_type convert_cet_to_gmt(timestamp_type cet) {
-        const timestamp_type ONE_HOUR = 3600;
+    timestamp_t convert_cet_to_gmt(timestamp_t cet) {
+        const timestamp_t ONE_HOUR = 3600;
         const int OLD_START_SUMMER_HOUR = 2;
         const int OLD_STOP_SUMMER_HOUR = 3;
         const int NEW_SUMMER_HOUR = 1;
@@ -513,33 +513,33 @@ namespace xtime {
         return cet - ONE_HOUR; // зимнее время
     }
 
-        std::string get_str_unix_date_time(timestamp_type timestamp) {
+        std::string get_str_unix_date_time(timestamp_t timestamp) {
                 DateTime iTime(timestamp);
                 return iTime.get_str_date_time();
         }
 
-        bool is_beg_half_hour(timestamp_type timestamp) {
+        bool is_beg_half_hour(timestamp_t timestamp) {
             return timestamp % SECONDS_IN_HALF_HOUR == 0 ? true : false;
         }
 
-        bool is_beg_hour(timestamp_type timestamp) {
+        bool is_beg_hour(timestamp_t timestamp) {
             return timestamp % SECONDS_IN_HOUR == 0 ? true : false;
         }
 
-        bool is_beg_day(timestamp_type timestamp) {
+        bool is_beg_day(timestamp_t timestamp) {
             return timestamp % SECONDS_IN_DAY == 0 ? true : false;
         }
 
-        bool is_beg_week(timestamp_type timestamp) {
+        bool is_beg_week(timestamp_t timestamp) {
             return get_weekday(timestamp) == SUN ? true : false;
         }
 
-        bool is_beg_month(timestamp_type timestamp) {
+        bool is_beg_month(timestamp_t timestamp) {
             DateTime iTime(timestamp);
             return (iTime.day == 1) ? true : false;
         }
 
-        bool is_end_month(timestamp_type timestamp) {
+        bool is_end_month(timestamp_t timestamp) {
             DateTime iTime(timestamp);
             return (iTime.day == iTime.get_num_days_current_month()) ? true : false;
         }
