@@ -26,25 +26,32 @@
 #define XTIME_HPP_INCLUDED
 
 #include <string>
+#include <iostream>
 
 namespace xtime {
 
         typedef unsigned long long timestamp_type;
+        const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
 
         /// Количество секунд в минуте, часе и т.д.
         enum {
-                SECONDS_IN_MINUTE = 60,	    ///< Количество секунд в одной минуте
-                SECONDS_IN_HALF_HOUR = 1800,///< Количество секунд в получасе
-                SECONDS_IN_HOUR = 3600,	    ///< Количество секунд в одном часе
-                SECONDS_IN_DAY = 86400,	    ///< Количество секунд в одном дне
-                MINUTES_IN_HOUR = 60,       ///< Количество минут в одном часе
-                MINUTES_IN_DAY = 1440,      ///< Количество минут в одном дне
-                HOURS_IN_DAY = 24,          ///< Количество часов в одном дне
-                MONTHS_IN_YEAR = 12,        ///< Количество месяцев в году
-                DAYS_IN_LEAP_YEAR = 366,    ///< Количество дней в високосом году
-                DAYS_IN_YEAR = 365,         ///< Количество дней в году
-                FIRST_YEAR_UNIX = 1970,     ///< Год начала UNIX времени
-                MAX_DAY_MONTH = 31,         ///< Максимальное количество дней в месяце
+                SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
+                SECONDS_IN_HALF_HOUR = 1800,        ///< Количество секунд в получасе
+                SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в одном часе
+                SECONDS_IN_DAY = 86400,	            ///< Количество секунд в одном дне
+                SECONDS_IN_YEAR = 31536000,	        ///< Количество секунд за год
+                SECONDS_IN_LEAP_YEAR = 31622400,	///< Количество секунд за високосный год
+                AVERAGE_SECONDS_IN_YEAR = 31557600, ///< Среднее количество секунд за год
+                SECONDS_IN_4_YEAR = 126230400,	    ///< Количество секунд за 4 года
+                MINUTES_IN_HOUR = 60,               ///< Количество минут в одном часе
+                MINUTES_IN_DAY = 1440,              ///< Количество минут в одном дне
+                HOURS_IN_DAY = 24,                  ///< Количество часов в одном дне
+                MONTHS_IN_YEAR = 12,                ///< Количество месяцев в году
+                DAYS_IN_LEAP_YEAR = 366,            ///< Количество дней в високосом году
+                DAYS_IN_YEAR = 365,                 ///< Количество дней в году
+                DAYS_IN_4_YEAR = 1461,              ///< Количество дней за 4 года
+                FIRST_YEAR_UNIX = 1970,             ///< Год начала UNIX времени
+                MAX_DAY_MONTH = 31,                 ///< Максимальное количество дней в месяце
         };
 
         /** \brief Получить время и дату в виде строки
@@ -309,6 +316,53 @@ namespace xtime {
          */
         inline int get_day(timestamp_type timestamp) {
                 return (timestamp / SECONDS_IN_DAY);
+        }
+
+        /** \brief Получить год
+         * Данная функция вернет год указанной временной метки
+         * \param timestamp временная метка
+         * \return год UNIX времени
+         */
+        inline int get_year(timestamp_type timestamp) {
+                int year = FIRST_YEAR_UNIX + 4 * (timestamp / SECONDS_IN_4_YEAR);
+                timestamp_type t = timestamp % SECONDS_IN_4_YEAR;
+                if(t < SECONDS_IN_YEAR) return year;
+                else if(t < (2*SECONDS_IN_YEAR)) return year + 1;
+                else if(t < (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR)) return year + 2;
+                return year + 3;
+        }
+
+        /** \brief Получить количество дней в текущем году
+         * \param timestamp временная метка
+         * \return дней в текущем году
+         */
+        inline int get_day_in_year(timestamp_type timestamp) {
+            if(is_leap_year(get_year(timestamp))) return DAYS_IN_LEAP_YEAR;
+            return DAYS_IN_YEAR;
+        }
+
+        /** \brief Получить временную метку начала года
+         * \param year год
+         * \return временная метка начала года
+         */
+        inline timestamp_type get_timestamp_beg_year(int year) {
+            int diff = (year - FIRST_YEAR_UNIX);
+            if(diff < 0) return 0;
+            timestamp_type t = (diff / 4) * SECONDS_IN_4_YEAR;
+            int temp = diff % 4;
+            if(temp == 0) return t;
+            else if(temp == 1) return t + SECONDS_IN_YEAR;
+            else if(temp == 2) return t + (2*SECONDS_IN_YEAR);
+            return t + (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR);
+        }
+
+        /** \brief Получить день года
+         * \param timestamp временная метка
+         * \return день года
+         */
+        inline int get_day_year(timestamp_type timestamp) {
+            int year = get_year(timestamp);
+            return get_day(timestamp) - get_day(get_timestamp_beg_year(year)) + 1;
         }
 
         /** \brief Проверить начало получаса
