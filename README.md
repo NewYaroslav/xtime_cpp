@@ -3,17 +3,24 @@
 
 ### Описание
 
-Данная библиотека позволяет удобно и быстро работать с временем. Например, можно легко преобразовать дату в timestamp, или сделать обратную операцию. Можно легко получить реальное GMT время, преобразовать GMT в CET и обратно, узнать день недели, количество дней в месяце и т.д.
+Данная библиотека позволяет удобно и быстро работать с временем. Например: 
+
+* Можно легко преобразовать дату в timestamp или сделать обратную операцию 
+* Можно легко получить реальное GMT время компьютера
+* Можно преобразовать GMT в CET и обратно
+* Получить день недели, количество дней в месяце и т.д.
+
+Смотрите файл *xtime.hpp*, он содежрит подробные комментарии перед каждой функцией 
 
 ### Как установить?
-Просто добавьте файлы xtime.hpp и xtime.cpp в свой проект
+Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект, или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
 
-### Быстрый обзор интерфейса
+### Быстрый обзор
 + Получить Unix-время из даты и стандартного времени
 ```C++
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
-xtime::timestamp_type epoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
+xtime::timestamp_t epoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
 ```
 + Класс для хранения времени
 ```C++
@@ -30,9 +37,9 @@ iTime = DateTime(24,5,2018, 0, 0, 0);
 // iTime = DateTime("2013-12-06T15:23:01+00:00");
 
 // Или инициализируем Unix epoch или Unix time или POSIX time или Unix timestamp
-unsigned long long unixEpoch = 1527120000;
+unsigned long long unix_epoch = 1527120000;
 
-iTime.set_timestamp(unixEpoch);
+iTime.set_timestamp(unix_epoch);
 
 // Переменные класса DateTime
 iTime.day = 24; // день
@@ -43,7 +50,7 @@ iTime.minutes = 0; // минуты
 iTime.seconds = 0; // секунды
 
 // Получить Unix epoch или Unix time или POSIX time или Unix timestamp 
-unixEpoch = iTime.get_timestamp();
+unix_epoch = iTime.get_timestamp();
 
 // Вывести время и дату на экран
 iTime.print();
@@ -55,9 +62,8 @@ std::string str = iTime.get_str_date_time(); // В строке будет 24.05
 ```C++
 using namespace xtime;
 
-<<<<<<< HEAD
-xtime::timestamp_type unixEpoch = 1527120000;
-DateTime iTime = convert_timestamp_to_datetime(unixEpoch);
+xtime::timestamp_t unix_epoch = 1527120000;
+DateTime iTime = convert_timestamp_to_datetime(unix_epoch);
 ```
 + Получить день недели
 ```C++
@@ -73,10 +79,10 @@ else if(wday == WED) std::cout << "WED" << std::endl;
 else if(wday == FRI) std::cout << "FRI" << std::endl;
 else if(wday == SAT) std::cout << "SAT" << std::endl;
 
-xtime::timestamp_type unixEpoch = 1527120000;
+xtime::timestamp_t unix_epoch = 1527120000;
 
 // Второй вариант функции для определения дня недели
-wday = get_weekday(unixEpoch);
+wday = get_weekday(unix_epoch);
 
 // Получить день недели через функцию класса DateTime
 DateTime iTime(24,5,2018);
@@ -97,8 +103,8 @@ if(convert_iso(strISOformattedUTCdatetime, iTime) == true) {
 using namespace xtime;
 // получаем время GMT для примера
 DateTime startTime(20,3,2018);
-<<<<<<< HEAD
-xtime::timestamp_type startGMT = startTime.get_unix_timestamp();
+
+xtime::timestamp_t startGMT = startTime.get_unix_timestamp();
 // переводим время GMT во время CET
 DateTime realCET(convert_gmt_to_cet(startGMT));
 realCET.print();
@@ -113,7 +119,7 @@ using namespace xtime;
 unsigned long long t = get_unix_timestamp();
 std::string str = get_str_unix_date_time(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
 ```
-+ Получить количество дней в месяце
++ Получить количество дней в месяце и день года
 ```C++
 using namespace xtime;
 
@@ -125,6 +131,8 @@ DateTime iTime(20,3,2018);
 
 // Получить количество дней в текущем (март) месяце
 std::cout << iTime.get_num_days_current_month() << std::endl;
+// Получить день года
+std::cout << get_day_year(iTime.get_timestamp()) << std::endl;
 ```
 + Проверка високосного года
 ```C++
@@ -141,6 +149,13 @@ if(iTime.is_leap_year()) {
 	// если год високосный, то условие сработает
 }
 ```
++ Получение временной метки начала дня
+```C++
+using namespace xtime;
 
+unsigned long long t = get_unix_timestamp();
+t = get_start_day(t);
+
+```
 
 

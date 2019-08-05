@@ -47,5 +47,9 @@ int main()
     cout << "get_day_year " << xtime::get_day_year(xtime::get_unix_timestamp(15,1,2013,0,0,0)) << endl;
     cout << "get_day_year " << xtime::get_day_year(xtime::get_unix_timestamp(16,10,2013,0,0,0)) << endl;
     cout << "get_day_year " << xtime::get_day_year(xtime::get_unix_timestamp(31,12,2016,0,0,0)) << endl;
+
+    cout << "get_start_day " << xtime::get_str_unix_date_time(xtime::get_start_day(xtime::get_unix_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_start_hour " << xtime::get_str_unix_date_time(xtime::get_start_hour(xtime::get_unix_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_start_minute " << xtime::get_str_unix_date_time(xtime::get_start_minute(xtime::get_unix_timestamp(31,12,2016,22,55,56))) << endl;
     return 0;
 }

@@ -433,6 +433,33 @@ namespace xtime {
          * \return вернет true, если заданное время корректно
          */
         bool is_correct_date_time(int day, int month, int year, int hour, int minutes, int seconds);
+
+        /** \brief Получить временную метку в начале дня
+         * Данная функция обнуляет часы, минуты и секунды
+         * \param timestamp временная метка
+         * \return временная метка в начале дня
+         */
+        inline timestamp_t get_start_day(timestamp_t timestamp) {
+            return timestamp - (timestamp % SECONDS_IN_DAY);
+        }
+
+        /** \brief Получить временную метку в начале часа
+         * Данная функция обнуляет минуты и секунды
+         * \param timestamp временная метка
+         * \return временная метка в начале часа
+         */
+        inline timestamp_t get_start_hour(timestamp_t timestamp) {
+            return timestamp - (timestamp % SECONDS_IN_HOUR);
+        }
+
+        /** \brief Получить временную метку в начале минуты
+         * Данная функция обнуляет секунды
+         * \param timestamp временная метка
+         * \return временная метка в начале минуты
+         */
+        inline timestamp_t get_start_minute(timestamp_t timestamp) {
+            return timestamp - (timestamp % SECONDS_IN_MINUTE);
+        }
 }
 
 #endif // XTIME_HPP_INCLUDED
