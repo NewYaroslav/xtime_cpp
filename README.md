@@ -3,25 +3,25 @@
 
 ### Описание
 
-Данная библиотека позволяет удобно и быстро работать с временем. Например: 
+Данная библиотека позволяет удобно и быстро работать со стандартным временем и меткой времени. Например: 
 
 * Можно легко преобразовать дату в timestamp или сделать обратную операцию 
 * Можно легко получить реальное GMT время компьютера
 * Можно преобразовать GMT в CET и обратно
-* Получить день недели, количество дней в месяце и т.д.
+* Получить день недели, количество дней в месяце, день года, день с начала UNIX времени и т.д.
 
 Смотрите файл *xtime.hpp*, он содежрит подробные комментарии перед каждой функцией.
-Для хранения временных меток используется тип данных *uint64*.
+Для хранения временных меток используется тип данных *uint64*, поэтому у данной библиотеки нет [проблемы 2038 года](https://en.wikipedia.org/wiki/Year_2038_problem)
 
 ### Как установить?
-Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект, или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
+Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
 
 ### Быстрый обзор
 + Получить Unix-время из даты и стандартного времени
 ```C++
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
-xtime::timestamp_t epoch = get_unix_timestamp(24, 5, 2018, 23, 59, 59);
+xtime::timestamp_t epoch = get_timestamp(24, 5, 2018, 23, 59, 59);
 ```
 + Класс для хранения времени
 ```C++
@@ -105,20 +105,20 @@ using namespace xtime;
 // получаем время GMT для примера
 DateTime startTime(20,3,2018);
 
-xtime::timestamp_t startGMT = startTime.get_unix_timestamp();
+xtime::timestamp_t startGMT = startTime.get_timestamp();
 // переводим время GMT во время CET
 DateTime realCET(convert_gmt_to_cet(startGMT));
 realCET.print();
 // переводим время CET во время GMT
-DateTime realGMT(convert_cet_to_gmt(realCET.get_unix_timestamp()));
+DateTime realGMT(convert_cet_to_gmt(realCET.get_timestamp()));
 realGMT.print();
 ```
 + Получить Unix-время компьютера
 ```C++
 using namespace xtime;
 
-unsigned long long t = get_unix_timestamp();
-std::string str = get_str_unix_date_time(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
+unsigned long long t = get_timestamp();
+std::string str = get_str_date_time(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
 ```
 + Получить количество дней в месяце и день года
 ```C++
@@ -154,7 +154,7 @@ if(iTime.is_leap_year()) {
 ```C++
 using namespace xtime;
 
-unsigned long long t = get_unix_timestamp();
+unsigned long long t = get_timestamp();
 t = get_start_day(t);
 
 ```
