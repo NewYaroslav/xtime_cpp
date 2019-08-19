@@ -263,7 +263,7 @@ namespace xtime {
 				return true;
         }
 
-        timestamp_t get_unix_timestamp(DateTime& timedata) {
+        timestamp_t get_timestamp(DateTime& timedata) {
                 timestamp_t _secs;
                 long _mon, _year;
                 long _days;
@@ -449,6 +449,10 @@ namespace xtime {
         return gmt + ONE_HOUR; // зимнее время
     }
 
+    timestamp_t convert_gmt_to_eet(const timestamp_t gmt) {
+        return convert_gmt_to_cet(gmt) + SECONDS_IN_HOUR;
+    }
+
     timestamp_t convert_cet_to_gmt(const timestamp_t cet) {
         const timestamp_t ONE_HOUR = 3600;
         const int OLD_START_SUMMER_HOUR = 2;
@@ -526,6 +530,10 @@ namespace xtime {
             return cet - ONE_HOUR; // зимнее время
         }
         return cet - ONE_HOUR; // зимнее время
+    }
+
+    timestamp_t convert_eet_to_gmt(const timestamp_t eet) {
+        convert_cet_to_gmt(eet - SECONDS_IN_HOUR);
     }
 
     std::string get_str_date_time(const timestamp_t timestamp) {

@@ -34,16 +34,16 @@ int main()
     cout << "get_day_in_year " << xtime::get_day_in_year(xtime::get_timestamp(1,1,2014,0,0,0)) << endl;
     cout << "get_day_in_year " << xtime::get_day_in_year(xtime::get_timestamp(1,1,2013,0,0,0)) << endl;
 
-    cout << "get_unix_timestamp " << xtime::get_timestamp(1,1,2013,0,0,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(1,1,2013,0,0,0) << endl;
     cout << "get_timestamp_beg_year " << xtime::get_timestamp_beg_year(2013) << endl;
 
-    cout << "get_unix_timestamp " << xtime::get_timestamp(1,1,2012,0,0,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(1,1,2012,0,0,0) << endl;
     cout << "get_timestamp_beg_year " << xtime::get_timestamp_beg_year(2012) << endl;
 
-    cout << "get_unix_timestamp " << xtime::get_timestamp(1,1,2011,0,0,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(1,1,2011,0,0,0) << endl;
     cout << "get_timestamp_beg_year " << xtime::get_timestamp_beg_year(2011) << endl;
 
-    cout << "get_unix_timestamp " << xtime::get_timestamp(1,1,2010,0,0,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(1,1,2010,0,0,0) << endl;
     cout << "get_timestamp_beg_year " << xtime::get_timestamp_beg_year(2010) << endl;
 
     cout << "get_day_year " << xtime::get_day_year(xtime::get_timestamp(1,1,2013,0,0,0)) << endl;
