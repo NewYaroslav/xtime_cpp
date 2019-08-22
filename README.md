@@ -16,6 +16,79 @@
 ### Как установить?
 Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
 
+### Функции и методы
+
+Методы класса DateTime
+
+* set_beg_day()
+* set_end_day()
+* set_beg_month()
+* set_end_month()
+* timestamp_t get_timestamp()
+* set_timestamp(const timestamp_t timestamp)
+* print()
+* std::string get_str_date_time()
+* std::string get_str_date(const timestamp_t timestamp)
+* std::string get_str_time(const timestamp_t timestamp)
+* int get_weekday()
+* is_leap_year()
+* int get_num_days_current_month()
+
+Преобразование времени в строку или вывод на экран
+
+* std::string get_str_date_time(const timestamp_t timestamp)
+* std::string get_str_date(const timestamp_t timestamp)
+* std::string get_str_time(const timestamp_t timestamp)
+* std::string get_str_date_time()
+* print_date_time(const timestamp_t timestamp)
+
+Преобразование строки в метку времени
+
+* bool convert_iso(const std::string str_iso_formatted_utc_datetime, DateTime& t)
+* bool convert_str_to_timestamp(std::string str, timestamp_t& t)
+
+Перевод времени из одной вреемнной зоны в другую
+
+* timestamp_t convert_gmt_to_cet(const timestamp_t gmt)
+* timestamp_t convert_gmt_to_eet(const timestamp_t gmt)
+* timestamp_t convert_cet_to_gmt(const timestamp_t cet)
+* timestamp_t convert_eet_to_gmt(const timestamp_t eet)
+
+Проверки различных условий
+
+* bool is_beg_half_hour(const timestamp_t timestamp)
+* bool is_beg_hour(const timestamp_t timestamp)
+* bool is_beg_day(const timestamp_t timestamp)
+* bool is_beg_week(const timestamp_t timestamp)
+* bool is_beg_month(timestamp_t timestamp)
+* bool is_end_month(const timestamp_t timestamp)
+* bool is_correct_date(const int day, const int month, const int year)
+* bool is_correct_time(const int hour, const int minutes = 0, const int seconds = 0)
+* bool is_correct_date_time(const int day,const int month,const int year,const int hour = 0,const int minutes = 0,const int seconds = 0)
+* bool is_day_off(const timestamp_t timestamp)
+* bool is_day_off_for_day(const int day)
+* bool is_leap_year(const int year)
+
+Различные преобразования и вычисления
+
+* int get_num_days_month(const int month, const int year)
+* int get_num_days_month(const timestamp_t timestamp)
+* timestamp_t get_start_day(const timestamp_t timestamp)
+* timestamp_t get_start_hour(const timestamp_t timestamp)
+* timestamp_t get_start_minute(const timestamp_t timestamp)
+* int get_weekday(const int day, const int month, const int year)
+* int get_weekday(const timestamp_t timestamp)
+* int get_minute_day(const timestamp_t timestamp)
+* int get_hour_day(const timestamp_t timestamp)
+* int get_second_day(const timestamp_t timestamp)
+* int get_day(const timestamp_t timestamp)
+* timestamp_t get_timestamp_beg_year(const int year)
+* int get_year(const timestamp_t timestamp)
+* int get_day_year(const timestamp_t timestamp)
+* int get_month_year(const timestamp_t timestamp)
+* int get_day_in_year(const timestamp_t timestamp)
+* timestamp_t get_timestamp_for_start_day(const int day)
+
 ### Быстрый обзор
 + Получить Unix-время из даты и стандартного времени
 ```C++

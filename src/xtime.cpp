@@ -322,12 +322,23 @@ namespace xtime {
     int get_num_days_month(const int month, const int year) {
         if(month > MONTHS_IN_YEAR)
             return 0;
-        const int numDays[13] = {0,31,30,31,30,31,30,31,31,30,31,30,31};
-        if(month == 2) {
+        const int num_days[13] = {0,31,30,31,30,31,30,31,31,30,31,30,31};
+        if(month == FEB) {
             if(is_leap_year(year)) return 29;
             else return 28;
         } else {
-            return numDays[month];
+            return num_days[month];
+        }
+    }
+
+    int get_num_days_month(const timestamp_t timestamp) {
+        const int num_days[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        const int month = get_month_year(timestamp);
+        if(month == FEB) {
+            if(is_leap_year(get_year(timestamp))) return 29;
+            else return 28;
+        } else {
+            return num_days[month];
         }
     }
 

@@ -65,17 +65,36 @@ namespace xtime {
         SAT,        ///< Суббота
     };
 
+    /// Скоращенные имена месяцев
+    enum {
+        JAN = 1,    ///< Январь
+        FEB,        ///< Февраль
+        MAR,        ///< Март
+        APR,        ///< Апрель
+        MAY,        ///< Май
+        JUNE,       ///< Июнь
+        JULY,       ///< Июль
+        AUG,        ///< Август
+        SEPT,       ///< Сентябрь
+        OCT,        ///< Октябрь
+        NOV,        ///< Ноябрь
+        DEC,        ///< Декабрь
+    };
+
     /** \brief Получить время и дату в виде строки
+     * \param timestamp метка времен
      * \return строка, содержащая время и дату
      */
     std::string get_str_date_time(const timestamp_t timestamp);
 
     /** \brief Получить дату в виде строки
+     * \param timestamp метка времен
      * \return строка, содержащая дату
      */
     std::string get_str_date(const timestamp_t timestamp);
 
     /** \brief Получить время в виде строки
+     * \param timestamp метка времен
      * \return строка, содержащая время
      */
     std::string get_str_time(const timestamp_t timestamp);
@@ -87,8 +106,8 @@ namespace xtime {
      */
     std::string get_str_date_time();
 
-    /** \brief Получить Unix-время компьютера
-     * \return Unix-время
+    /** \brief Получить метку времени (Unix-время) компьютера
+     * \return метка времен
      */
     timestamp_t get_timestamp();
 
@@ -169,7 +188,7 @@ namespace xtime {
                 const int seconds = 0);
 
             /** \brief Инициализация с указанием unix-времени
-             * \param timestamp unix-время
+             * \param timestamp метка времени
              */
             DateTime(const timestamp_t timestamp);
 
@@ -185,7 +204,7 @@ namespace xtime {
             timestamp_t get_timestamp();
 
             /** \brief Установить время
-             * \param timestamp unix-время
+             * \param timestamp метка времени
              */
             void set_timestamp(const timestamp_t timestamp);
 
@@ -234,66 +253,21 @@ namespace xtime {
     /** \brief Преобразует строку, полученную функцией get_str_date_time или методом get_str_date_time
      * обратно в timestamp
      * \param str время в формате строки, например
-     * \param t временная метка
+     * \param t метка времени
      * \return вернет true если преобразование завершилось успешно
      */
     bool convert_str_to_timestamp(std::string str, timestamp_t& t);
 
     /** \brief Преобразовать unix-время в класс DateTime
-     * \param timestamp unix-время
+     * \param timestamp метка времени
      * \return класс DateTime
      */
     DateTime convert_timestamp_to_datetime(const timestamp_t timestamp);
 
-    /** \brief Получить день недели
-     * \param day день
-     * \param month месяц
-     * \param year год
-     * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
-     */
-    int get_weekday(const int day, const int month, const int year);
-
-    /** \brief Получить день недели
-     * \param timestamp Unix-время
-     * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
-     */
-    inline int get_weekday(const timestamp_t timestamp) {
-        return (timestamp/SECONDS_IN_DAY) % DAYS_IN_WEEK + THU;
-    }
-
     /** \brief Напечатать дату и время
-     * \param timestamp Unix-время
+     * \param timestamp метка времени
      */
     void print_date_time(const timestamp_t timestamp);
-
-    /** \brief Проверить выходной день (суббота и воскресение)
-     * \param timestamp Unix-время
-     * \return вернет true если выходной день
-     */
-    inline bool is_day_off(const timestamp_t timestamp) {
-        int wday = get_weekday(timestamp);
-        if(wday == xtime::SUN || wday == xtime::SAT) return true;
-        return false;
-    }
-
-    /** \brief Проверить выходной день (суббота и воскресение)
-     * \param day день с начала отсчета Unix-времени
-     * \return вернет true если выходной день
-     */
-    inline bool is_day_off_for_day(const int day) {
-        int wday = day % DAYS_IN_WEEK + THU;
-        if(wday == xtime::SUN || wday == xtime::SAT) return true;
-        return false;
-    }
-
-    /** \brief Проверка високосного года
-     * \param year год
-     * \return вернет true, если год високосный
-     */
-    inline bool is_leap_year(const int year) {
-        if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
-        return false;
-    }
 
     /** \brief Получить количество дней в месяце
      * \param month месяц
@@ -302,11 +276,17 @@ namespace xtime {
      */
     int get_num_days_month(const int month, const int year);
 
+    /** \brief Получить количество дней в месяце
+     * \param timestamp метка времени
+     * \return количество дней в месяце
+     */
+    int get_num_days_month(const timestamp_t timestamp);
+
     /** \brief Переводит время GMT во время CET
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
      * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
      * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-     * \param gmt Время GMT
+     * \param gmt метка времени, время GMT
      * \return время CET
      */
     timestamp_t convert_gmt_to_cet(const timestamp_t gmt);
@@ -315,7 +295,7 @@ namespace xtime {
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
      * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
      * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-     * \param gmt Время GMT
+     * \param gmt метка времени, время GMT
      * \return время EET
      */
     timestamp_t convert_gmt_to_eet(const timestamp_t gmt);
@@ -324,7 +304,7 @@ namespace xtime {
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
      * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
      * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-     * \param cet Время CET
+     * \param cet метка времени c измененым часовым поясом, время CET
      * \return время GMT
      */
     timestamp_t convert_cet_to_gmt(const timestamp_t cet);
@@ -333,108 +313,25 @@ namespace xtime {
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
      * а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
      * Начиная с 2002 года, согласно директиве ЕС(2000/84/EC) в Европе переход на летнее время осуществляется в 01:00 по Гринвичу.
-     * \param eet Время EET
+     * \param eet метка времени c измененым часовым поясом, время EET
      * \return время GMT
      */
     timestamp_t convert_eet_to_gmt(const timestamp_t eet);
 
-    /** \brief Получить минуту дня
-     * Данная функция вернет от 0 до 1439 (минуту дня)
-     * \param timestamp временная метка
-     * \return минута дня
-     */
-    inline int get_minute_day(const timestamp_t timestamp) {
-            return (timestamp / 60) % MINUTES_IN_DAY;
-    }
-
-    /** \brief Получить час дня
-     * Данная функция вернет от 0 до 23 (час дня)
-     * \param timestamp временная метка
-     * \return час дня
-     */
-    inline int get_hour_day(const timestamp_t timestamp) {
-            return (timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY;
-    }
-
-    /** \brief Получить секунду дня
-     * Данная функция вернет от 0 до 86399 (секунда дня)
-     * \param timestamp временная метка
-     * \return секунда дня
-     */
-    inline int get_second_day(const timestamp_t timestamp) {
-            return timestamp % SECONDS_IN_DAY;
-    }
-
-    /** \brief Получить день
-     * Данная функция вернет день, начиная с начала UNIX времени
-     * \param timestamp временная метка
-     * \return день с начала UNIX времени
-     */
-    inline int get_day(const timestamp_t timestamp) {
-            return (timestamp / SECONDS_IN_DAY);
-    }
-
-    /** \brief Получить год
-     * Данная функция вернет год указанной временной метки
-     * \param timestamp временная метка
-     * \return год UNIX времени
-     */
-    inline int get_year(const timestamp_t timestamp) {
-            int year = FIRST_YEAR_UNIX + 4 * (timestamp / SECONDS_IN_4_YEAR);
-            timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
-            if(t < SECONDS_IN_YEAR) return year;
-            else if(t < (2*SECONDS_IN_YEAR)) return year + 1;
-            else if(t < (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR)) return year + 2;
-            return year + 3;
-    }
-
-    /** \brief Получить количество дней в текущем году
-     * \param timestamp временная метка
-     * \return дней в текущем году
-     */
-    inline int get_day_in_year(const timestamp_t timestamp) {
-        if(is_leap_year(get_year(timestamp))) return DAYS_IN_LEAP_YEAR;
-        return DAYS_IN_YEAR;
-    }
-
-    /** \brief Получить временную метку начала года
-     * \param year год
-     * \return временная метка начала года
-     */
-    inline timestamp_t get_timestamp_beg_year(const int year) {
-        int diff = (year - FIRST_YEAR_UNIX);
-        if(diff < 0) return 0;
-        timestamp_t t = (diff / 4) * SECONDS_IN_4_YEAR;
-        int temp = diff % 4;
-        if(temp == 0) return t;
-        else if(temp == 1) return t + SECONDS_IN_YEAR;
-        else if(temp == 2) return t + (2*SECONDS_IN_YEAR);
-        return t + (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR);
-    }
-
-    /** \brief Получить день года
-     * \param timestamp временная метка
-     * \return день года
-     */
-    inline int get_day_year(const timestamp_t timestamp) {
-        int year = get_year(timestamp);
-        return get_day(timestamp) - get_day(get_timestamp_beg_year(year)) + 1;
-    }
-
     /** \brief Проверить начало получаса
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return вернет true, если начало получаса
      */
     bool is_beg_half_hour(const timestamp_t timestamp);
 
     /** \brief Проверить начало часа
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return вернет true, если начало часа
      */
     bool is_beg_hour(const timestamp_t timestamp);
 
     /** \brief Проверить начало дня
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return вернет true, если начало дня
      */
     bool is_beg_day(const timestamp_t timestamp);
@@ -442,7 +339,7 @@ namespace xtime {
     /** \brief Проверить начало недели
      * Если день воскресенье, функция вернет true
      * \warning Данная функция проверят только день! Она не проверяет секунды, минуты, часы
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return вернет true, если начало недели
      */
     bool is_beg_week(const timestamp_t timestamp);
@@ -450,7 +347,7 @@ namespace xtime {
     /** \brief Проверить начало месяца
      * Если первый день месяца, функция вернет true
      * \warning Данная функция проверят только день! Она не проверяет секунды, минуты, часы
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return вернет true, если начало месяца
      */
     bool is_beg_month(timestamp_t timestamp);
@@ -498,7 +395,7 @@ namespace xtime {
 
     /** \brief Получить временную метку в начале дня
      * Данная функция обнуляет часы, минуты и секунды
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return временная метка в начале дня
      */
     inline timestamp_t get_start_day(const timestamp_t timestamp) {
@@ -507,7 +404,7 @@ namespace xtime {
 
     /** \brief Получить временную метку в начале часа
      * Данная функция обнуляет минуты и секунды
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return временная метка в начале часа
      */
     inline timestamp_t get_start_hour(const timestamp_t timestamp) {
@@ -516,11 +413,172 @@ namespace xtime {
 
     /** \brief Получить временную метку в начале минуты
      * Данная функция обнуляет секунды
-     * \param timestamp временная метка
+     * \param timestamp метка времени
      * \return временная метка в начале минуты
      */
     inline timestamp_t get_start_minute(const timestamp_t timestamp) {
         return timestamp - (timestamp % SECONDS_IN_MINUTE);
+    }
+
+    /** \brief Получить день недели
+     * \param day день
+     * \param month месяц
+     * \param year год
+     * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+     */
+    int get_weekday(const int day, const int month, const int year);
+
+    /** \brief Получить день недели
+     * \param timestamp метка времени
+     * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+     */
+    inline int get_weekday(const timestamp_t timestamp) {
+        return ((timestamp/SECONDS_IN_DAY + THU) % DAYS_IN_WEEK);
+    }
+
+    /** \brief Проверить выходной день (суббота и воскресение)
+     * \param timestamp метка времени
+     * \return вернет true если выходной день
+     */
+    inline bool is_day_off(const timestamp_t timestamp) {
+        int wday = get_weekday(timestamp);
+        if(wday == xtime::SUN || wday == xtime::SAT) return true;
+        return false;
+    }
+
+    /** \brief Проверить выходной день (суббота и воскресение)
+     * \param day день с начала отсчета Unix-времени
+     * \return вернет true если выходной день
+     */
+    inline bool is_day_off_for_day(const int day) {
+        int wday = (day + THU) % DAYS_IN_WEEK;
+        if(wday == xtime::SUN || wday == xtime::SAT) return true;
+        return false;
+    }
+
+    /** \brief Проверка високосного года
+     * \param year год
+     * \return вернет true, если год високосный
+     */
+    inline bool is_leap_year(const int year) {
+        if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
+        return false;
+    }
+
+    /** \brief Получить минуту дня
+     * Данная функция вернет от 0 до 1439 (минуту дня)
+     * \param timestamp метка времени
+     * \return минута дня
+     */
+    inline int get_minute_day(const timestamp_t timestamp) {
+            return (timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_DAY;
+    }
+
+    /** \brief Получить час дня
+     * Данная функция вернет от 0 до 23 (час дня)
+     * \param timestamp метка времени
+     * \return час дня
+     */
+    inline int get_hour_day(const timestamp_t timestamp) {
+            return (timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY;
+    }
+
+    /** \brief Получить секунду дня
+     * Данная функция вернет от 0 до 86399 (секунда дня)
+     * \param timestamp метка времени
+     * \return секунда дня
+     */
+    inline int get_second_day(const timestamp_t timestamp) {
+            return timestamp % SECONDS_IN_DAY;
+    }
+
+    /** \brief Получить день
+     * Данная функция вернет день, начиная с начала UNIX времени
+     * \param timestamp метка времени
+     * \return день с начала UNIX времени
+     */
+    inline int get_day(const timestamp_t timestamp) {
+            return (timestamp / SECONDS_IN_DAY);
+    }
+
+    /** \brief Получить временную метку начала года
+     * \param year год
+     * \return временная метка начала года
+     */
+    inline timestamp_t get_timestamp_beg_year(const int year) {
+        int diff = (year - FIRST_YEAR_UNIX);
+        if(diff < 0) return 0;
+        timestamp_t t = (diff / 4) * SECONDS_IN_4_YEAR;
+        int temp = diff % 4;
+        if(temp == 0) return t;
+        else if(temp == 1) return t + SECONDS_IN_YEAR;
+        else if(temp == 2) return t + (2*SECONDS_IN_YEAR);
+        return t + (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR);
+    }
+
+    /** \brief Получить год
+     * Данная функция вернет год указанной временной метки
+     * \param timestamp временная метка
+     * \return год UNIX времени
+     */
+    inline int get_year(const timestamp_t timestamp) {
+        int year = FIRST_YEAR_UNIX + 4 * (timestamp / SECONDS_IN_4_YEAR);
+        timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
+        if(t < SECONDS_IN_YEAR) return year;
+        else if(t < (2*SECONDS_IN_YEAR)) return year + 1;
+        else if(t < (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR)) return year + 2;
+        return year + 3;
+    }
+
+    /** \brief Получить день года
+     * \param timestamp метка времени
+     * \return день года
+     */
+    inline int get_day_year(const timestamp_t timestamp) {
+        int year = get_year(timestamp);
+        return get_day(timestamp) - get_day(get_timestamp_beg_year(year)) + 1;
+    }
+
+    /** \brief Получить месяц года
+     * \param timestamp метка времени
+     * \return месяц года
+     */
+    inline int get_month_year(const timestamp_t timestamp) {
+        int day_year = get_day_year(timestamp);
+        const unsigned char JAN_AND_FEB_DAY_LEAP_YEAR = 60;
+        const unsigned char TABLE_DAY_OF_YEAR[] = {
+            0,
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,  // 31 январь
+            2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,        // 28 февраль
+            3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,  // 31 март
+            4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,    // 30 апрель
+            5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+            6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+            10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
+            11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+            12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
+        };
+        return (is_leap_year(get_year(timestamp)) && day_year >= JAN_AND_FEB_DAY_LEAP_YEAR) ? TABLE_DAY_OF_YEAR[day_year - 1] : TABLE_DAY_OF_YEAR[day_year];
+    }
+
+    /** \brief Получить количество дней в текущем году
+     * \param timestamp временная метка
+     * \return дней в текущем году
+     */
+    inline int get_day_in_year(const timestamp_t timestamp) {
+        if(is_leap_year(get_year(timestamp))) return DAYS_IN_LEAP_YEAR;
+        return DAYS_IN_YEAR;
+    }
+
+    /** \brief Получить метку времени начала дня от начала unix-времени
+     * \param day день с начала unix-времени
+     * \return метка времени
+     */
+    inline timestamp_t get_timestamp_for_start_day(const int day) {
+        return day * SECONDS_IN_DAY;
     }
 }
 

@@ -6,8 +6,25 @@ using namespace std;
 int main()
 {
 
-    cout << "get_weekday " << xtime::get_weekday(2,5,2070) << endl;
-    cout << "get_weekday " << xtime::get_weekday(xtime::get_timestamp(2,5,2070)) << endl;
+    cout << "get_weekday " << xtime::get_weekday(24,3,2018) << endl; // Суббота
+    cout << "get_weekday " << xtime::get_weekday(xtime::get_timestamp(25,3,2018)) << endl; // Воскресенье
+    cout << "get_weekday " << xtime::get_weekday(xtime::get_timestamp(26,3,2018)) << endl; // Понедельник
+
+    cout << "is_day_off " << xtime::is_day_off(xtime::get_timestamp(24,3,2018)) << endl;
+    cout << "is_day_off " << xtime::is_day_off(xtime::get_timestamp(25,3,2018)) << endl;
+    cout << "is_day_off " << xtime::is_day_off(xtime::get_timestamp(26,3,2018)) << endl;
+
+    cout << "--------------------------------------" << endl;
+
+    cout << "is_leap_year " << xtime::is_leap_year(xtime::get_year(xtime::get_timestamp(29,2,2016))) << endl;
+    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(29,2,2016)) << endl;
+    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(1,3,2016)) << endl;
+
+    cout << "is_leap_year " << xtime::is_leap_year(xtime::get_year(xtime::get_timestamp(28,2,2015))) << endl;
+    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(28,2,2015)) << endl;
+    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(1,3,2015)) << endl;
+    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(31,12,2015)) << endl;
+    cout << "get_num_days_month " << xtime::get_num_days_month(xtime::get_timestamp(31,12,2015)) << endl;
     cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0,0,0) << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0) << endl;
