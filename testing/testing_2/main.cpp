@@ -8,12 +8,31 @@ int main()
     xtime::DateTime iTime(9, 10, 2018);
     xtime::timestamp_t time = iTime.get_timestamp();
 
+    cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0,0,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0) << endl;
+    cout << "get_timestamp " << xtime::get_timestamp(1,3,4000) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date_time(xtime::get_timestamp(1,1,4000,22,55,56)) << endl;
+
+    cout << "--------------------------------------" << endl;
+    xtime::DateTime iBigTime(9, 10, 4000, 22,55,56);
+    cout << "get_str_date_time for 4000 year " << iBigTime.get_str_date_time() << endl;
+    cout << "get_timestamp 4000 year " << iBigTime.get_timestamp() << endl;
+    xtime::DateTime iBigTime2(iBigTime.get_timestamp());
+    cout << "DateTime.get_timestamp() in get_str_date_time 4000 year " << xtime::get_str_date_time(iBigTime2.get_timestamp()) << endl;
+
+    cout << "--------------------------------------" << endl;
+
+    cout << "get_timestamp " << xtime::get_timestamp(31,12,2016,22,55,56) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date_time(xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "get_str_time " << xtime::get_str_time(xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "--------------------------------------" << endl;
+
     cout << "get_str_date " << xtime::get_str_date(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
     cout << "get_str_time " << xtime::get_str_time(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
 
     cout << "wday " << xtime::get_weekday(time) << endl;
 
-    cout << "minute day " << xtime::get_minute_day(xtime::get_timestamp(1,1,2019,23,59,59)) << endl;
+    cout << "minute day " << xtime::get_minute_day(xtime::get_timestamp(1,1,2019,23,359,59)) << endl;
 
     cout << "is beg day " << xtime::is_beg_day(xtime::get_timestamp(1,1,2019,0,0,0)) << endl;
     cout << "is beg half hour " << xtime::is_beg_half_hour(xtime::get_timestamp(1,1,2019,0,30,0)) << endl;
