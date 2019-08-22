@@ -46,11 +46,23 @@ namespace xtime {
         MINUTES_IN_DAY = 1440,              ///< Количество минут в одном дне
         HOURS_IN_DAY = 24,                  ///< Количество часов в одном дне
         MONTHS_IN_YEAR = 12,                ///< Количество месяцев в году
+        DAYS_IN_WEEK = 7,                   ///< Количество дней в неделе
         DAYS_IN_LEAP_YEAR = 366,            ///< Количество дней в високосом году
         DAYS_IN_YEAR = 365,                 ///< Количество дней в году
         DAYS_IN_4_YEAR = 1461,              ///< Количество дней за 4 года
         FIRST_YEAR_UNIX = 1970,             ///< Год начала UNIX времени
         MAX_DAY_MONTH = 31,                 ///< Максимальное количество дней в месяце
+    };
+
+    /// Скоращенные имена дней неделии
+    enum {
+        SUN = 0,    ///< Воскресенье
+        MON,        ///< Понедельник
+        TUS,        ///< Вторник
+        WED,        ///< Среда
+        THU,        ///< Четверг
+        FRI,        ///< Пятница
+        SAT,        ///< Суббота
     };
 
     /** \brief Получить время и дату в виде строки
@@ -233,17 +245,6 @@ namespace xtime {
      */
     DateTime convert_timestamp_to_datetime(const timestamp_t timestamp);
 
-    /// Скоращенные имена дней неделии
-    enum eWday {
-        SUN = 0,    ///< Воскресенье
-        MON,        ///< Понедельник
-        TUS,        ///< Вторник
-        WED,        ///< Среда
-        THU,        ///< Четверг
-        FRI,        ///< Пятница
-        SAT,        ///< Суббота
-    };
-
     /** \brief Получить день недели
      * \param day день
      * \param month месяц
@@ -256,24 +257,43 @@ namespace xtime {
      * \param timestamp Unix-время
      * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
      */
-    int get_weekday(const timestamp_t timestamp);
+    inline int get_weekday(const timestamp_t timestamp) {
+        return (timestamp/SECONDS_IN_DAY) % DAYS_IN_WEEK + THU;
+    }
 
     /** \brief Напечатать дату и время
      * \param timestamp Unix-время
      */
     void print_date_time(const timestamp_t timestamp);
 
-    /** \brief Проверить, приходится ли данна дата на выходной день (суббота и воскресение)
+    /** \brief Проверить выходной день (суббота и воскресение)
      * \param timestamp Unix-время
      * \return вернет true если выходной день
      */
-    bool is_day_off(const timestamp_t timestamp);
+    inline bool is_day_off(const timestamp_t timestamp) {
+        int wday = get_weekday(timestamp);
+        if(wday == xtime::SUN || wday == xtime::SAT) return true;
+        return false;
+    }
+
+    /** \brief Проверить выходной день (суббота и воскресение)
+     * \param day день с начала отсчета Unix-времени
+     * \return вернет true если выходной день
+     */
+    inline bool is_day_off_for_day(const int day) {
+        int wday = day % DAYS_IN_WEEK + THU;
+        if(wday == xtime::SUN || wday == xtime::SAT) return true;
+        return false;
+    }
 
     /** \brief Проверка високосного года
      * \param year год
      * \return вернет true, если год високосный
      */
-    bool is_leap_year(const int year);
+    inline bool is_leap_year(const int year) {
+        if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
+        return false;
+    }
 
     /** \brief Получить количество дней в месяце
      * \param month месяц

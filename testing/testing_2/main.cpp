@@ -5,9 +5,10 @@ using namespace std;
 
 int main()
 {
-    xtime::DateTime iTime(9, 10, 2018);
-    xtime::timestamp_t time = iTime.get_timestamp();
 
+    cout << "get_weekday " << xtime::get_weekday(2,5,2070) << endl;
+    cout << "get_weekday " << xtime::get_weekday(xtime::get_timestamp(2,5,2070)) << endl;
+    cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0,0,0) << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0) << endl;
     cout << "get_timestamp " << xtime::get_timestamp(1,3,4000) << endl;
@@ -30,6 +31,9 @@ int main()
     cout << "get_str_date " << xtime::get_str_date(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
     cout << "get_str_time " << xtime::get_str_time(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
 
+    cout << "--------------------------------------" << endl;
+    xtime::DateTime iTime(9, 10, 2018);
+    xtime::timestamp_t time = iTime.get_timestamp();
     cout << "wday " << xtime::get_weekday(time) << endl;
 
     cout << "minute day " << xtime::get_minute_day(xtime::get_timestamp(1,1,2019,23,359,59)) << endl;

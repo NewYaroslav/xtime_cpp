@@ -308,11 +308,6 @@ namespace xtime {
         return R % 7;
     }
 
-    int get_weekday(const timestamp_t timestamp) {
-        DateTime temp = convert_timestamp_to_datetime(timestamp);
-        return get_weekday(temp.day, temp.month, temp.year);
-    }
-
     void print_date_time(const timestamp_t timestamp) {
         DateTime t(timestamp);
         t.print();
@@ -322,19 +317,6 @@ namespace xtime {
         DateTime t;
         t.set_timestamp(get_timestamp());
         return t.get_str_date_time();
-    }
-
-    bool is_day_off(const timestamp_t timestamp) {
-        int wday = get_weekday(timestamp);
-        if(wday == xtime::SUN || wday == xtime::SAT) {
-            return true;
-        }
-        return false;
-    }
-
-    bool is_leap_year(const int year) {
-        if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
-        return false;
     }
 
     int get_num_days_month(const int month, const int year) {
