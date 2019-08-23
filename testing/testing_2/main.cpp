@@ -5,6 +5,14 @@ using namespace std;
 
 int main()
 {
+    cout << "get_timestamp " << xtime::get_timestamp(31,12,2016) << endl; // 1483142400
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(31,12,2016)) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(1,1,2017)) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(2,1,2017)) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(3,1,2017)) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(4,1,2017)) << endl;
+    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(5,1,2017)) << endl;
+    cout << "--------------------------------------" << endl;
 
     cout << "get_weekday " << xtime::get_weekday(24,3,2018) << endl; // Суббота
     cout << "get_weekday " << xtime::get_weekday(xtime::get_timestamp(25,3,2018)) << endl; // Воскресенье

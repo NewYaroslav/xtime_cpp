@@ -119,18 +119,14 @@ namespace xtime {
         _days -= i;
         const long _TBIAS_YEAR = 1900;
         year = _year + _TBIAS_YEAR;
-
+        _mon = MONTHS_IN_YEAR;
         if(((_year) & 03) || ((_year) == 0)) {
-            _mon = MONTHS_IN_YEAR;
-            while(_days < mos[--_mon]) {
-                month = _mon + 1;
-            }
+            while(_days < mos[--_mon]) {};
+            month = _mon + 1;
             day = _days - mos[_mon] + 1;
         } else {
-            _mon = MONTHS_IN_YEAR;
-            while(_days < lmos[--_mon]) {
-                month = _mon + 1;
-            }
+            while(_days < lmos[--_mon]) {};
+            month = _mon + 1;
             day = _days - lmos[_mon] + 1;
         }
     }
@@ -347,8 +343,8 @@ namespace xtime {
         const int OLD_START_SUMMER_HOUR = 2;
         const int OLD_STOP_SUMMER_HOUR = 3;
         const int NEW_SUMMER_HOUR = 1;
-        const int MONTH_MARSH = 3;
-        const int MONTH_OCTOBER = 10;
+        const int MONTH_MARSH = MAR;
+        const int MONTH_OCTOBER = OCT;
         DateTime iTime(gmt);
         int maxDays = iTime.get_num_days_current_month();
         if(iTime.year < 2002) {
@@ -431,8 +427,8 @@ namespace xtime {
         const int OLD_START_SUMMER_HOUR = 2;
         const int OLD_STOP_SUMMER_HOUR = 3;
         const int NEW_SUMMER_HOUR = 1;
-        const int MONTH_MARSH = 3;
-        const int MONTH_OCTOBER = 10;
+        const int MONTH_MARSH = MAR;
+        const int MONTH_OCTOBER = OCT;
         DateTime iTime(cet);
         int maxDays = iTime.get_num_days_current_month();
 
