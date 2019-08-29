@@ -26,6 +26,7 @@
 #define XTIME_HPP_INCLUDED
 
 #include <string>
+#include <array>
 
 namespace xtime {
     // для того, чтобы можно было работать и после 19 января 2038 года, используем 64 бит, а не 32 бит
@@ -79,6 +80,20 @@ namespace xtime {
         OCT,        ///< Октябрь
         NOV,        ///< Ноябрь
         DEC,        ///< Декабрь
+    };
+
+    const std::array<std::string, MONTHS_IN_YEAR> month_name_long = {
+        "January","February","March",
+        "April","May","June",
+        "July","August","September",
+        "October","November","December",
+    };
+
+    const std::array<std::string, MONTHS_IN_YEAR> month_name_short = {
+        "Jan","Feb","Mar",
+        "Apr","May","June",
+        "July","Aug","Sept",
+        "Oct","Nov","Dec",
     };
 
     /** \brief Получить время и дату в виде строки
@@ -250,6 +265,12 @@ namespace xtime {
      */
     bool convert_iso(const std::string str_iso_formatted_utc_datetime, DateTime& t);
 
+    /** \brief Получить номер месяца по названию
+     * \param month Имя месяца
+     * \return номер месяца
+     */
+    int get_month(std::string month);
+
     /** \brief Преобразует строку, полученную функцией get_str_date_time или методом get_str_date_time
      * обратно в timestamp
      * \param str время в формате строки, например
@@ -402,6 +423,15 @@ namespace xtime {
         return timestamp - (timestamp % SECONDS_IN_DAY);
     }
 
+    /** \brief Получить временную метку в конце дня
+     * Данная функция устанавливает час 23, минута 59 и секунда 59
+     * \param timestamp метка времени
+     * \return временная метка в конце дня
+     */
+    inline timestamp_t get_end_day(const timestamp_t timestamp) {
+        return timestamp - (timestamp % SECONDS_IN_DAY) + SECONDS_IN_DAY - 1;
+    }
+
     /** \brief Получить временную метку в начале часа
      * Данная функция обнуляет минуты и секунды
      * \param timestamp метка времени
@@ -481,6 +511,24 @@ namespace xtime {
      */
     inline int get_hour_day(const timestamp_t timestamp) {
             return (timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY;
+    }
+
+    /** \brief Получить секунду минуты
+     * Данная функция вернет от 0 до 59 (секунда минуты)
+     * \param timestamp метка времени
+     * \return секунда минуты
+     */
+    inline int get_second_minute(const timestamp_t timestamp) {
+            return timestamp % SECONDS_IN_MINUTE;
+    }
+
+    /** \brief Получить секунду часа
+     * Данная функция вернет от 0 до 3599 (секунда часа)
+     * \param timestamp метка времени
+     * \return секунда часа
+     */
+    inline int get_second_hour(const timestamp_t timestamp) {
+            return timestamp % SECONDS_IN_HOUR;
     }
 
     /** \brief Получить секунду дня

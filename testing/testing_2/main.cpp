@@ -5,6 +5,17 @@ using namespace std;
 
 int main()
 {
+    // 20:25:00, 29 Aug парсим
+    xtime::timestamp_t timestamp;
+    bool is_convert = xtime::convert_str_to_timestamp("20:25:00, 29 Aug", timestamp);
+    if(is_convert) cout << "get_timestamp " << xtime::get_str_date_time(timestamp) << endl;
+    else cout << "convert_str_to_timestamp error" << endl;
+
+    cout << "get_month " << xtime::get_month("Aug") << endl;
+    cout << "get_second_minute " << xtime::get_second_minute(xtime::get_timestamp(1,1,2017,2,3,6)) << endl;
+    cout << "get_end_day " << xtime::get_str_date_time(xtime::get_end_day(xtime::get_timestamp(1,1,2017,2,3,6))) << endl;
+
+    cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2016) << endl; // 1483142400
     cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(31,12,2016)) << endl;
     cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(1,1,2017)) << endl;

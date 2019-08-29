@@ -26,6 +26,8 @@
 #include "stdio.h"
 #include <ctime>
 #include <vector>
+#include <algorithm>
+#include <cctype>
 
 namespace xtime {
 
@@ -204,13 +206,26 @@ namespace xtime {
         return false;
     }
 
+    int get_month(std::string month) {
+        if(month.size() == 0) return 0;
+        std::transform(month.begin(), month.end(), month.begin(), tolower);
+        month[0] = toupper(month[0]);
+        for(int i = 0; i < MONTHS_IN_YEAR; ++i) {
+            std::string name_long = month_name_long[i];
+            std::string name_short = month_name_short[i];
+            if(month == name_long) return i + 1;
+            if(month == name_short) return i + 1;
+        }
+        return 0;
+    }
+
     bool convert_str_to_timestamp(std::string str, timestamp_t& t) {
         int day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
         str += "_";
         std::vector<std::string> output_list;
         std::size_t start_pos = 0;
         while(true) {
-            std::size_t found_beg = str.find_first_of("/\\_:-. ", start_pos);
+            std::size_t found_beg = str.find_first_of("/\\_:-., ", start_pos);
             if(found_beg != std::string::npos) {
                 std::size_t len = found_beg - start_pos;
                 if(len > 0)
