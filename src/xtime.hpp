@@ -146,116 +146,118 @@ namespace xtime {
     /** \brief Класс для хранения времени
      */
     class DateTime {
-            public:
-            char seconds;   /**< секунды */
-            char minutes;   /**< минуты */
-            char hour;      /**< час */
-            char day;       /**< день */
-            char month;     /**< месяц */
-            long year;      /**< год */
+        public:
+        char seconds;   /**< секунды */
+        char minutes;   /**< минуты */
+        char hour;      /**< час */
+        char day;       /**< день */
+        char month;     /**< месяц */
+        long year;      /**< год */
 
-            /** \brief Установить начало дня
-             * Данная функция устанавливает час, минуту и секунду дня в 0
-             */
-            inline void set_beg_day() {
-                    seconds = 0;
-                    minutes = 0;
-                    hour = 0;
-            }
+        bool is_correct();
 
-            /** \brief Установить конец дня
-             */
-            inline void set_end_day() {
-                    seconds = 59;
-                    minutes = 59;
-                    hour = 23;
-            }
+        /** \brief Установить начало дня
+         * Данная функция устанавливает час, минуту и секунду дня в 0
+         */
+        inline void set_beg_day() {
+                seconds = 0;
+                minutes = 0;
+                hour = 0;
+        }
 
-            /** \brief Установить начало месяца
-             */
-            inline void set_beg_month() {
-                    set_beg_day();
-                    day = 1;
-            }
+        /** \brief Установить конец дня
+         */
+        inline void set_end_day() {
+                seconds = 59;
+                minutes = 59;
+                hour = 23;
+        }
 
-            /** \brief Установить конец месяца
-             */
-            void set_end_month();
+        /** \brief Установить начало месяца
+         */
+        inline void set_beg_month() {
+                set_beg_day();
+                day = 1;
+        }
 
-            /** \brief Конструктор класса без начальной инициализации времени
-             */
-            DateTime();
+        /** \brief Установить конец месяца
+         */
+        void set_end_month();
 
-            /** \brief Инициализация с указанием времени и даты
-             * \param day день
-             * \param month месяц
-             * \param year год
-             * \param hour час
-             * \param minutes минуты
-             * \param seconds секунды
-             */
-            DateTime(
-                const int day,
-                const int month,
-                const int year,
-                const int hour = 0,
-                const int minutes = 0,
-                const int seconds = 0);
+        /** \brief Конструктор класса без начальной инициализации времени
+         */
+        DateTime();
 
-            /** \brief Инициализация с указанием unix-времени
-             * \param timestamp метка времени
-             */
-            DateTime(const timestamp_t timestamp);
+        /** \brief Инициализация с указанием времени и даты
+         * \param day день
+         * \param month месяц
+         * \param year год
+         * \param hour час
+         * \param minutes минуты
+         * \param seconds секунды
+         */
+        DateTime(
+            const int day,
+            const int month,
+            const int year,
+            const int hour = 0,
+            const int minutes = 0,
+            const int seconds = 0);
 
-            /** \brief Инициализация с указанием unix-времени в формате ISO
-             * Пример формата ISO: 2013-12-06T15:23:01+00:00
-             * \param str_iso_formatted_utc_datetime время UTC в формате ISO
-             */
-            DateTime(const std::string str_iso_formatted_utc_datetime);
+        /** \brief Инициализация с указанием unix-времени
+         * \param timestamp метка времени
+         */
+        DateTime(const timestamp_t timestamp);
 
-            /** \brief Получить время
-             * \return timestamp
-             */
-            timestamp_t get_timestamp();
+        /** \brief Инициализация с указанием unix-времени в формате ISO
+         * Пример формата ISO: 2013-12-06T15:23:01+00:00
+         * \param str_iso_formatted_utc_datetime время UTC в формате ISO
+         */
+        DateTime(const std::string str_iso_formatted_utc_datetime);
 
-            /** \brief Установить время
-             * \param timestamp метка времени
-             */
-            void set_timestamp(const timestamp_t timestamp);
+        /** \brief Получить время
+         * \return timestamp
+         */
+        timestamp_t get_timestamp();
 
-            /** \brief Вывести время и дату на экран
-             */
-            void print();
+        /** \brief Установить время
+         * \param timestamp метка времени
+         */
+        void set_timestamp(const timestamp_t timestamp);
 
-            /** \brief Получить дату и время в виде строки
-             * \return строка, содержащая дату и время
-             */
-            std::string get_str_date_time();
+        /** \brief Вывести время и дату на экран
+         */
+        void print();
 
-            /** \brief Получить дату в виде строки
-             * \return строка, содержащая дату
-             */
-            std::string get_str_date();
+        /** \brief Получить дату и время в виде строки
+         * \return строка, содержащая дату и время
+         */
+        std::string get_str_date_time();
 
-            /** \brief Получить время в виде строки
-             * \return строка, содержащая время
-             */
-            std::string get_str_time();
+        /** \brief Получить дату в виде строки
+         * \return строка, содержащая дату
+         */
+        std::string get_str_date();
 
-            /** \brief Получить день недели
-             * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
-             */
-            int get_weekday();
+        /** \brief Получить время в виде строки
+         * \return строка, содержащая время
+         */
+        std::string get_str_time();
 
-            /** \brief Проверка високосного года
-             * \return вернет true, если год високосный
-             */
-            bool is_leap_year();
+        /** \brief Получить день недели
+         * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
+         */
+        int get_weekday();
 
-            /** \brief Получить количество дней в текущем месяце
-             * \return количество дней
-             */
-            int get_num_days_current_month();
+        /** \brief Проверка високосного года
+         * \return вернет true, если год високосный
+         */
+        bool is_leap_year();
+
+        /** \brief Получить количество дней в текущем месяце
+         * \return количество дней
+         */
+        int get_num_days_current_month();
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса DateTime

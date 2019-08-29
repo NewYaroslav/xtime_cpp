@@ -94,6 +94,10 @@ namespace xtime {
         convert_iso(str_iso_formatted_utc_datetime, *this);
     }
 
+    bool DateTime::is_correct() {
+        return is_correct_date_time(day, month, year, hour, minutes, seconds);
+    }
+
     timestamp_t DateTime::get_timestamp() {
         return xtime::get_timestamp(day, month, year, hour, minutes, seconds);
     }
