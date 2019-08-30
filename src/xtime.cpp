@@ -240,30 +240,49 @@ namespace xtime {
 
         if(output_list.size() >= 3) {
             if(output_list[0].size() >= 4) {
+                // если год в самом начале
                 year = atoi(output_list[0].c_str());
                 month = atoi(output_list[1].c_str());
                 day = atoi(output_list[2].c_str());
-            } else
-            if(output_list[2].size() >= 4) {
-                day = atoi(output_list[0].c_str());
-                month = atoi(output_list[1].c_str());
-                year = atoi(output_list[2].c_str());
-            } else {
-                hour = atoi(output_list[0].c_str());
-                minutes = atoi(output_list[1].c_str());
-                seconds = atoi(output_list[2].c_str());
-                if(output_list.size() == 6) {
-                    day = atoi(output_list[0].c_str());
-                    month = atoi(output_list[1].c_str());
-                    year = atoi(output_list[2].c_str());
-                } else {
-                    return false;
-                }
-            }
-            if(output_list.size() == 6) {
                 hour = atoi(output_list[3].c_str());
                 minutes = atoi(output_list[4].c_str());
                 seconds = atoi(output_list[5].c_str());
+            } else
+            if(output_list[2].size() >= 4) {
+                // если год в конце
+                day = atoi(output_list[0].c_str());
+                month = atoi(output_list[1].c_str());
+                year = atoi(output_list[2].c_str());
+                hour = atoi(output_list[3].c_str());
+                minutes = atoi(output_list[4].c_str());
+                seconds = atoi(output_list[5].c_str());
+            } else
+            if(output_list[2].size() == 2) {
+                hour = atoi(output_list[0].c_str());
+                minutes = atoi(output_list[1].c_str());
+                seconds = atoi(output_list[2].c_str());
+                if(output_list.size() == 6 && output_list[5].size() >= 4 && output_list[4].size() == 2) {
+                    day = atoi(output_list[3].c_str());
+                    month = atoi(output_list[4].c_str());
+                    year = atoi(output_list[5].c_str());
+                } else
+                if(output_list.size() == 6 && output_list[5].size() == 2 && output_list[4].size() >= 3) {
+                    day = atoi(output_list[3].c_str());
+                    month = get_month(output_list[4]);
+                    year = atoi(output_list[5].c_str()) + 2000;
+                } else
+                if(output_list.size() == 6 && output_list[5].size() == 4 && output_list[4].size() >= 3) {
+                    day = atoi(output_list[3].c_str());
+                    month = get_month(output_list[4]);
+                    year = atoi(output_list[5].c_str());
+                } else
+                if(output_list.size() == 6 && output_list[5].size() == 2 && output_list[4].size() == 2) {
+                    day = atoi(output_list[3].c_str());
+                    month = atoi(output_list[4].c_str());
+                    year = atoi(output_list[5].c_str()) + 2000;
+                } else {
+                    return false;
+                }
             }
         } else {
             return false;
@@ -439,6 +458,79 @@ namespace xtime {
 
     timestamp_t convert_gmt_to_eet(const timestamp_t gmt) {
         return convert_gmt_to_cet(gmt) + SECONDS_IN_HOUR;
+    }
+
+    timestamp_t convert_gmt_to_msk(const timestamp_t gmt) {
+        const timestamp_t gmt2 = gmt + 2 * SECONDS_IN_HOUR;
+        const timestamp_t gmt3 = gmt + 3 * SECONDS_IN_HOUR;
+        const timestamp_t gmt4 = gmt + 4 * SECONDS_IN_HOUR;
+
+        const timestamp_t OCT_26_2014 = 1414281600;
+        const timestamp_t MAR_27_2011 = 1301184000;
+        const timestamp_t JAN_19_1992 = 695782800;
+        const timestamp_t YEAR_1991 = 662688000;
+        const timestamp_t OFFSET_HOUR1 = 23*SECONDS_IN_HOUR + 1;
+        const timestamp_t OFFSET_HOUR2 = 22*SECONDS_IN_HOUR + 1;
+
+        //int year4 = get_year(gmt4);
+        //int month4 = get_month_year(gmt4);
+        //int dayweek4 = get_weekday(gmt4);
+        //int year3 = get_year(gmt4);
+        //int month3 = get_month_year(gmt4);
+        //int dayweek3 = get_weekday(gmt4);
+
+        if(gmt4 >= OCT_26_2014) return gmt3;
+        else
+        if(gmt3 >= MAR_27_2011) return gmt4;
+        else
+        if(gmt2 >= JAN_19_1992) {
+            timestamp_t last_timestamp_sunday2 = get_last_timestamp_sunday_month(gmt2);
+            int month2 = get_month_year(gmt2);
+            //int month3 = get_month_year(gmt3);
+            int month4 = get_month_year(gmt4);
+            if(month2 == MAR) {
+                if(gmt2 < last_timestamp_sunday2) return gmt3;
+                else return gmt4;
+            } else
+            if(month2 < MAR) return gmt3;
+            else
+            if(month4 == SEPT) {
+                timestamp_t last_timestamp_sunday4 = get_last_timestamp_sunday_month(gmt4);
+                if(gmt4 < (last_timestamp_sunday4 - OFFSET_HOUR1)) return gmt3;
+                else return gmt4;
+            } else
+            if(month4 >= SEPT) return gmt3;
+            else return gmt4;
+        } else
+        if(gmt3 >= YEAR_1991) {
+            //timestamp_t last_timestamp_sunday2 = get_last_timestamp_sunday_month(gmt2);
+            int month3 = get_month_year(gmt3);
+            if(month3 == SEPT) {
+                timestamp_t last_timestamp_sunday3 = get_last_timestamp_sunday_month(gmt3);
+                if(gmt3 < (last_timestamp_sunday3 - OFFSET_HOUR2)) return gmt3;
+                else return gmt4;
+            } else
+            if(month3 >= SEPT) return gmt2;
+            else return gmt3;
+        } else {
+            timestamp_t last_timestamp_sunday3 = get_last_timestamp_sunday_month(gmt3);
+            int month2 = get_month_year(gmt2);
+            int month3 = get_month_year(gmt3);
+            int month4 = get_month_year(gmt4);
+            if(month3 == MAR) {
+                if(gmt3 < last_timestamp_sunday3) return gmt3;
+                else return gmt4;
+            } else
+            if(month2 < MAR) return gmt3;
+            else
+            if(month4 == SEPT) {
+                timestamp_t last_timestamp_sunday4 = get_last_timestamp_sunday_month(gmt4);
+                if(gmt4 < (last_timestamp_sunday4 - OFFSET_HOUR1)) return gmt3;
+                else return gmt4;
+            } else
+            if(month4 >= SEPT) return gmt3;
+            else return gmt4;
+        }
     }
 
     timestamp_t convert_cet_to_gmt(const timestamp_t cet) {

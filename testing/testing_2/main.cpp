@@ -13,7 +13,7 @@ int main()
 
     cout << "get_month " << xtime::get_month("Aug") << endl;
     cout << "get_second_minute " << xtime::get_second_minute(xtime::get_timestamp(1,1,2017,2,3,6)) << endl;
-    cout << "get_end_day " << xtime::get_str_date_time(xtime::get_end_day(xtime::get_timestamp(1,1,2017,2,3,6))) << endl;
+    cout << "get_last_timestamp_day " << xtime::get_str_date_time(xtime::get_last_timestamp_day(xtime::get_timestamp(1,1,2017,2,3,6))) << endl;
 
     cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2016) << endl; // 1483142400
@@ -64,8 +64,8 @@ int main()
     cout << "get_str_time " << xtime::get_str_time(xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
     cout << "--------------------------------------" << endl;
 
-    cout << "get_str_date " << xtime::get_str_date(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
-    cout << "get_str_time " << xtime::get_str_time(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_str_time " << xtime::get_str_time(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
 
     cout << "--------------------------------------" << endl;
     xtime::DateTime iTime(9, 10, 2018);
@@ -110,8 +110,8 @@ int main()
     cout << "get_day_year " << xtime::get_day_year(xtime::get_timestamp(16,10,2013,0,0,0)) << endl;
     cout << "get_day_year " << xtime::get_day_year(xtime::get_timestamp(31,12,2016,0,0,0)) << endl;
 
-    cout << "get_start_day " << xtime::get_str_date_time(xtime::get_start_day(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
-    cout << "get_start_hour " << xtime::get_str_date_time(xtime::get_start_hour(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
-    cout << "get_start_minute " << xtime::get_str_date_time(xtime::get_start_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_first_timestamp_day " << xtime::get_str_date_time(xtime::get_first_timestamp_day(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_first_timestamp_hour " << xtime::get_str_date_time(xtime::get_first_timestamp_hour(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+    cout << "get_first_timestamp_minute " << xtime::get_str_date_time(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
     return 0;
 }

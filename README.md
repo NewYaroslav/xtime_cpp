@@ -42,17 +42,31 @@
 * std::string get_str_date_time()
 * print_date_time(const timestamp_t timestamp)
 
+Данные функции выводят время и дату в следующих форматах:
+* DD.MM.YYYY HH:MM:SS
+* DD.MM.YYYY
+* HH:MM:SS
+
 Преобразование строки в метку времени
 
 * bool convert_iso(const std::string str_iso_formatted_utc_datetime, DateTime& t)
 * bool convert_str_to_timestamp(std::string str, timestamp_t& t)
 
+Функция *convert_str_to_timestamp* подерживает следующий список разделителей чисел: */\_:-., *
+Данная функия способна распрасить время и дату, принимаемых в следующем порядке и размерности:
+* HH MM SS DD MM YY Пример: 20:25:00, 29 Aug 19 или 00:59:59 30.08.19
+* HH MM SS DD MM YYYYY Пример: 00:59:59 30.08.2019 или 20:25:00, 29 Aug 2019
+* DD MM YYYYY HH MM SS Пример: 25.02.2013 18:25:10
+* YYYYY MM DD HH MM SS Пример: 2013.02.25 18:25:10
+
 Перевод времени из одной вреемнной зоны в другую
 
 * timestamp_t convert_gmt_to_cet(const timestamp_t gmt)
 * timestamp_t convert_gmt_to_eet(const timestamp_t gmt)
+* timestamp_t convert_gmt_to_msk(const timestamp_t gmt)
 * timestamp_t convert_cet_to_gmt(const timestamp_t cet)
 * timestamp_t convert_eet_to_gmt(const timestamp_t eet)
+* timestamp_t convert_msk_to_gmt(const timestamp_t msk)
 
 Проверки различных условий
 
