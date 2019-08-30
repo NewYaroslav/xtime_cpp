@@ -87,9 +87,10 @@
 
 * int get_num_days_month(const int month, const int year)
 * int get_num_days_month(const timestamp_t timestamp)
-* timestamp_t get_start_day(const timestamp_t timestamp)
-* timestamp_t get_start_hour(const timestamp_t timestamp)
-* timestamp_t get_start_minute(const timestamp_t timestamp)
+* timestamp_t get_first_timestamp_day(const timestamp_t timestamp)
+* timestamp_t get_last_timestamp_day(const timestamp_t timestamp)
+* timestamp_t get_first_timestamp_hour(const timestamp_t timestamp)
+* timestamp_t get_first_timestamp_minute(const timestamp_t timestamp)
 * int get_weekday(const int day, const int month, const int year)
 * int get_weekday(const timestamp_t timestamp)
 * int get_minute_day(const timestamp_t timestamp)
@@ -101,7 +102,10 @@
 * int get_day_year(const timestamp_t timestamp)
 * int get_month_year(const timestamp_t timestamp)
 * int get_day_in_year(const timestamp_t timestamp)
-* timestamp_t get_timestamp_for_start_day(const int day)
+* int get_month_year(const timestamp_t timestamp)
+* int get_month_day(const timestamp_t timestamp)
+* timestamp_t get_last_timestamp_month(const timestamp_t timestamp)
+* timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp)
 
 ### Быстрый обзор
 + Получить Unix-время из даты и стандартного времени
