@@ -158,6 +158,11 @@ namespace xtime {
      */
     std::string get_str_time_ms();
 
+    /** \brief Получить миллисекунду
+     * \return миллисекунда
+     */
+    int get_milliseconds();
+
     /** \brief Получить метку времени компьютера
      * \return метка времен
      */

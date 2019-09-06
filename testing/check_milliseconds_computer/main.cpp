@@ -10,7 +10,7 @@ int main() {
     std::cout << "check: " << xtime::get_timestamp("1567798104660") << "\n";
     //1567798104 -2019 19:28:24 GMT
     std::cout << "check: " << xtime::get_str_date_time_ms(xtime::get_timestamp_ms("1567798104660")) << "\n";
-
+    std::cout << "check: " << xtime::get_milliseconds() << "\n";
     double last_gmt = xtime::get_timestamp_ms();
     xtime::DateTime iDateTime(last_gmt);
     std::cout << "pc gmt: " << iDateTime.get_str_time_ms() << "\n";

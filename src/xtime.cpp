@@ -49,6 +49,12 @@ namespace xtime {
         return (timestamp_ms_t)t + (timestamp_ms_t)tb.millitm/1000.0;
     }
 
+    int get_milliseconds() {
+        timeb tb;
+        ftime(&tb);
+        return tb.millitm;
+    }
+
     timestamp_t get_timestamp(std::string value) {
         auto new_end = std::remove_if(value.begin(), value.end(), [](const char& c){
             return !std::isdigit(c);
