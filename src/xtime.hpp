@@ -31,6 +31,9 @@
 namespace xtime {
     // для того, чтобы можно было работать и после 19 января 2038 года, используем 64 бит, а не 32 бит
     typedef unsigned long long timestamp_t;
+    // для работы с миллисекундами
+    typedef double timestamp_ms_t;
+
     const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
 
     /// Количество секунд в минуте, часе и т.д.
@@ -103,6 +106,13 @@ namespace xtime {
      */
     std::string get_str_date_time(const timestamp_t timestamp);
 
+    /** \brief Получить время и дату в виде строки
+     * Формат строки: DD.MM.YYYY HH:MM:SS
+     * \param timestamp метка времен
+     * \return строка, содержащая время и дату
+     */
+    std::string get_str_date_time_ms(const timestamp_ms_t timestamp);
+
     /** \brief Получить дату в виде строки
      * Формат строки: DD.MM.YYYY
      * \param timestamp метка времен
@@ -117,6 +127,13 @@ namespace xtime {
      */
     std::string get_str_time(const timestamp_t timestamp);
 
+    /** \brief Получить время с миллисекундами в виде строки
+     * Формат строки: HH:MM:SS.fff
+     * \param timestamp метка времен
+     * \return строка, содержащая время
+     */
+    std::string get_str_time_ms(const timestamp_ms_t timestamp);
+
     /** \brief Получить время и дату компьютера в виде строки
      * Формат строки: DD.MM.YYYY HH:MM:SS
      * Данная функция напечатает UTC/GMT время
@@ -125,19 +142,52 @@ namespace xtime {
      */
     std::string get_str_date_time();
 
-    /** \brief Получить метку времени (Unix-время) компьютера
+    /** \brief Получить время с миллисекундами и дату компьютера в виде строки
+     * Формат строки: DD.MM.YYYY HH:MM:SS.fff
+     * Данная функция напечатает UTC/GMT время
+     * \param timestamp unix время
+     * \return строка, содержащая время
+     */
+    std::string get_str_date_time_ms();
+
+    /** \brief Получить время компьютера в виде строки с миллисекундами
+     * Формат строки: DD.MM.YYYY HH:MM:SS
+     * Данная функция напечатает UTC/GMT время
+     * \param timestamp unix время
+     * \return строка, содержащая время
+     */
+    std::string get_str_time_ms();
+
+    /** \brief Получить метку времени компьютера
      * \return метка времен
      */
     timestamp_t get_timestamp();
 
-    /** \brief Получить unix-время из даты и стандартного времени
+    /** \brief Получить метку времени
+     * \param value строковое представление числа
+     * \return метка времен
+     */
+    timestamp_t get_timestamp(std::string value);
+
+    /** \brief Получить метку времени
+     * \param value строковое представление числа
+     * \return метка времен
+     */
+    timestamp_ms_t get_timestamp_ms(const std::string &value);
+
+    /** \brief Получить метку времени компьютера с миллисекундами
+     * \return метка времен
+     */
+    timestamp_ms_t get_timestamp_ms();
+
+    /** \brief Получить метку времени из даты и стандартного времени
      * \param day день
      * \param month месяц
      * \param year год
      * \param hour час
      * \param minutes минуты
      * \param seconds секунды
-     * \return Unix-время
+     * \return метка времени
      */
     timestamp_t get_timestamp(
         const int day,
@@ -147,16 +197,36 @@ namespace xtime {
         const int minutes = 0,
         const int seconds = 0);
 
+    /** \brief Получить метку времени с миллисекундами из даты и стандартного времени
+     * \param day день
+     * \param month месяц
+     * \param year год
+     * \param hour час
+     * \param minutes минуты
+     * \param seconds секунды
+     * \param milliseconds миллисекунды
+     * \return метка времени
+     */
+    timestamp_ms_t get_timestamp_ms(
+        const int day,
+        const int month,
+        const int year,
+        const int hour = 0,
+        const int minutes = 0,
+        const int seconds = 0,
+        const int milliseconds = 0);
+
     /** \brief Класс для хранения времени
      */
     class DateTime {
         public:
-        char seconds;   /**< секунды */
-        char minutes;   /**< минуты */
-        char hour;      /**< час */
-        char day;       /**< день */
-        char month;     /**< месяц */
-        long year;      /**< год */
+        short milliseconds; /**< микросекунды */
+        char seconds;       /**< секунды */
+        char minutes;       /**< минуты */
+        char hour;          /**< час */
+        char day;           /**< день */
+        char month;         /**< месяц */
+        long year;          /**< год */
 
         bool is_correct();
 
@@ -164,17 +234,19 @@ namespace xtime {
          * Данная функция устанавливает час, минуту и секунду дня в 0
          */
         inline void set_beg_day() {
-                seconds = 0;
-                minutes = 0;
-                hour = 0;
+            milliseconds = 0;
+            seconds = 0;
+            minutes = 0;
+            hour = 0;
         }
 
         /** \brief Установить конец дня
          */
         inline void set_end_day() {
-                seconds = 59;
-                minutes = 59;
-                hour = 23;
+            milliseconds = 999;
+            seconds = 59;
+            minutes = 59;
+            hour = 23;
         }
 
         /** \brief Установить начало месяца
@@ -199,6 +271,7 @@ namespace xtime {
          * \param hour час
          * \param minutes минуты
          * \param seconds секунды
+         * \param milliseconds миллисекунды
          */
         DateTime(
             const int day,
@@ -206,12 +279,18 @@ namespace xtime {
             const int year,
             const int hour = 0,
             const int minutes = 0,
-            const int seconds = 0);
+            const int seconds = 0,
+            const int milliseconds = 0);
 
         /** \brief Инициализация с указанием unix-времени
          * \param timestamp метка времени
          */
         DateTime(const timestamp_t timestamp);
+
+        /** \brief Инициализация с указанием unix-времени
+         * \param timestamp метка времени
+         */
+        DateTime(const timestamp_ms_t timestamp_ms);
 
         /** \brief Инициализация с указанием unix-времени в формате ISO
          * Пример формата ISO: 2013-12-06T15:23:01+00:00
@@ -219,15 +298,25 @@ namespace xtime {
          */
         DateTime(const std::string str_iso_formatted_utc_datetime);
 
-        /** \brief Получить время
+        /** \brief Получить метку времени
          * \return timestamp
          */
         timestamp_t get_timestamp();
+
+        /** \brief Получить метку времени с миллисекундами
+         * \return timestamp
+         */
+        timestamp_ms_t get_timestamp_ms();
 
         /** \brief Установить время
          * \param timestamp метка времени
          */
         void set_timestamp(const timestamp_t timestamp);
+
+        /** \brief Установить время с миллисекундами
+         * \param timestamp метка времени
+         */
+        void set_timestamp_ms(const timestamp_ms_t timestamp);
 
         /** \brief Вывести время и дату на экран
          */
@@ -238,6 +327,12 @@ namespace xtime {
          * \return строка, содержащая дату и время
          */
         std::string get_str_date_time();
+
+        /** \brief Получить дату и время в виде строки
+         * Формат строки: DD.MM.YYYY HH:MM:SS
+         * \return строка, содержащая дату и время
+         */
+        std::string get_str_date_time_ms();
 
         /** \brief Получить дату в виде строки
          * Формат строки: DD.MM.YYYY
@@ -250,6 +345,12 @@ namespace xtime {
          * \return строка, содержащая время
          */
         std::string get_str_time();
+
+        /** \brief Получить время в виде строки
+         * Формат строки: HH:MM:SS
+         * \return строка, содержащая время
+         */
+        std::string get_str_time_ms();
 
         /** \brief Получить день недели
          * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
@@ -421,9 +522,14 @@ namespace xtime {
      * \param hour час
      * \param minutes минуты
      * \param seconds секунды
+     * \param milliseconds миллисекунды
      * \return вернет true, если заданное время корректно
      */
-    bool is_correct_time(const int hour, const int minutes = 0, const int seconds = 0);
+    bool is_correct_time(
+        const int hour,
+        const int minutes = 0,
+        const int seconds = 0,
+        const int milliseconds = 0);
 
     /** \brief Проверить корректность даты и времени
      * \param day день
@@ -432,6 +538,7 @@ namespace xtime {
      * \param hour час
      * \param minutes минуты
      * \param seconds секунды
+     * \param milliseconds миллисекунды
      * \return вернет true, если заданное время корректно
      */
     bool is_correct_date_time(
@@ -440,7 +547,8 @@ namespace xtime {
         const int year,
         const int hour = 0,
         const int minutes = 0,
-        const int seconds = 0);
+        const int seconds = 0,
+        const int milliseconds = 0);
 
     /** \brief Получить метку времени в начале дня
      * Данная функция обнуляет часы, минуты и секунды

@@ -28,6 +28,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <sys/timeb.h>
 
 namespace xtime {
 
@@ -41,7 +42,48 @@ namespace xtime {
         return iTime.get_timestamp();
     }
 
-    timestamp_t get_timestamp(const int day, const int month, const int year, const int hour, const int minutes, const int seconds) {
+    timestamp_ms_t get_timestamp_ms() {
+        timestamp_t t = get_timestamp();
+        timeb tb;
+        ftime(&tb);
+        return (timestamp_ms_t)t + (timestamp_ms_t)tb.millitm/1000.0;
+    }
+
+    timestamp_t get_timestamp(std::string value) {
+        auto new_end = std::remove_if(value.begin(), value.end(), [](const char& c){
+            return !std::isdigit(c);
+        });
+        value.erase(new_end, value.end());
+        int digit = (int)value.size() - 1;
+        timestamp_t t = 0;
+        const timestamp_t factors[] = {
+            1,10,100,
+            1000,10000,100000,
+            1000000,10000000,100000000,
+            1000000000,10000000000,100000000000,
+            1000000000000,10000000000000,100000000000000,
+            1000000000000000,10000000000000000,100000000000000000,
+            1000000000000000000};
+        int start = value.size() > 19 ? (int)value.size() - 19 : 0;
+        for(int d = start; d <= digit; ++d) {
+            t += ((timestamp_t)(value[d] - '0') * factors[digit - d]);
+        }
+        return t;
+    }
+
+    timestamp_ms_t get_timestamp_ms(const std::string &value) {
+        timestamp_t temp = get_timestamp(value);
+        timestamp_t t = temp / 1000;
+        return (double)(temp - t*1000)/1000.0 + (double)t;
+    }
+
+    timestamp_t get_timestamp(
+            const int day,
+            const int month,
+            const int year,
+            const int hour,
+            const int minutes,
+            const int seconds) {
         timestamp_t _secs;
         long _mon, _year;
         long long _days; // для предотвращения проблемы 2038 года переменная должна быть больше 32 бит
@@ -62,6 +104,18 @@ namespace xtime {
         return _secs;
     }
 
+    timestamp_ms_t get_timestamp_ms(
+        const int day,
+        const int month,
+        const int year,
+        const int hour,
+        const int minutes,
+        const int seconds,
+        const int milliseconds) {
+        timestamp_t t = get_timestamp(day, month, year, hour, minutes, seconds);
+        return (double)t + (double)milliseconds/1000.0;
+    }
+
     DateTime::DateTime() {
         DateTime::day = 1;
         DateTime::month = 1;
@@ -69,6 +123,7 @@ namespace xtime {
         DateTime::hour = 0;
         DateTime::minutes = 0;
         DateTime::seconds = 0;
+        DateTime::milliseconds = 0;
     };
 
     DateTime::DateTime(
@@ -77,17 +132,23 @@ namespace xtime {
             const int year,
             const int hour,
             const int minutes,
-            const int seconds) {
+            const int seconds,
+            const int milliseconds) {
         DateTime::day = day;
         DateTime::month = month;
         DateTime::year = year;
         DateTime::hour = hour;
         DateTime::minutes = minutes;
         DateTime::seconds = seconds;
+        DateTime::milliseconds = milliseconds;
     }
 
     DateTime::DateTime(const timestamp_t timestamp) {
         set_timestamp(timestamp);
+    }
+
+    DateTime::DateTime(const timestamp_ms_t timestamp) {
+        set_timestamp_ms(timestamp);
     }
 
     DateTime::DateTime(const std::string str_iso_formatted_utc_datetime) {
@@ -95,11 +156,15 @@ namespace xtime {
     }
 
     bool DateTime::is_correct() {
-        return is_correct_date_time(day, month, year, hour, minutes, seconds);
+        return is_correct_date_time(day, month, year, hour, minutes, seconds, milliseconds);
     }
 
     timestamp_t DateTime::get_timestamp() {
         return xtime::get_timestamp(day, month, year, hour, minutes, seconds);
+    }
+
+    timestamp_ms_t DateTime::get_timestamp_ms() {
+        return xtime::get_timestamp_ms(day, month, year, hour, minutes, seconds, milliseconds);
     }
 
     void DateTime::set_timestamp(const timestamp_t timestamp) {
@@ -137,6 +202,12 @@ namespace xtime {
         }
     }
 
+    void DateTime::set_timestamp_ms(const timestamp_ms_t timestamp) {
+        const timestamp_t sec_timestamp = (timestamp_t)timestamp;
+        set_timestamp(sec_timestamp);
+        milliseconds = (long)(((timestamp_t)(timestamp * 1000.0 + 0.5)) % 1000);
+    }
+
     void DateTime::print() {
         printf("%.2d.%.2d.%.4d %.2d:%.2d:%.2d\n",
             (int)day,
@@ -159,6 +230,19 @@ namespace xtime {
         return std::string(text);
     }
 
+    std::string DateTime::get_str_date_time_ms() {
+        char text[32] = {};
+        sprintf(text,"%.2d.%.2d.%.4d %.2d:%.2d:%.2d.%.3d",
+            (int)day,
+            (int)month,
+            (int)year,
+            (int)hour,
+            (int)minutes,
+            (int)seconds,
+            (int)milliseconds);
+        return std::string(text);
+    }
+
     std::string DateTime::get_str_date() {
         char text[12] = {};
         sprintf(text,"%.2d.%.2d.%.4d", (int)day, (int)month, (int)year);
@@ -167,7 +251,20 @@ namespace xtime {
 
     std::string DateTime::get_str_time() {
         char text[10] = {};
-        sprintf(text,"%.2d:%.2d:%.2d",hour,minutes,seconds);
+        sprintf(text,"%.2d:%.2d:%.2d",
+            (int)hour,
+            (int)minutes,
+            (int)seconds);
+        return std::string(text);
+    }
+
+    std::string DateTime::get_str_time_ms() {
+        char text[16] = {};
+        sprintf(text,"%.2d:%.2d:%.2d.%.3d",
+            (int)hour,
+            (int)minutes,
+            (int)seconds,
+            (int)milliseconds);
         return std::string(text);
     }
 
@@ -351,6 +448,18 @@ namespace xtime {
         DateTime t;
         t.set_timestamp(get_timestamp());
         return t.get_str_date_time();
+    }
+
+    std::string get_str_date_time_ms() {
+        DateTime t;
+        t.set_timestamp_ms(get_timestamp_ms());
+        return t.get_str_date_time_ms();
+    }
+
+    std::string get_str_time_ms() {
+        DateTime t;
+        t.set_timestamp_ms(get_timestamp_ms());
+        return t.get_str_time_ms();
     }
 
     int get_num_days_month(const int month, const int year) {
@@ -621,6 +730,11 @@ namespace xtime {
         return iTime.get_str_date_time();
     }
 
+    std::string get_str_date_time_ms(const timestamp_ms_t timestamp) {
+        DateTime iTime(timestamp);
+        return iTime.get_str_date_time_ms();
+    }
+
     std::string get_str_date(const timestamp_t timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_date();
@@ -629,6 +743,11 @@ namespace xtime {
     std::string get_str_time(const timestamp_t timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_time();
+    }
+
+    std::string get_str_time_ms(const timestamp_ms_t timestamp) {
+        DateTime iTime(timestamp);
+        return iTime.get_str_time_ms();
     }
 
     bool is_beg_half_hour(const timestamp_t timestamp) {
@@ -665,10 +784,15 @@ namespace xtime {
         return true;
     }
 
-    bool is_correct_time(const int hour, const int minutes, const int seconds) {
+    bool is_correct_time(
+            const int hour,
+            const int minutes,
+            const int seconds,
+            const int milliseconds) {
         if(hour < 0 || hour > 23) return false;
         if(minutes < 0 || minutes > 59) return false;
         if(seconds < 0 || seconds > 59) return false;
+        if(milliseconds < 0 || milliseconds > 999) return false;
         return true;
     }
 
@@ -678,9 +802,10 @@ namespace xtime {
             const int year,
             const int hour,
             const int minutes,
-            const int seconds) {
+            const int seconds,
+            const int milliseconds) {
         if(!is_correct_date(day, month, year)) return false;
-        if(!is_correct_time(hour, minutes, seconds)) return false;
+        if(!is_correct_time(hour, minutes, seconds, milliseconds)) return false;
         return true;
     }
 }
