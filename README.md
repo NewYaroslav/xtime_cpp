@@ -5,6 +5,7 @@
 
 Данная библиотека позволяет удобно и быстро работать с меткой времени (*timestamp*) и "понятной датой" (*human readable date*). Например: 
 
+* Можно получить синхронизированное с интернетом время
 * Можно легко преобразовать дату в timestamp или сделать обратную операцию 
 * Можно легко получить реальное GMT время компьютера
 * Можно преобразовать GMT в CET и обратно
@@ -12,6 +13,8 @@
 
 Смотрите файл *xtime.hpp*, он содежрит подробные комментарии перед каждой функцией.
 Для хранения и преобразования меток времени используется тип данных *uint64*, поэтому у данной библиотеки нет [проблемы 2038 года](https://en.wikipedia.org/wiki/Year_2038_problem)
+
+Синхронизированное время реализовано в файле *xtime_sync.hpp* и для его работы вам понадобится *curl* с поддержкой *https*. Пример есть в папке *code_blocks*. Для сокращения времени запуска примера советую использовать готовые сборки *curl*, например: [https://github.com/NewYaroslav/curl-7.60.0-win64-mingw](https://github.com/NewYaroslav/curl-7.60.0-win64-mingw).
 
 ### Как установить?
 Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
@@ -28,24 +31,35 @@
 * set_timestamp(const timestamp_t timestamp)
 * print()
 * std::string get_str_date_time()
-* std::string get_str_date(const timestamp_t timestamp)
-* std::string get_str_time(const timestamp_t timestamp)
+* std::string get_str_date_time_ms()
+* std::string get_str_date()
+* std::string get_str_time()
 * int get_weekday()
 * is_leap_year()
 * int get_num_days_current_month()
 
+Получение времени компьютера
+* int get_milliseconds()
+* timestamp_t get_timestamp()
+* timestamp_ms_t get_timestamp_ms()
+
 Преобразование времени в строку или вывод на экран
 
 * std::string get_str_date_time(const timestamp_t timestamp)
+* std::string get_str_date_time_ms(const timestamp_ms_t timestamp)
 * std::string get_str_date(const timestamp_t timestamp)
 * std::string get_str_time(const timestamp_t timestamp)
+* std::string get_str_time_ms(const timestamp_ms_t timestamp)
 * std::string get_str_date_time()
+* std::string get_str_date_time_ms()
 * print_date_time(const timestamp_t timestamp)
 
 Данные функции выводят время и дату в следующих форматах:
 * DD.MM.YYYY HH:MM:SS
 * DD.MM.YYYY
 * HH:MM:SS
+* DD.MM.YYYY HH:MM:SS.fff
+* HH:MM:SS.fff
 
 Преобразование строки в метку времени
 
@@ -108,6 +122,38 @@
 * timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp)
 
 ### Быстрый обзор
+
++ Получить синхронизированное *UTC* время
+
+```C++
+#include <iostream>
+#include <xtime_sync.hpp>
+
+int main() {
+    std::cout << "Hello world!" << std::endl;
+    xtime::TimeSync iTimeSync(0.6);
+    while(!iTimeSync.is_time_sync()) {
+        std::chrono::seconds sec(1);
+        std::this_thread::sleep_for(sec);
+    };
+
+    double last_utc = iTimeSync.get_timestamp_ms();
+    while(true) {
+        double real_utc = iTimeSync.get_timestamp_ms();
+        double pc_utc = xtime::get_timestamp_ms();
+        if(real_utc - last_utc > 0.1) {
+            std::cout << "accuracy: " << iTimeSync.get_accuracy() << " sync utc: " << xtime::get_str_time_ms(real_utc) << " pc utc: " << xtime::get_str_time_ms(pc_utc) << "\r";
+            last_utc = real_utc;
+        }
+    };
+    return 0;
+}
+```
+
+На экране увидим:
+
+[!sync](doc/sync.png)
+
 + Получить Unix-время из даты и стандартного времени
 ```C++
 using namespace xtime;
