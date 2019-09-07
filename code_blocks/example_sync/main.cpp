@@ -3,7 +3,7 @@
 
 int main() {
     std::cout << "Hello world!" << std::endl;
-    xtime::TimeSync iTimeSync(0.6);
+    xtime::TimeSync iTimeSync;
     while(!iTimeSync.is_time_sync()) {
         std::chrono::seconds sec(1);
         std::this_thread::sleep_for(sec);
