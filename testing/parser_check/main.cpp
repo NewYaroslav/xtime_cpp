@@ -34,5 +34,16 @@ int main()
     bool is_convert5 = xtime::convert_str_to_timestamp("00:59:59 30.08.19", timestamp);
     if(is_convert5) cout << "get_timestamp " << xtime::get_str_date_time(timestamp) << endl;
     else cout << "convert_str_to_timestamp error" << endl << endl;
+
+    cout << "parser check: 2017.12.21" << endl;
+    bool is_convert6 = xtime::convert_str_to_timestamp("2017.12.21", timestamp);
+    if(is_convert6) cout << "get_timestamp " << xtime::get_str_date_time(timestamp) << endl;
+    else cout << "convert_str_to_timestamp error" << endl << endl;
+
+    cout << "parser check: 21.09.2018" << endl;
+    bool is_convert7 = xtime::convert_str_to_timestamp("21.09.2018", timestamp);
+    if(is_convert7) cout << "get_timestamp " << xtime::get_str_date_time(timestamp) << endl;
+    else cout << "convert_str_to_timestamp error" << endl << endl;
+
     return 0;
 }

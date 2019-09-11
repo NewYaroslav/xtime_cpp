@@ -72,7 +72,9 @@
 * HH MM SS DD MM YYYYY Пример: 00:59:59 30.08.2019 или 20:25:00, 29 Aug 2019
 * DD MM YYYYY HH MM SS Пример: 25.02.2013 18:25:10
 * YYYYY MM DD HH MM SS Пример: 2013.02.25 18:25:10
-
+* YYYY.MM.DD Пример: 2013.02.25
+* DD.MM.YYYY Пример: 21.09.2018
+	 
 Перевод времени из одной вреемнной зоны в другую
 
 * timestamp_t convert_gmt_to_cet(const timestamp_t gmt)

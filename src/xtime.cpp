@@ -331,6 +331,7 @@ namespace xtime {
         str += "_";
         std::vector<std::string> output_list;
         std::size_t start_pos = 0;
+
         while(true) {
             std::size_t found_beg = str.find_first_of("/\\_:-., ", start_pos);
             if(found_beg != std::string::npos) {
@@ -347,39 +348,43 @@ namespace xtime {
                 year = atoi(output_list[0].c_str());
                 month = atoi(output_list[1].c_str());
                 day = atoi(output_list[2].c_str());
-                hour = atoi(output_list[3].c_str());
-                minutes = atoi(output_list[4].c_str());
-                seconds = atoi(output_list[5].c_str());
+                if(output_list.size() == 6) {
+                    hour = atoi(output_list[3].c_str());
+                    minutes = atoi(output_list[4].c_str());
+                    seconds = atoi(output_list[5].c_str());
+                }
             } else
             if(output_list[2].size() >= 4) {
                 // если год в конце
                 day = atoi(output_list[0].c_str());
                 month = atoi(output_list[1].c_str());
                 year = atoi(output_list[2].c_str());
-                hour = atoi(output_list[3].c_str());
-                minutes = atoi(output_list[4].c_str());
-                seconds = atoi(output_list[5].c_str());
+                if(output_list.size() == 6) {
+                    hour = atoi(output_list[3].c_str());
+                    minutes = atoi(output_list[4].c_str());
+                    seconds = atoi(output_list[5].c_str());
+                }
             } else
-            if(output_list[2].size() == 2) {
+            if(output_list[2].size() == 2 && output_list.size() == 6) {
                 hour = atoi(output_list[0].c_str());
                 minutes = atoi(output_list[1].c_str());
                 seconds = atoi(output_list[2].c_str());
-                if(output_list.size() == 6 && output_list[5].size() >= 4 && output_list[4].size() == 2) {
+                if(output_list[5].size() >= 4 && output_list[4].size() == 2) {
                     day = atoi(output_list[3].c_str());
                     month = atoi(output_list[4].c_str());
                     year = atoi(output_list[5].c_str());
                 } else
-                if(output_list.size() == 6 && output_list[5].size() == 2 && output_list[4].size() >= 3) {
+                if(output_list[5].size() == 2 && output_list[4].size() >= 3) {
                     day = atoi(output_list[3].c_str());
                     month = get_month(output_list[4]);
                     year = atoi(output_list[5].c_str()) + 2000;
                 } else
-                if(output_list.size() == 6 && output_list[5].size() == 4 && output_list[4].size() >= 3) {
+                if(output_list[5].size() == 4 && output_list[4].size() >= 3) {
                     day = atoi(output_list[3].c_str());
                     month = get_month(output_list[4]);
                     year = atoi(output_list[5].c_str());
                 } else
-                if(output_list.size() == 6 && output_list[5].size() == 2 && output_list[4].size() == 2) {
+                if(output_list[5].size() == 2 && output_list[4].size() == 2) {
                     day = atoi(output_list[3].c_str());
                     month = atoi(output_list[4].c_str());
                     year = atoi(output_list[5].c_str()) + 2000;
