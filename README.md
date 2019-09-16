@@ -19,6 +19,11 @@
 ### Как установить?
 Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
 
+### Типы данных
+
+* timestamp_t - тип длиной 64 бита для хранения метки времени.
+* ftimestamp_t - тип с плавающей точкой длиной 64 бита для хранения метки времени с дробной частью секунд.
+
 ### Функции и методы
 
 Методы класса DateTime
@@ -28,31 +33,33 @@
 * set_beg_month()
 * set_end_month()
 * timestamp_t get_timestamp()
-* set_timestamp(const timestamp_t timestamp)
+* ftimestamp_t get_ftimestamp()
+* set_timestamp(const timestamp_t &timestamp)
+* set_ftimestamp(const ftimestamp_t &ftimestamp)
 * print()
 * std::string get_str_date_time()
 * std::string get_str_date_time_ms()
 * std::string get_str_date()
 * std::string get_str_time()
-* int get_weekday()
+* uint32_t get_weekday()
 * is_leap_year()
-* int get_num_days_current_month()
+* uint32_t get_num_days_current_month()
 
 Получение времени компьютера
-* int get_milliseconds()
+* uint32_t get_milliseconds()
 * timestamp_t get_timestamp()
-* timestamp_ms_t get_timestamp_ms()
+* ftimestamp_t get_ftimestamp()
 
 Преобразование времени в строку или вывод на экран
 
-* std::string get_str_date_time(const timestamp_t timestamp)
-* std::string get_str_date_time_ms(const timestamp_ms_t timestamp)
-* std::string get_str_date(const timestamp_t timestamp)
-* std::string get_str_time(const timestamp_t timestamp)
-* std::string get_str_time_ms(const timestamp_ms_t timestamp)
+* std::string get_str_date_time(const timestamp_t &timestamp)
+* std::string get_str_date_time_ms(const timestamp_ms_t &timestamp)
+* std::string get_str_date(const timestamp_t &timestamp)
+* std::string get_str_time(const timestamp_t &timestamp)
+* std::string get_str_time_ms(const timestamp_ms_t &timestamp)
 * std::string get_str_date_time()
 * std::string get_str_date_time_ms()
-* print_date_time(const timestamp_t timestamp)
+* print_date_time(const timestamp_t &timestamp)
 
 Данные функции выводят время и дату в следующих форматах:
 * DD.MM.YYYY HH:MM:SS
@@ -63,7 +70,7 @@
 
 Преобразование строки в метку времени
 
-* bool convert_iso(const std::string str_iso_formatted_utc_datetime, DateTime& t)
+* bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t)
 * bool convert_str_to_timestamp(std::string str, timestamp_t& t)
 
 Функция *convert_str_to_timestamp* подерживает следующий список разделителей чисел: */\_:-., *
@@ -77,51 +84,51 @@
 	 
 Перевод времени из одной вреемнной зоны в другую
 
-* timestamp_t convert_gmt_to_cet(const timestamp_t gmt)
-* timestamp_t convert_gmt_to_eet(const timestamp_t gmt)
-* timestamp_t convert_gmt_to_msk(const timestamp_t gmt)
-* timestamp_t convert_cet_to_gmt(const timestamp_t cet)
-* timestamp_t convert_eet_to_gmt(const timestamp_t eet)
-* timestamp_t convert_msk_to_gmt(const timestamp_t msk)
+* timestamp_t convert_gmt_to_cet(const timestamp_t &gmt)
+* timestamp_t convert_gmt_to_eet(const timestamp_t &gmt)
+* timestamp_t convert_gmt_to_msk(const timestamp_t &gmt)
+* timestamp_t convert_cet_to_gmt(const timestamp_t &cet)
+* timestamp_t convert_eet_to_gmt(const timestamp_t &eet)
+* timestamp_t convert_msk_to_gmt(const timestamp_t &msk)
 
 Проверки различных условий
 
-* bool is_beg_half_hour(const timestamp_t timestamp)
-* bool is_beg_hour(const timestamp_t timestamp)
-* bool is_beg_day(const timestamp_t timestamp)
-* bool is_beg_week(const timestamp_t timestamp)
-* bool is_beg_month(timestamp_t timestamp)
-* bool is_end_month(const timestamp_t timestamp)
-* bool is_correct_date(const int day, const int month, const int year)
-* bool is_correct_time(const int hour, const int minutes = 0, const int seconds = 0)
-* bool is_correct_date_time(const int day,const int month,const int year,const int hour = 0,const int minutes = 0,const int seconds = 0)
-* bool is_day_off(const timestamp_t timestamp)
-* bool is_day_off_for_day(const int day)
-* bool is_leap_year(const int year)
+* bool is_beg_half_hour(const timestamp_t &timestamp)
+* bool is_beg_hour(const timestamp_t &timestamp)
+* bool is_beg_day(const timestamp_t &timestamp)
+* bool is_beg_week(const timestamp_t &timestamp)
+* bool is_beg_month(timestamp_t &timestamp)
+* bool is_end_month(const timestamp_t &timestamp)
+* bool is_correct_date(const uint32_t &day, const uint32_t &month, const uint32_t &year)
+* bool is_correct_time(const uint32_t &hour, const uint32_t &minutes = 0, const uint32_t &seconds = 0)
+* bool is_correct_date_time(const uint32_t &day,const uint32_t &month,const uint32_t &year, const uint32_t &hour = 0, const uint32_t &minutes = 0, const uint32_t &seconds = 0)
+* bool is_day_off(const timestamp_t &timestamp)
+* bool is_day_off_for_day(const uint32_t &day)
+* bool is_leap_year(const uint32_t &year)
 
 Различные преобразования и вычисления
 
-* int get_num_days_month(const int month, const int year)
-* int get_num_days_month(const timestamp_t timestamp)
-* timestamp_t get_first_timestamp_day(const timestamp_t timestamp)
-* timestamp_t get_last_timestamp_day(const timestamp_t timestamp)
-* timestamp_t get_first_timestamp_hour(const timestamp_t timestamp)
-* timestamp_t get_first_timestamp_minute(const timestamp_t timestamp)
-* int get_weekday(const int day, const int month, const int year)
-* int get_weekday(const timestamp_t timestamp)
-* int get_minute_day(const timestamp_t timestamp)
-* int get_hour_day(const timestamp_t timestamp)
-* int get_second_day(const timestamp_t timestamp)
-* int get_day(const timestamp_t timestamp)
-* timestamp_t get_timestamp_beg_year(const int year)
-* int get_year(const timestamp_t timestamp)
-* int get_day_year(const timestamp_t timestamp)
-* int get_month_year(const timestamp_t timestamp)
-* int get_day_in_year(const timestamp_t timestamp)
-* int get_month_year(const timestamp_t timestamp)
-* int get_month_day(const timestamp_t timestamp)
-* timestamp_t get_last_timestamp_month(const timestamp_t timestamp)
-* timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp)
+* uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year)
+* uint32_t get_num_days_month(const timestamp_t &timestamp)
+* timestamp_t get_first_timestamp_day(const timestamp_t &timestamp)
+* timestamp_t get_last_timestamp_day(const timestamp_t &timestamp)
+* timestamp_t get_first_timestamp_hour(const timestamp_t &timestamp)
+* timestamp_t get_first_timestamp_minute(const timestamp_t &timestamp)
+* uint32_t get_weekday(const uint32_t &day, const uint32_t &month, const uint32_t &year)
+* uint32_t get_weekday(const timestamp_t &timestamp)
+* uint32_t get_minute_day(const timestamp_t &timestamp)
+* uint32_t get_hour_day(const timestamp_t &timestamp)
+* uint32_t get_second_day(const timestamp_t &timestamp)
+* uint32_t get_day(const timestamp_t &timestamp)
+* timestamp_t get_timestamp_beg_year(const uint32_t &year)
+* uint32_t get_year(const timestamp_t &timestamp)
+* uint32_t get_day_year(const timestamp_t &timestamp)
+* uint32_t get_month(const timestamp_t &timestamp)
+* uint32_t get_day_in_year(const timestamp_t &timestamp)
+* uint32_t get_month_year(const timestamp_t &timestamp)
+* uint32_t get_day_month(const timestamp_t &timestamp)
+* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp)
+* timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp)
 
 ### Быстрый обзор
 
@@ -131,18 +138,17 @@
 #include <iostream>
 #include <xtime_sync.hpp>
 
-int main() {
+uint32_t main() {
     std::cout << "Hello world!" << std::endl;
     xtime::TimeSync iTimeSync;
     while(!iTimeSync.is_time_sync()) {
-        std::chrono::seconds sec(1);
-        std::this_thread::sleep_for(sec);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     };
 
-    double last_utc = iTimeSync.get_timestamp_ms();
+    double last_utc = iTimeSync.get_ftimestamp();
     while(true) {
-        double real_utc = iTimeSync.get_timestamp_ms();
-        double pc_utc = xtime::get_timestamp_ms();
+        double real_utc = iTimeSync.get_ftimestamp();
+        double pc_utc = xtime::get_ftimestamp();
         if(real_utc - last_utc > 0.1) {
             std::cout << "accuracy: " << iTimeSync.get_accuracy() << " sync utc: " << xtime::get_str_time_ms(real_utc) << " pc utc: " << xtime::get_str_time_ms(pc_utc) << "\r";
             last_utc = real_utc;
@@ -157,6 +163,7 @@ int main() {
 ![sync](doc/sync.png)
 
 + Получить Unix-время из даты и стандартного времени
+
 ```C++
 using namespace xtime;
 // дата 24.05.2018 время 23:59:59
@@ -177,7 +184,7 @@ iTime = DateTime(24,5,2018, 0, 0, 0);
 // iTime = DateTime("2013-12-06T15:23:01+00:00");
 
 // Или инициализируем Unix epoch или Unix time или POSIX time или Unix timestamp
-unsigned long long unix_epoch = 1527120000;
+xtime::timestamp_t unix_epoch = 1527120000;
 
 iTime.set_timestamp(unix_epoch);
 
@@ -198,19 +205,23 @@ iTime.print();
 // Получить дату и время в виде строки
 std::string str = iTime.get_str_date_time(); // В строке будет 24.05.2018 00:00:00
 ```
+
 + Получить стандартное время
+
 ```C++
 using namespace xtime;
 
 xtime::timestamp_t unix_epoch = 1527120000;
 DateTime iTime = convert_timestamp_to_datetime(unix_epoch);
 ```
+
 + Получить день недели
+
 ```C++
 using namespace xtime;
 
 // Получить номер дня недели
-int wday = get_weekday(24,5,2018);
+uint32_t wday = get_weekday(24,5,2018);
 
 if(wday == SUN) std::cout << "SUN" << std::endl; // Если функция вернула 0 или Воскресенье
 else if(wday == MON) std::cout << "MON" << std::endl; // Если функция вернула 1 или Понедельник
@@ -229,6 +240,7 @@ DateTime iTime(24,5,2018);
 wday = iTime.get_weekday();
 ```
 + Конвертировать строку в формате ISO в данные класса DateTime
+
 ```C++
 using namespace xtime;
 
@@ -238,6 +250,7 @@ if(convert_iso(strISOformattedUTCdatetime, iTime) == true) {
   iTime.print();
 }
 ```
+
 + Перевод времени CET во время GMT и обратно с учетом перехода на зимнее время
 ```C++
 using namespace xtime;
@@ -256,15 +269,15 @@ realGMT.print();
 ```C++
 using namespace xtime;
 
-unsigned long long t = get_timestamp();
+xtime::timestamp_t t = get_timestamp();
 std::string str = get_str_date_time(); // В строке время будет предсталвено как в примере (24.05.2018 00:00:00)
 ```
 + Получить количество дней в месяце и день года
 ```C++
 using namespace xtime;
 
-int month = 2;
-int year = 2018;
+uint32_t month = 2;
+uint32_t year = 2018;
 std::cout << get_num_days_month(month, year) << std::endl;
 
 DateTime iTime(20,3,2018);
@@ -274,11 +287,13 @@ std::cout << iTime.get_num_days_current_month() << std::endl;
 // Получить день года
 std::cout << get_day_year(iTime.get_timestamp()) << std::endl;
 ```
+
 + Проверка високосного года
+
 ```C++
 using namespace xtime;
 
-int year = 2018;
+uint32_t year = 2018;
 if(is_leap_year(year)) {
 	// если год високосный, то условие сработает
 }
@@ -289,12 +304,14 @@ if(iTime.is_leap_year()) {
 	// если год високосный, то условие сработает
 }
 ```
-+ Получение временной метки начала дня
+
++ Получение метки времени начала дня
+
 ```C++
 using namespace xtime;
 
-unsigned long long t = get_timestamp();
-t = get_start_day(t);
+xtime::timestamp_t t = get_timestamp();
+t = get_first_timestamp_day(t);
 
 ```
 

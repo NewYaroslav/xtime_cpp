@@ -42,14 +42,14 @@ namespace xtime {
         return iTime.get_timestamp();
     }
 
-    timestamp_ms_t get_timestamp_ms() {
+    ftimestamp_t get_ftimestamp() {
         timestamp_t t = get_timestamp();
         timeb tb;
         ftime(&tb);
-        return (timestamp_ms_t)t + (timestamp_ms_t)tb.millitm/1000.0;
+        return (ftimestamp_t)t + (ftimestamp_t)tb.millitm/1000.0;
     }
 
-    int get_milliseconds() {
+    uint32_t get_milliseconds() {
         timeb tb;
         ftime(&tb);
         return tb.millitm;
@@ -60,7 +60,7 @@ namespace xtime {
             return !std::isdigit(c);
         });
         value.erase(new_end, value.end());
-        int digit = (int)value.size() - 1;
+        uint32_t digit = (uint32_t)value.size() - 1;
         timestamp_t t = 0;
         const timestamp_t factors[] = {
             1,10,100,
@@ -70,26 +70,26 @@ namespace xtime {
             1000000000000,10000000000000,100000000000000,
             1000000000000000,10000000000000000,100000000000000000,
             1000000000000000000};
-        int start = value.size() > 19 ? (int)value.size() - 19 : 0;
-        for(int d = start; d <= digit; ++d) {
+        uint32_t start = value.size() > 19 ? (uint32_t)value.size() - 19 : 0;
+        for(uint32_t d = start; d <= digit; ++d) {
             t += ((timestamp_t)(value[d] - '0') * factors[digit - d]);
         }
         return t;
     }
 
-    timestamp_ms_t get_timestamp_ms(const std::string &value) {
+    ftimestamp_t get_ftimestamp(const std::string &value) {
         timestamp_t temp = get_timestamp(value);
         timestamp_t t = temp / 1000;
         return (double)(temp - t*1000)/1000.0 + (double)t;
     }
 
     timestamp_t get_timestamp(
-            const int day,
-            const int month,
-            const int year,
-            const int hour,
-            const int minutes,
-            const int seconds) {
+            const uint32_t &day,
+            const uint32_t &month,
+            const uint32_t &year,
+            const uint32_t &hour,
+            const uint32_t &minutes,
+            const uint32_t &seconds) {
         timestamp_t _secs;
         long _mon, _year;
         long long _days; // для предотвращения проблемы 2038 года переменная должна быть больше 32 бит
@@ -110,14 +110,14 @@ namespace xtime {
         return _secs;
     }
 
-    timestamp_ms_t get_timestamp_ms(
-        const int day,
-        const int month,
-        const int year,
-        const int hour,
-        const int minutes,
-        const int seconds,
-        const int milliseconds) {
+    ftimestamp_t get_ftimestamp(
+        const uint32_t &day,
+        const uint32_t &month,
+        const uint32_t &year,
+        const uint32_t &hour,
+        const uint32_t &minutes,
+        const uint32_t &seconds,
+        const uint32_t &milliseconds) {
         timestamp_t t = get_timestamp(day, month, year, hour, minutes, seconds);
         return (double)t + (double)milliseconds/1000.0;
     }
@@ -133,13 +133,13 @@ namespace xtime {
     };
 
     DateTime::DateTime(
-            const int day,
-            const int month,
-            const int year,
-            const int hour,
-            const int minutes,
-            const int seconds,
-            const int milliseconds) {
+            const uint32_t &day,
+            const uint32_t &month,
+            const uint32_t &year,
+            const uint32_t &hour,
+            const uint32_t &minutes,
+            const uint32_t &seconds,
+            const uint32_t &milliseconds) {
         DateTime::day = day;
         DateTime::month = month;
         DateTime::year = year;
@@ -149,15 +149,15 @@ namespace xtime {
         DateTime::milliseconds = milliseconds;
     }
 
-    DateTime::DateTime(const timestamp_t timestamp) {
+    DateTime::DateTime(const timestamp_t &timestamp) {
         set_timestamp(timestamp);
     }
 
-    DateTime::DateTime(const timestamp_ms_t timestamp) {
-        set_timestamp_ms(timestamp);
+    DateTime::DateTime(const ftimestamp_t &ftimestamp) {
+        set_ftimestamp(ftimestamp);
     }
 
-    DateTime::DateTime(const std::string str_iso_formatted_utc_datetime) {
+    DateTime::DateTime(const std::string &str_iso_formatted_utc_datetime) {
         convert_iso(str_iso_formatted_utc_datetime, *this);
     }
 
@@ -169,11 +169,11 @@ namespace xtime {
         return xtime::get_timestamp(day, month, year, hour, minutes, seconds);
     }
 
-    timestamp_ms_t DateTime::get_timestamp_ms() {
-        return xtime::get_timestamp_ms(day, month, year, hour, minutes, seconds, milliseconds);
+    ftimestamp_t DateTime::get_ftimestamp() {
+        return xtime::get_ftimestamp(day, month, year, hour, minutes, seconds, milliseconds);
     }
 
-    void DateTime::set_timestamp(const timestamp_t timestamp) {
+    void DateTime::set_timestamp(const timestamp_t &timestamp) {
         timestamp_t _secs;
         long _mon, _year;
         long long _days;
@@ -208,73 +208,73 @@ namespace xtime {
         }
     }
 
-    void DateTime::set_timestamp_ms(const timestamp_ms_t timestamp) {
-        const timestamp_t sec_timestamp = (timestamp_t)timestamp;
+    void DateTime::set_ftimestamp(const ftimestamp_t &ftimestamp) {
+        const timestamp_t sec_timestamp = (timestamp_t)ftimestamp;
         set_timestamp(sec_timestamp);
-        milliseconds = (long)(((timestamp_t)(timestamp * 1000.0 + 0.5)) % 1000);
+        milliseconds = (long)(((timestamp_t)(ftimestamp * 1000.0 + 0.5)) % 1000);
     }
 
     void DateTime::print() {
         printf("%.2d.%.2d.%.4d %.2d:%.2d:%.2d\n",
-            (int)day,
-            (int)month,
-            (int)year,
-            (int)hour,
-            (int)minutes,
-            (int)seconds);
+            (uint32_t)day,
+            (uint32_t)month,
+            (uint32_t)year,
+            (uint32_t)hour,
+            (uint32_t)minutes,
+            (uint32_t)seconds);
     }
 
     std::string DateTime::get_str_date_time() {
         char text[24] = {};
         sprintf(text,"%.2d.%.2d.%.4d %.2d:%.2d:%.2d",
-            (int)day,
-            (int)month,
-            (int)year,
-            (int)hour,
-            (int)minutes,
-            (int)seconds);
+            (uint32_t)day,
+            (uint32_t)month,
+            (uint32_t)year,
+            (uint32_t)hour,
+            (uint32_t)minutes,
+            (uint32_t)seconds);
         return std::string(text);
     }
 
     std::string DateTime::get_str_date_time_ms() {
         char text[32] = {};
         sprintf(text,"%.2d.%.2d.%.4d %.2d:%.2d:%.2d.%.3d",
-            (int)day,
-            (int)month,
-            (int)year,
-            (int)hour,
-            (int)minutes,
-            (int)seconds,
-            (int)milliseconds);
+            (uint32_t)day,
+            (uint32_t)month,
+            (uint32_t)year,
+            (uint32_t)hour,
+            (uint32_t)minutes,
+            (uint32_t)seconds,
+            (uint32_t)milliseconds);
         return std::string(text);
     }
 
     std::string DateTime::get_str_date() {
         char text[12] = {};
-        sprintf(text,"%.2d.%.2d.%.4d", (int)day, (int)month, (int)year);
+        sprintf(text,"%.2d.%.2d.%.4d", (uint32_t)day, (uint32_t)month, (uint32_t)year);
         return std::string(text);
     }
 
     std::string DateTime::get_str_time() {
         char text[10] = {};
         sprintf(text,"%.2d:%.2d:%.2d",
-            (int)hour,
-            (int)minutes,
-            (int)seconds);
+            (uint32_t)hour,
+            (uint32_t)minutes,
+            (uint32_t)seconds);
         return std::string(text);
     }
 
     std::string DateTime::get_str_time_ms() {
         char text[16] = {};
         sprintf(text,"%.2d:%.2d:%.2d.%.3d",
-            (int)hour,
-            (int)minutes,
-            (int)seconds,
-            (int)milliseconds);
+            (uint32_t)hour,
+            (uint32_t)minutes,
+            (uint32_t)seconds,
+            (uint32_t)milliseconds);
         return std::string(text);
     }
 
-    int DateTime::get_weekday() {
+    uint32_t DateTime::get_weekday() {
         return xtime::get_weekday(day, month, year);
     }
 
@@ -282,7 +282,7 @@ namespace xtime {
         return xtime::is_leap_year(year);
     }
 
-    int DateTime::get_num_days_current_month() {
+    uint32_t DateTime::get_num_days_current_month() {
         return get_num_days_month(month, year);
     }
 
@@ -291,8 +291,8 @@ namespace xtime {
         day = get_num_days_month(month, year);
     }
 
-    bool convert_iso(const std::string str_iso_formatted_utc_datetime, DateTime& t) {
-        const std::string& word = str_iso_formatted_utc_datetime;
+    bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t) {
+        const std::string &word = str_iso_formatted_utc_datetime;
         if(word.size() >= 26) {
             // находим дату и время
             t.year = atoi(word.substr(0, 4).c_str());
@@ -313,11 +313,11 @@ namespace xtime {
         return false;
     }
 
-    int get_month(std::string month) {
+    uint32_t get_month(std::string month) {
         if(month.size() == 0) return 0;
         std::transform(month.begin(), month.end(), month.begin(), tolower);
         month[0] = toupper(month[0]);
-        for(int i = 0; i < MONTHS_IN_YEAR; ++i) {
+        for(uint32_t i = 0; i < MONTHS_IN_YEAR; ++i) {
             std::string name_long = month_name_long[i];
             std::string name_short = month_name_short[i];
             if(month == name_long) return i + 1;
@@ -327,7 +327,7 @@ namespace xtime {
     }
 
     bool convert_str_to_timestamp(std::string str, timestamp_t& t) {
-        int day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
+        uint32_t day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
         str += "_";
         std::vector<std::string> output_list;
         std::size_t start_pos = 0;
@@ -405,7 +405,7 @@ namespace xtime {
         return true;
     }
 
-    DateTime convert_timestamp_to_datetime(const timestamp_t timestamp) {
+    DateTime convert_timestamp_to_datetime(const timestamp_t &timestamp) {
         DateTime outTime;
         timestamp_t _secs;
         long _mon, _year;
@@ -441,8 +441,8 @@ namespace xtime {
         return outTime;
     }
 
-    int get_weekday(const int day, const int month, const int year) {
-        int a, y, m, R;
+    uint32_t get_weekday(const uint32_t &day, const uint32_t &month, const uint32_t &year) {
+        uint32_t a, y, m, R;
         a = ( 14 - month ) / 12;
         y = year - a;
         m = month + 12 * a - 2;
@@ -450,7 +450,7 @@ namespace xtime {
         return R % 7;
     }
 
-    void print_date_time(const timestamp_t timestamp) {
+    void print_date_time(const timestamp_t &timestamp) {
         DateTime t(timestamp);
         t.print();
     }
@@ -463,20 +463,20 @@ namespace xtime {
 
     std::string get_str_date_time_ms() {
         DateTime t;
-        t.set_timestamp_ms(get_timestamp_ms());
+        t.set_ftimestamp(get_ftimestamp());
         return t.get_str_date_time_ms();
     }
 
     std::string get_str_time_ms() {
         DateTime t;
-        t.set_timestamp_ms(get_timestamp_ms());
+        t.set_ftimestamp(get_ftimestamp());
         return t.get_str_time_ms();
     }
 
-    int get_num_days_month(const int month, const int year) {
+    uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year) {
         if(month > MONTHS_IN_YEAR)
             return 0;
-        const int num_days[13] = {0,31,30,31,30,31,30,31,31,30,31,30,31};
+        const uint32_t num_days[13] = {0,31,30,31,30,31,30,31,31,30,31,30,31};
         if(month == FEB) {
             if(is_leap_year(year)) return 29;
             else return 28;
@@ -485,9 +485,9 @@ namespace xtime {
         }
     }
 
-    int get_num_days_month(const timestamp_t timestamp) {
-        const int num_days[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-        const int month = get_month_year(timestamp);
+    uint32_t get_num_days_month(const timestamp_t &timestamp) {
+        const uint32_t num_days[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        const uint32_t month = get_month(timestamp);
         if(month == FEB) {
             if(is_leap_year(get_year(timestamp))) return 29;
             else return 28;
@@ -496,15 +496,15 @@ namespace xtime {
         }
     }
 
-    timestamp_t convert_gmt_to_cet(const timestamp_t gmt) {
+    timestamp_t convert_gmt_to_cet(const timestamp_t &gmt) {
         const timestamp_t ONE_HOUR = SECONDS_IN_HOUR;
-        const int OLD_START_SUMMER_HOUR = 2;
-        const int OLD_STOP_SUMMER_HOUR = 3;
-        const int NEW_SUMMER_HOUR = 1;
-        const int MONTH_MARSH = MAR;
-        const int MONTH_OCTOBER = OCT;
+        const uint8_t OLD_START_SUMMER_HOUR = 2;
+        const uint8_t OLD_STOP_SUMMER_HOUR = 3;
+        const uint8_t NEW_SUMMER_HOUR = 1;
+        const uint8_t MONTH_MARSH = MAR;
+        const uint8_t MONTH_OCTOBER = OCT;
         DateTime iTime(gmt);
-        int maxDays = iTime.get_num_days_current_month();
+        uint32_t maxDays = iTime.get_num_days_current_month();
         if(iTime.year < 2002) {
             // До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
             // а обратный переход осуществлялся в последнее воскресенье октября в 3:00 переводом на 1 час назад
@@ -512,11 +512,11 @@ namespace xtime {
                 return gmt + ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_MARSH, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour + 1 >= OLD_START_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // летнее время
+                            if((iTime.hour + 1) >= OLD_START_SUMMER_HOUR) return gmt + ONE_HOUR * 2; // летнее время
                             return gmt + ONE_HOUR; // зимнее время
                         }
                         return gmt + ONE_HOUR; // зимнее время
@@ -525,8 +525,8 @@ namespace xtime {
                 return gmt + ONE_HOUR * 2; // летнее время
             } else
             if(iTime.month == MONTH_OCTOBER) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
                             if(iTime.hour + 2 >= OLD_STOP_SUMMER_HOUR) return gmt + ONE_HOUR; // зимнее время
@@ -544,8 +544,8 @@ namespace xtime {
                     return gmt + ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_MARSH, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
                             if(iTime.hour >= NEW_SUMMER_HOUR)
@@ -558,8 +558,8 @@ namespace xtime {
                 return gmt + ONE_HOUR * 2; // летнее время
             } else
             if(iTime.month == MONTH_OCTOBER) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
                             if(iTime.hour >= NEW_SUMMER_HOUR)
@@ -576,11 +576,11 @@ namespace xtime {
         return gmt + ONE_HOUR; // зимнее время
     }
 
-    timestamp_t convert_gmt_to_eet(const timestamp_t gmt) {
+    timestamp_t convert_gmt_to_eet(const timestamp_t &gmt) {
         return convert_gmt_to_cet(gmt) + SECONDS_IN_HOUR;
     }
 
-    timestamp_t convert_gmt_to_msk(const timestamp_t gmt) {
+    timestamp_t convert_gmt_to_msk(const timestamp_t &gmt) {
         const timestamp_t gmt2 = gmt + 2 * SECONDS_IN_HOUR;
         const timestamp_t gmt3 = gmt + 3 * SECONDS_IN_HOUR;
         const timestamp_t gmt4 = gmt + 4 * SECONDS_IN_HOUR;
@@ -605,9 +605,9 @@ namespace xtime {
         else
         if(gmt2 >= JAN_19_1992) {
             timestamp_t last_timestamp_sunday2 = get_last_timestamp_sunday_month(gmt2);
-            int month2 = get_month_year(gmt2);
-            //int month3 = get_month_year(gmt3);
-            int month4 = get_month_year(gmt4);
+            uint32_t month2 = get_month(gmt2);
+            //uint32_t month3 = get_month_year(gmt3);
+            uint32_t month4 = get_month(gmt4);
             if(month2 == MAR) {
                 if(gmt2 < last_timestamp_sunday2) return gmt3;
                 else return gmt4;
@@ -624,7 +624,7 @@ namespace xtime {
         } else
         if(gmt3 >= YEAR_1991) {
             //timestamp_t last_timestamp_sunday2 = get_last_timestamp_sunday_month(gmt2);
-            int month3 = get_month_year(gmt3);
+            uint32_t month3 = get_month(gmt3);
             if(month3 == SEPT) {
                 timestamp_t last_timestamp_sunday3 = get_last_timestamp_sunday_month(gmt3);
                 if(gmt3 < (last_timestamp_sunday3 - OFFSET_HOUR2)) return gmt3;
@@ -634,9 +634,9 @@ namespace xtime {
             else return gmt3;
         } else {
             timestamp_t last_timestamp_sunday3 = get_last_timestamp_sunday_month(gmt3);
-            int month2 = get_month_year(gmt2);
-            int month3 = get_month_year(gmt3);
-            int month4 = get_month_year(gmt4);
+            uint32_t month2 = get_month(gmt2);
+            uint32_t month3 = get_month(gmt3);
+            uint32_t month4 = get_month(gmt4);
             if(month3 == MAR) {
                 if(gmt3 < last_timestamp_sunday3) return gmt3;
                 else return gmt4;
@@ -653,15 +653,15 @@ namespace xtime {
         }
     }
 
-    timestamp_t convert_cet_to_gmt(const timestamp_t cet) {
+    timestamp_t convert_cet_to_gmt(const timestamp_t &cet) {
         const timestamp_t ONE_HOUR = SECONDS_IN_HOUR;
-        const int OLD_START_SUMMER_HOUR = 2;
-        const int OLD_STOP_SUMMER_HOUR = 3;
-        const int NEW_SUMMER_HOUR = 1;
-        const int MONTH_MARSH = MAR;
-        const int MONTH_OCTOBER = OCT;
+        const uint32_t OLD_START_SUMMER_HOUR = 2;
+        const uint32_t OLD_STOP_SUMMER_HOUR = 3;
+        const uint32_t NEW_SUMMER_HOUR = 1;
+        const uint32_t MONTH_MARSH = MAR;
+        const uint32_t MONTH_OCTOBER = OCT;
         DateTime iTime(cet);
-        int maxDays = iTime.get_num_days_current_month();
+        uint32_t maxDays = iTime.get_num_days_current_month();
 
         if(iTime.year < 2002) {
             // До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -670,8 +670,8 @@ namespace xtime {
                 return cet - ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_MARSH, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
                             if(iTime.hour >= OLD_START_SUMMER_HOUR) return cet - ONE_HOUR * 2; // летнее время
@@ -683,8 +683,8 @@ namespace xtime {
                 return cet - ONE_HOUR * 2; // летнее время
             } else
             if(iTime.month == MONTH_OCTOBER) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
                             if(iTime.hour >= OLD_STOP_SUMMER_HOUR) return cet - ONE_HOUR; // зимнее время
@@ -702,11 +702,11 @@ namespace xtime {
                 return cet - ONE_HOUR * 2;
             } else
             if(iTime.month == MONTH_MARSH) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_MARSH, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_MARSH, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour - 2 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR * 2; // летнее время
+                            if(iTime.hour >= (NEW_SUMMER_HOUR + 2)) return cet - ONE_HOUR * 2; // летнее время
                             return cet - ONE_HOUR; // зимнее время
                         }
                         return cet - ONE_HOUR; // зимнее время
@@ -715,11 +715,11 @@ namespace xtime {
                 return cet - ONE_HOUR * 2; // летнее время
             } else
             if(iTime.month == MONTH_OCTOBER) {
-                for(int d = maxDays; d >= iTime.day; d--) {
-                    int _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
+                for(uint32_t d = maxDays; d >= iTime.day; d--) {
+                    uint32_t _wday = get_weekday(d, MONTH_OCTOBER, iTime.year);
                     if(_wday == SUN) {
                         if(d == iTime.day) { // если сейчас воскресенье
-                            if(iTime.hour - 1 >= NEW_SUMMER_HOUR) return cet - ONE_HOUR; // зимнее время
+                            if(iTime.hour >= (NEW_SUMMER_HOUR + 1)) return cet - ONE_HOUR; // зимнее время
                             return cet - ONE_HOUR * 2; // летнее время
                         }
                         return cet - ONE_HOUR * 2; // летнее время
@@ -732,62 +732,41 @@ namespace xtime {
         return cet - ONE_HOUR; // зимнее время
     }
 
-    timestamp_t convert_eet_to_gmt(const timestamp_t eet) {
+    timestamp_t convert_eet_to_gmt(const timestamp_t &eet) {
         return convert_cet_to_gmt(eet - SECONDS_IN_HOUR);
     }
 
-    std::string get_str_date_time(const timestamp_t timestamp) {
+    std::string get_str_date_time(const timestamp_t &timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_date_time();
     }
 
-    std::string get_str_date_time_ms(const timestamp_ms_t timestamp) {
+    std::string get_str_date_time_ms(const ftimestamp_t &timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_date_time_ms();
     }
 
-    std::string get_str_date(const timestamp_t timestamp) {
+    std::string get_str_date(const timestamp_t &timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_date();
     }
 
-    std::string get_str_time(const timestamp_t timestamp) {
+    std::string get_str_time(const timestamp_t &timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_time();
     }
 
-    std::string get_str_time_ms(const timestamp_ms_t timestamp) {
+    std::string get_str_time_ms(const ftimestamp_t &timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_time_ms();
     }
 
-    bool is_beg_half_hour(const timestamp_t timestamp) {
-        return timestamp % SECONDS_IN_HALF_HOUR == 0 ? true : false;
-    }
-
-    bool is_beg_hour(const timestamp_t timestamp) {
-        return timestamp % SECONDS_IN_HOUR == 0 ? true : false;
-    }
-
-    bool is_beg_day(const timestamp_t timestamp) {
-        return timestamp % SECONDS_IN_DAY == 0 ? true : false;
-    }
-
-    bool is_beg_week(const timestamp_t timestamp) {
-        return get_weekday(timestamp) == SUN ? true : false;
-    }
-
-    bool is_beg_month(const timestamp_t timestamp) {
+    bool is_end_month(const timestamp_t &timestamp) {
         DateTime iTime(timestamp);
-        return (iTime.day == 1) ? true : false;
+        return iTime.day == iTime.get_num_days_current_month();
     }
 
-    bool is_end_month(const timestamp_t timestamp) {
-        DateTime iTime(timestamp);
-        return (iTime.day == iTime.get_num_days_current_month()) ? true : false;
-    }
-
-    bool is_correct_date(const int day, const int month, const int year) {
+    bool is_correct_date(const uint32_t &day, const uint32_t &month, const uint32_t &year) {
         if(day < 1 || day > MAX_DAY_MONTH) return false;
         if(month > MONTHS_IN_YEAR || month < 1) return false;
         if(year < FIRST_YEAR_UNIX) return false;
@@ -796,27 +775,53 @@ namespace xtime {
     }
 
     bool is_correct_time(
-            const int hour,
-            const int minutes,
-            const int seconds,
-            const int milliseconds) {
-        if(hour < 0 || hour > 23) return false;
-        if(minutes < 0 || minutes > 59) return false;
-        if(seconds < 0 || seconds > 59) return false;
-        if(milliseconds < 0 || milliseconds > 999) return false;
+            const uint32_t &hour,
+            const uint32_t &minutes,
+            const uint32_t &seconds,
+            const uint32_t &milliseconds) {
+        if(hour > 23) return false;
+        if(minutes > 59) return false;
+        if(seconds > 59) return false;
+        if(milliseconds > 999) return false;
         return true;
     }
 
     bool is_correct_date_time(
-            const int day,
-            const int month,
-            const int year,
-            const int hour,
-            const int minutes,
-            const int seconds,
-            const int milliseconds) {
+            const uint32_t &day,
+            const uint32_t &month,
+            const uint32_t &year,
+            const uint32_t &hour,
+            const uint32_t &minutes,
+            const uint32_t &seconds,
+            const uint32_t &milliseconds) {
         if(!is_correct_date(day, month, year)) return false;
         if(!is_correct_time(hour, minutes, seconds, milliseconds)) return false;
         return true;
+    }
+
+    uint32_t get_day_month(const timestamp_t &timestamp) {
+        uint32_t day_year = get_day_year(timestamp);
+        const uint8_t JAN_AND_FEB_DAY = 60;
+        // таблица для обычного года, не високосного
+        const uint8_t TABLE_DAY_OF_YEAR[] = {
+            0,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,    // 31 январь
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,             // 28 февраль
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,    // 31 март
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,       // 30 апрель
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+        };
+        if(is_leap_year(get_year(timestamp))) {
+            if(day_year == JAN_AND_FEB_DAY) return TABLE_DAY_OF_YEAR[day_year - 1] + 1;
+            else if(day_year > JAN_AND_FEB_DAY) return TABLE_DAY_OF_YEAR[day_year - 1];
+        }
+        return TABLE_DAY_OF_YEAR[day_year];
     }
 }

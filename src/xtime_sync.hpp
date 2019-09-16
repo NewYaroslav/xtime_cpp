@@ -104,9 +104,9 @@ namespace xtime {
         }
 
         int http_sync(
-                xtime::timestamp_ms_t &start_time,
-                xtime::timestamp_ms_t &stop_time,
-                xtime::timestamp_ms_t &server_time) {
+                xtime::ftimestamp_t &start_time,
+                xtime::ftimestamp_t &stop_time,
+                xtime::ftimestamp_t &server_time) {
             struct curl_slist *http_headers = NULL;
             http_headers = curl_slist_append(http_headers, "Host: time.is");
             http_headers = curl_slist_append(http_headers, "Accept: */*");
@@ -115,7 +115,7 @@ namespace xtime {
             http_headers = curl_slist_append(http_headers, "Connection: keep-alive");
             http_headers = curl_slist_append(http_headers, "Referer: https://time.is/UTC");
 
-            xtime::timestamp_t t = (xtime::timestamp_t)((xtime::get_timestamp_ms()) * 1000.0 + 0.5);
+            xtime::timestamp_t t = (xtime::timestamp_t)((xtime::get_ftimestamp()) * 1000.0 + 0.5);
             std::string url = "https://time.is/t/?en.0.117.0.0p.0.a00." + std::to_string(t) + "." + std::to_string(t) + ".";
             std::string response;
 
@@ -132,9 +132,9 @@ namespace xtime {
             curl_easy_setopt(curl, CURLOPT_TIMEOUT, TIME_OUT); // выход через N сек
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
 
-            start_time = xtime::get_timestamp_ms();
+            start_time = xtime::get_ftimestamp();
             CURLcode result = curl_easy_perform(curl);
-            stop_time = xtime::get_timestamp_ms();
+            stop_time = xtime::get_ftimestamp();
 
             curl_easy_cleanup(curl);
             curl_slist_free_all(http_headers);
@@ -144,7 +144,7 @@ namespace xtime {
                 std::vector<std::string> elemet_list;
                 parse(response, elemet_list);
                 if(elemet_list.size() >= 1) {
-                    server_time = xtime::get_timestamp_ms(elemet_list[0]);
+                    server_time = xtime::get_ftimestamp(elemet_list[0]);
                 } else {
                     return XTIME_CURL_ERROR;
                 }
@@ -157,15 +157,15 @@ namespace xtime {
             if(samples < 1) samples = 1;
             if(attempts < 1) attempts = 1;
             if(delay < 1) delay = 1;
-            xtime::timestamp_ms_t sum_accuracy = 0;
-            xtime::timestamp_ms_t sum_diff_time = 0;
-            std::vector<xtime::timestamp_ms_t> array_diff_time;
+            xtime::ftimestamp_t sum_accuracy = 0;
+            xtime::ftimestamp_t sum_diff_time = 0;
+            std::vector<xtime::ftimestamp_t> array_diff_time;
             int sample = 0;
             int num_error = 0;
             while(true) {
-                xtime::timestamp_ms_t start_time = 0;
-                xtime::timestamp_ms_t stop_time = 0;
-                xtime::timestamp_ms_t server_time = 0;
+                xtime::ftimestamp_t start_time = 0;
+                xtime::ftimestamp_t stop_time = 0;
+                xtime::ftimestamp_t server_time = 0;
                 int err = XTIME_OK;
                 for(int attempt = 0; attempt < attempts; ++attempt) {
                     err = http_sync(start_time, stop_time, server_time);
@@ -182,13 +182,13 @@ namespace xtime {
                 }
 
                 // находим общую задержку ответа от сервера
-                xtime::timestamp_ms_t delay_server = stop_time - start_time;
+                xtime::ftimestamp_t delay_server = stop_time - start_time;
                 /* находим задержку отправки сообщения на сервер
                  * (предполагаем что сигнал идет туда и обратно одинаковое время)
                  */
-                xtime::timestamp_ms_t delay_server_div2 = delay_server/2;
+                xtime::ftimestamp_t delay_server_div2 = delay_server/2;
                 // находим разницу во времени между сервером и временем ПК
-                xtime::timestamp_ms_t diff_time = (server_time - start_time + delay_server_div2);
+                xtime::ftimestamp_t diff_time = (server_time - start_time + delay_server_div2);
 
                 sum_diff_time += diff_time;
                 sum_accuracy += delay_server_div2;
@@ -203,10 +203,10 @@ namespace xtime {
             double aver = sum_accuracy/(double)samples;
             double sum = 0;
             for(int i = 0; i < samples; ++i) {
-                xtime::timestamp_ms_t temp = array_diff_time[i] - aver;
+                xtime::ftimestamp_t temp = array_diff_time[i] - aver;
                 sum += temp * temp;
             }
-            xtime::timestamp_ms_t std_dev = std::sqrt(sum) /(double)(samples - 1);
+            xtime::ftimestamp_t std_dev = std::sqrt(sum) /(double)(samples - 1);
             accuracy = 3 * std_dev;
             //std::sort(array_diff_time.begin(), array_diff_time.end());
             offset = sum_diff_time/(double)samples;
@@ -236,15 +236,15 @@ namespace xtime {
         /** \brief Получить метку времени компьютера
          * \return метка времен
          */
-        timestamp_ms_t get_timestamp_ms() {
-            return xtime::get_timestamp_ms() + offset;
+        ftimestamp_t get_ftimestamp() {
+            return xtime::get_ftimestamp() + offset;
         }
 
         /** \brief Получить метку времени компьютера
          * \return метка времен
          */
         timestamp_t get_timestamp() {
-            return (timestamp_t)(xtime::get_timestamp_ms() + offset);
+            return (timestamp_t)(xtime::get_ftimestamp() + offset);
         }
 
         /** \brief Инициализировать класс для получения времени
