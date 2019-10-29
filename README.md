@@ -28,27 +28,27 @@
 
 Методы класса DateTime
 
-* set_beg_day()
-* set_end_day()
-* set_beg_month()
-* set_end_month()
-* timestamp_t get_timestamp()
-* ftimestamp_t get_ftimestamp()
-* set_timestamp(const timestamp_t &timestamp)
-* set_ftimestamp(const ftimestamp_t &ftimestamp)
-* print()
-* std::string get_str_date_time()
-* std::string get_str_date_time_ms()
-* std::string get_str_date()
-* std::string get_str_time()
-* uint32_t get_weekday()
-* is_leap_year()
-* uint32_t get_num_days_current_month()
+* set_beg_day() - установить начало дня
+* set_end_day() - установить конец дня
+* set_beg_month() - установить начало месяца (00:00)
+* set_end_month() - установить конец месяца
+* timestamp_t get_timestamp() - получить метку времени
+* ftimestamp_t get_ftimestamp() - получить метку времени с плавающей запятой
+* set_timestamp(const timestamp_t &timestamp) - установить метку времени
+* set_ftimestamp(const ftimestamp_t &ftimestamp) - установить метку времени с плавающей запятой
+* print() - напечатать время на экране
+* std::string get_str_date_time() - получить время и дату в виде строки
+* std::string get_str_date_time_ms() - получить время, миллисекунды и дату в виде строки
+* std::string get_str_date() - получить дату в виде строки
+* std::string get_str_time() - получить время в виде строки
+* uint32_t get_weekday() - получить день недели
+* is_leap_year() - получить флаг високосного года (если год високосный, вернет true)
+* uint32_t get_num_days_current_month() - получить кол-во дней в текущшем месяце
 
 Получение времени компьютера
-* uint32_t get_milliseconds()
-* timestamp_t get_timestamp()
-* ftimestamp_t get_ftimestamp()
+* uint32_t get_milliseconds() - получить миллисекунды
+* timestamp_t get_timestamp() - получить метку времени
+* ftimestamp_t get_ftimestamp() - получить метку времени с плавающей запятой
 
 Преобразование времени в строку или вывод на экран
 

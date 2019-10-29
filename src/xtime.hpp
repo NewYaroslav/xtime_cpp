@@ -24,7 +24,7 @@
 
 #ifndef XTIME_HPP_INCLUDED
 #define XTIME_HPP_INCLUDED
-#include <iostream>
+
 #include <string>
 #include <array>
 
@@ -828,6 +828,14 @@ namespace xtime {
      */
     inline timestamp_t get_first_timestamp_for_day(const uint32_t &day) {
         return day * SECONDS_IN_DAY;
+    }
+
+    /** \brief Получить метку времени начала предыдущего дня
+     * \param timestamp Метка времени текущего дня
+     * \return метка времени начала предыдущего дня
+     */
+    inline timestamp_t get_first_timestamp_previous_day(const timestamp_t &timestamp) {
+        return get_first_timestamp_day(timestamp) - SECONDS_IN_DAY;
     }
 
 }
