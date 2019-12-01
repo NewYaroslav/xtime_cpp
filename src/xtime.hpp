@@ -29,10 +29,14 @@
 #include <array>
 
 namespace xtime {
-    // для того, чтобы можно было работать и после 19 января 2038 года, используем 64 бит, а не 32 бит
-    typedef uint64_t timestamp_t;
-    // для работы с миллисекундами
-    typedef double ftimestamp_t;
+    /* для того, чтобы можно было работать и после 19 января 2038 года,
+     * используем 64 бит, а не 32 бит
+     */
+    typedef uint64_t timestamp_t;           ///< Целочисленный тип метки врмени
+    /* для работы с миллисекундами */
+    typedef double ftimestamp_t;            ///< Тип метки времени с плавающей точкой
+    typedef double oadate_t;                ///< Тип даты автоматизации (OADate) с плавающей точкой
+    const oadate_t OADATE_MAX = 9223372036854775807; ///< Максимально возможное значение даты автоматизации (OADate)
 
     const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
 
@@ -56,6 +60,7 @@ namespace xtime {
         DAYS_IN_4_YEAR = 1461,              ///< Количество дней за 4 года
         FIRST_YEAR_UNIX = 1970,             ///< Год начала UNIX времени
         MAX_DAY_MONTH = 31,                 ///< Максимальное количество дней в месяце
+        OADATE_UNIX_EPOCH = 25569,          ///< Дата автоматизации OLE с момента эпохи UNIX
     };
 
     /// Скоращенные имена дней неделии
@@ -98,6 +103,56 @@ namespace xtime {
         "July","Aug","Sept",
         "Oct","Nov","Dec",
     };
+
+    /** \brief Получить дату автоматизации OLE из метки времени
+     * \param timestamp Метка времени
+     * \return Дата автоматизации OLE
+     */
+    oadate_t convert_timestamp_to_oadate(const timestamp_t &timestamp);
+
+    /** \brief Получить дату автоматизации OLE из метки времени c плавающей точкой
+     * \param timestamp Метка времени c плавающей точкой
+     * \return Дата автоматизации OLE
+     */
+    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t &timestamp);
+
+    /** \brief Преобразовать дату автоматизации OLE в метку времени
+     * \param oadate Дата автоматизации OLE
+     * \return Метка времени
+     */
+    timestamp_t convert_oadate_to_timestamp(const oadate_t &oadate);
+
+    /** \brief Преобразовать дату автоматизации OLE в метку времени  плавающей точкой
+     * \param oadate Дата автоматизации OLE
+     * \return Метка времени с плавающей точкой
+     */
+    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t &oadate);
+
+    /** \brief Получить дату автоматизации OLE
+     * \return дата автоматизации OLE
+     */
+    oadate_t get_oadate();
+
+    /** \brief Получить дату автоматизации OLE
+     * \param day день
+     * \param month месяц
+     * \param year год
+     * \param hour час
+     * \param minutes минуты
+     * \param seconds секунды
+     * \param milliseconds миллисекунды
+     * \return дата автоматизации OLE
+     */
+    oadate_t get_oadate(
+        const uint32_t &day,
+        const uint32_t &month,
+        const uint32_t &year,
+        const uint32_t &hour = 0,
+        const uint32_t &minutes = 0,
+        const uint32_t &seconds = 0,
+        const uint32_t &milliseconds = 0);
+
+    #define get_ole_automation_date get_oadate
 
     /** \brief Получить время и дату в виде строки
      * Формат строки: DD.MM.YYYY HH:MM:SS
@@ -371,6 +426,16 @@ namespace xtime {
          * \return количество дней
          */
         uint32_t get_num_days_current_month();
+
+        /** \brief Получить дату автоматизации OLE
+         * \return дата автоматизации OLE
+         */
+        oadate_t get_oadate();
+
+        /** \brief Установить дату автоматизации OLE
+         * \param oadate Дата автоматизации OLE
+         */
+        void set_oadate(const oadate_t &oadate);
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса DateTime

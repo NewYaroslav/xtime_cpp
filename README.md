@@ -10,6 +10,7 @@
 * Можно легко получить реальное GMT время компьютера
 * Можно преобразовать GMT в CET и обратно
 * Получить день недели, количество дней в месяце, день года, день с начала UNIX времени и т.д.
+* Можно преобразовать UINX время в OLE Automation Date и обратно
 
 Смотрите файл *xtime.hpp*, он содежрит подробные комментарии перед каждой функцией.
 Для хранения и преобразования меток времени используется тип данных *uint64*, поэтому у данной библиотеки нет [проблемы 2038 года](https://en.wikipedia.org/wiki/Year_2038_problem)
@@ -49,6 +50,7 @@
 * uint32_t get_milliseconds() - получить миллисекунды
 * timestamp_t get_timestamp() - получить метку времени
 * ftimestamp_t get_ftimestamp() - получить метку времени с плавающей запятой
+* oadate_t get_oadate() - Получить дату автоматизации OLE
 
 Преобразование времени в строку или вывод на экран
 
@@ -68,10 +70,14 @@
 * DD.MM.YYYY HH:MM:SS.fff
 * HH:MM:SS.fff
 
-Преобразование строки в метку времени
+Преобразование строки в метку времени и не только
 
 * bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t)
 * bool convert_str_to_timestamp(std::string str, timestamp_t& t)
+* oadate_t convert_timestamp_to_oadate(const timestamp_t &timestamp)
+* oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t &timestamp)
+* timestamp_t convert_oadate_to_timestamp(const oadate_t &oadate)
+* ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t &oadate)
 
 Функция *convert_str_to_timestamp* подерживает следующий список разделителей чисел: */\_:-., *
 Данная функия способна распрасить время и дату, принимаемых в следующем порядке и размерности:
@@ -315,4 +321,23 @@ t = get_first_timestamp_day(t);
 
 ```
 
++ OLE Automation Date (Дата автоматизации OLE)
 
+```C++
+xtime::timestamp_t timestamp = xtime::get_timestamp(1,1,2019);
+xtime::oadate_t oadate = xtime::convert_timestamp_to_oadate(timestamp);
+cout << "oadate " << oadate << endl;
+cout << "timestamp " << timestamp << endl;
+cout << "date " << xtime::get_str_date_time(xtime::convert_oadate_to_timestamp(oadate)) << endl;
+xtime::timestamp_t stop_timestamp = xtime::get_timestamp(31,12,9999);
+cout << "31.12.9999 oadate " << xtime::convert_timestamp_to_oadate(stop_timestamp) << endl;
+cout << "31.12.9999 oadate " << xtime::get_oadate(31,12,9999) << endl;
+cout.precision(12);
+xtime::timestamp_t last_timestamp = xtime::get_timestamp();
+while(true) {
+	if(xtime::get_timestamp() > last_timestamp) {
+		std::cout << "oadate " << xtime::get_ole_automation_date() << std::endl;
+		last_timestamp = xtime::get_timestamp();
+	}
+}
+```
