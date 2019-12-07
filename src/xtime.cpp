@@ -73,17 +73,17 @@ namespace xtime {
             const uint32_t &month,
             const uint32_t &year,
             const uint32_t &hour,
-            const uint32_t &minutes,
-            const uint32_t &seconds,
-            const uint32_t &milliseconds) {
+            const uint32_t &minute,
+            const uint32_t &second,
+            const uint32_t &millisecond) {
         return convert_ftimestamp_to_oadate(get_ftimestamp(
             day,
             month,
             year,
             hour,
-            minutes,
-            seconds,
-            milliseconds));
+            minute,
+            second,
+            millisecond));
     }
 
     timestamp_t get_timestamp() {
@@ -103,7 +103,7 @@ namespace xtime {
         return (ftimestamp_t)t + (ftimestamp_t)tb.millitm/1000.0;
     }
 
-    uint32_t get_milliseconds() {
+    uint32_t get_millisecond() {
         timeb tb;
         ftime(&tb);
         return tb.millitm;
@@ -142,8 +142,8 @@ namespace xtime {
             const uint32_t &month,
             const uint32_t &year,
             const uint32_t &hour,
-            const uint32_t &minutes,
-            const uint32_t &seconds) {
+            const uint32_t &minute,
+            const uint32_t &second) {
         timestamp_t _secs;
         long _mon, _year;
         long long _days; // для предотвращения проблемы 2038 года переменная должна быть больше 32 бит
@@ -158,8 +158,8 @@ namespace xtime {
         const long _TBIAS_DAYS = 25567;
         _days -= _TBIAS_DAYS;
         _secs = SECONDS_IN_HOUR * hour;
-        _secs += SECONDS_IN_MINUTE * minutes;
-        _secs += seconds;
+        _secs += SECONDS_IN_MINUTE * minute;
+        _secs += second;
         _secs += _days * SECONDS_IN_DAY;
         return _secs;
     }
@@ -169,38 +169,38 @@ namespace xtime {
         const uint32_t &month,
         const uint32_t &year,
         const uint32_t &hour,
-        const uint32_t &minutes,
-        const uint32_t &seconds,
-        const uint32_t &milliseconds) {
-        timestamp_t t = get_timestamp(day, month, year, hour, minutes, seconds);
-        return (double)t + (double)milliseconds/1000.0;
+        const uint32_t &minute,
+        const uint32_t &second,
+        const uint32_t &millisecond) {
+        timestamp_t t = get_timestamp(day, month, year, hour, minute, second);
+        return (double)t + (double)millisecond/1000.0;
     }
 
-    DateTime::DateTime() {
-        DateTime::day = 1;
-        DateTime::month = 1;
-        DateTime::year = 1970;
-        DateTime::hour = 0;
-        DateTime::minutes = 0;
-        DateTime::seconds = 0;
-        DateTime::milliseconds = 0;
+    DateTime::DateTime() :
+        year(1970),
+        millisecond(0),
+        second(0),
+        minute(0),
+        hour(0),
+        day(1),
+        month(1) {
     };
 
     DateTime::DateTime(
-            const uint32_t &day,
-            const uint32_t &month,
-            const uint32_t &year,
-            const uint32_t &hour,
-            const uint32_t &minutes,
-            const uint32_t &seconds,
-            const uint32_t &milliseconds) {
-        DateTime::day = day;
-        DateTime::month = month;
-        DateTime::year = year;
-        DateTime::hour = hour;
-        DateTime::minutes = minutes;
-        DateTime::seconds = seconds;
-        DateTime::milliseconds = milliseconds;
+            const uint32_t &_day,
+            const uint32_t &_month,
+            const uint32_t &_year,
+            const uint32_t &_hour,
+            const uint32_t &_minute,
+            const uint32_t &_second,
+            const uint32_t &_millisecond) :
+        year(_year),
+        millisecond(_millisecond),
+        second(_second),
+        minute(_minute),
+        hour(_hour),
+        day(_day),
+        month(_month) {
     }
 
     DateTime::DateTime(const timestamp_t &timestamp) {
@@ -216,15 +216,15 @@ namespace xtime {
     }
 
     bool DateTime::is_correct() {
-        return is_correct_date_time(day, month, year, hour, minutes, seconds, milliseconds);
+        return is_correct_date_time(day, month, year, hour, minute, second, millisecond);
     }
 
     timestamp_t DateTime::get_timestamp() {
-        return xtime::get_timestamp(day, month, year, hour, minutes, seconds);
+        return xtime::get_timestamp(day, month, year, hour, minute, second);
     }
 
     ftimestamp_t DateTime::get_ftimestamp() {
-        return xtime::get_ftimestamp(day, month, year, hour, minutes, seconds, milliseconds);
+        return xtime::get_ftimestamp(day, month, year, hour, minute, second, millisecond);
     }
 
     void DateTime::set_timestamp(const timestamp_t &timestamp) {
@@ -239,7 +239,7 @@ namespace xtime {
 
         _days += _secs / SECONDS_IN_DAY; _secs = _secs % SECONDS_IN_DAY;
         hour = _secs / SECONDS_IN_HOUR; _secs %= SECONDS_IN_HOUR;
-        minutes = _secs / SECONDS_IN_MINUTE; seconds = _secs % SECONDS_IN_MINUTE;
+        minute = _secs / SECONDS_IN_MINUTE; second = _secs % SECONDS_IN_MINUTE;
         const long lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
         const long mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
@@ -265,7 +265,7 @@ namespace xtime {
     void DateTime::set_ftimestamp(const ftimestamp_t &ftimestamp) {
         const timestamp_t sec_timestamp = (timestamp_t)ftimestamp;
         set_timestamp(sec_timestamp);
-        milliseconds = (long)(((timestamp_t)(ftimestamp * 1000.0 + 0.5)) % 1000);
+        millisecond = (long)(((timestamp_t)(ftimestamp * 1000.0 + 0.5)) % 1000);
     }
 
     void DateTime::print() {
@@ -274,8 +274,8 @@ namespace xtime {
             (uint32_t)month,
             (uint32_t)year,
             (uint32_t)hour,
-            (uint32_t)minutes,
-            (uint32_t)seconds);
+            (uint32_t)minute,
+            (uint32_t)second);
     }
 
     std::string DateTime::get_str_date_time() {
@@ -285,8 +285,8 @@ namespace xtime {
             (uint32_t)month,
             (uint32_t)year,
             (uint32_t)hour,
-            (uint32_t)minutes,
-            (uint32_t)seconds);
+            (uint32_t)minute,
+            (uint32_t)second);
         return std::string(text);
     }
 
@@ -297,9 +297,9 @@ namespace xtime {
             (uint32_t)month,
             (uint32_t)year,
             (uint32_t)hour,
-            (uint32_t)minutes,
-            (uint32_t)seconds,
-            (uint32_t)milliseconds);
+            (uint32_t)minute,
+            (uint32_t)second,
+            (uint32_t)millisecond);
         return std::string(text);
     }
 
@@ -313,8 +313,8 @@ namespace xtime {
         char text[10] = {};
         sprintf(text,"%.2d:%.2d:%.2d",
             (uint32_t)hour,
-            (uint32_t)minutes,
-            (uint32_t)seconds);
+            (uint32_t)minute,
+            (uint32_t)second);
         return std::string(text);
     }
 
@@ -322,9 +322,9 @@ namespace xtime {
         char text[16] = {};
         sprintf(text,"%.2d:%.2d:%.2d.%.3d",
             (uint32_t)hour,
-            (uint32_t)minutes,
-            (uint32_t)seconds,
-            (uint32_t)milliseconds);
+            (uint32_t)minute,
+            (uint32_t)second,
+            (uint32_t)millisecond);
         return std::string(text);
     }
 
@@ -352,9 +352,9 @@ namespace xtime {
             month,
             year,
             hour,
-            minutes,
-            seconds,
-            milliseconds);
+            minute,
+            second,
+            millisecond);
     }
 
     void DateTime::set_oadate(const oadate_t &oadate) {
@@ -369,8 +369,8 @@ namespace xtime {
             t.month = atoi(word.substr(5, 2).c_str());
             t.day = atoi(word.substr(8, 2).c_str());
             t.hour = atoi(word.substr(11, 2).c_str());
-            t.minutes = atoi(word.substr(14, 2).c_str());
-            t.seconds = atoi(word.substr(17, 2).c_str());
+            t.minute = atoi(word.substr(14, 2).c_str());
+            t.second = atoi(word.substr(17, 2).c_str());
             int gh = atoi(word.substr(20, 2).c_str());
             int gm = atoi(word.substr(23, 2).c_str());
             int offset = gh * 3600 + gm * 60;
@@ -397,7 +397,7 @@ namespace xtime {
     }
 
     bool convert_str_to_timestamp(std::string str, timestamp_t& t) {
-        uint32_t day = 0, month = 0, year = 0, hour = 0, minutes = 0, seconds = 0;
+        uint32_t day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0;
         str += "_";
         std::vector<std::string> output_list;
         std::size_t start_pos = 0;
@@ -420,8 +420,8 @@ namespace xtime {
                 day = atoi(output_list[2].c_str());
                 if(output_list.size() == 6) {
                     hour = atoi(output_list[3].c_str());
-                    minutes = atoi(output_list[4].c_str());
-                    seconds = atoi(output_list[5].c_str());
+                    minute = atoi(output_list[4].c_str());
+                    second = atoi(output_list[5].c_str());
                 }
             } else
             if(output_list[2].size() >= 4) {
@@ -431,14 +431,14 @@ namespace xtime {
                 year = atoi(output_list[2].c_str());
                 if(output_list.size() == 6) {
                     hour = atoi(output_list[3].c_str());
-                    minutes = atoi(output_list[4].c_str());
-                    seconds = atoi(output_list[5].c_str());
+                    minute = atoi(output_list[4].c_str());
+                    second = atoi(output_list[5].c_str());
                 }
             } else
             if(output_list[2].size() == 2 && output_list.size() == 6) {
                 hour = atoi(output_list[0].c_str());
-                minutes = atoi(output_list[1].c_str());
-                seconds = atoi(output_list[2].c_str());
+                minute = atoi(output_list[1].c_str());
+                second = atoi(output_list[2].c_str());
                 if(output_list[5].size() >= 4 && output_list[4].size() == 2) {
                     day = atoi(output_list[3].c_str());
                     month = atoi(output_list[4].c_str());
@@ -465,13 +465,13 @@ namespace xtime {
         } else {
             return false;
         }
-        if(day >= 32 || day <= 0 || minutes >= 60 ||
-            seconds >= 60 || hour >= 24 ||
+        if(day >= 32 || day <= 0 || minute >= 60 ||
+            second >= 60 || hour >= 24 ||
             year < 1970 || month > 12 || month <= 0) {
             return false;
         }
 
-        t = get_timestamp(day, month, year, hour, minutes, seconds);
+        t = get_timestamp(day, month, year, hour, minute, second);
         return true;
     }
 
@@ -488,8 +488,8 @@ namespace xtime {
 
         _days += _secs / SECONDS_IN_DAY; _secs = _secs % SECONDS_IN_DAY;
         outTime.hour = _secs / SECONDS_IN_HOUR; _secs %= SECONDS_IN_HOUR;
-        outTime.minutes = _secs / SECONDS_IN_MINUTE;
-        outTime.seconds = _secs % SECONDS_IN_MINUTE;
+        outTime.minute = _secs / SECONDS_IN_MINUTE;
+        outTime.second = _secs % SECONDS_IN_MINUTE;
         const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
         const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
@@ -846,13 +846,13 @@ namespace xtime {
 
     bool is_correct_time(
             const uint32_t &hour,
-            const uint32_t &minutes,
-            const uint32_t &seconds,
-            const uint32_t &milliseconds) {
+            const uint32_t &minute,
+            const uint32_t &second,
+            const uint32_t &millisecond) {
         if(hour > 23) return false;
-        if(minutes > 59) return false;
-        if(seconds > 59) return false;
-        if(milliseconds > 999) return false;
+        if(minute > 59) return false;
+        if(second > 59) return false;
+        if(millisecond > 999) return false;
         return true;
     }
 
@@ -861,11 +861,11 @@ namespace xtime {
             const uint32_t &month,
             const uint32_t &year,
             const uint32_t &hour,
-            const uint32_t &minutes,
-            const uint32_t &seconds,
-            const uint32_t &milliseconds) {
+            const uint32_t &minute,
+            const uint32_t &second,
+            const uint32_t &millisecond) {
         if(!is_correct_date(day, month, year)) return false;
-        if(!is_correct_time(hour, minutes, seconds, milliseconds)) return false;
+        if(!is_correct_time(hour, minute, second, millisecond)) return false;
         return true;
     }
 
@@ -893,5 +893,53 @@ namespace xtime {
             else if(day_year > JAN_AND_FEB_DAY) return TABLE_DAY_OF_YEAR[day_year - 1];
         }
         return TABLE_DAY_OF_YEAR[day_year];
+    }
+
+    uint32_t get_month(const timestamp_t &timestamp) {
+        uint32_t day_year = get_day_year(timestamp);
+        const unsigned char JAN_AND_FEB_DAY_LEAP_YEAR = 60;
+        const unsigned char TABLE_DAY_OF_YEAR[] = {
+            0,
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,  // 31 январь
+            2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,        // 28 февраль
+            3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,  // 31 март
+            4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,    // 30 апрель
+            5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+            6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
+            10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
+            11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+            12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
+        };
+        return (is_leap_year(get_year(timestamp)) && day_year >= JAN_AND_FEB_DAY_LEAP_YEAR) ? TABLE_DAY_OF_YEAR[day_year - 1] : TABLE_DAY_OF_YEAR[day_year];
+    }
+
+    void for_minutes(
+            const timestamp_t min_timestamp,
+            const timestamp_t max_timestamp,
+            std::function<void(const timestamp_t &timestamp)> f) {
+        for(timestamp_t t = min_timestamp; t < max_timestamp; t += SECONDS_IN_MINUTE) {
+            f(t);
+        }
+    }
+
+    void for_hours(
+            const timestamp_t min_timestamp,
+            const timestamp_t max_timestamp,
+            std::function<void(const timestamp_t &timestamp)> f) {
+        for(timestamp_t t = min_timestamp; t < max_timestamp; t += SECONDS_IN_HOUR) {
+            f(t);
+        }
+    }
+
+    void for_days(
+            const timestamp_t min_timestamp,
+            const timestamp_t max_timestamp,
+            std::function<void(const timestamp_t &timestamp)> f) {
+        for(timestamp_t t = min_timestamp; t < max_timestamp; t += SECONDS_IN_DAY) {
+            f(t);
+        }
     }
 }
