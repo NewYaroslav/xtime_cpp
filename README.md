@@ -1,8 +1,8 @@
 # xtime
 ![logo](doc/logo.png)
-> boost::posix_time, std, boost ::chrono... надо учится эффективно использовать чужие велосипеды, иначе легко завязнуть в своих
+> boost::posix_time, std, boost ::chrono... надо учиться эффективно использовать чужие велосипеды, иначе легко завязнуть в своих...
 
-Простая C++ библиотека  для работы с меткой времени (*timestamp*) и "понятной датой" (*human readable date*)
+Простая **C++11** библиотека  для работы с меткой времени (*timestamp*) и "понятной датой" (*human readable date*)
 
 ## Описание
 
@@ -217,27 +217,36 @@
 
 ### Различные преобразования и вычисления
 
-* uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year) - Получить количество дней в месяце
-* uint32_t get_num_days_month(const timestamp_t &timestamp) - Получить количество дней в месяце
 * timestamp_t get_first_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в начале дня
 * timestamp_t get_last_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в конце дня
 * timestamp_t get_first_timestamp_hour(const timestamp_t &timestamp) - Получить метку времени в начале часа
 * timestamp_t get_first_timestamp_minute(const timestamp_t &timestamp) - Получить метку времени в начале минуты
 * timestamp_t get_first_timestamp_previous_day(const timestamp_t &timestamp) - Получить метку времени начала предыдущего дня
+* timestamp_t get_timestamp_beg_year(const uint32_t &year) - Получить метку времени начала года
+* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) - Получить последнюю метку времени текущего месяца
+* timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
+* timestamp_t get_week_start_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня начала недели
+* timestamp_t get_week_end_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня конца недели
+* timestamp_t get_first_timestamp_next_day(const timestamp_t &timestamp, const uint32_t &days) - Получить метку времени начала дня через указанное количество дней
+
+* uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year) - Получить количество дней в месяце
+* uint32_t get_num_days_month(const timestamp_t &timestamp) - Получить количество дней в месяце
 * uint32_t get_weekday(const uint32_t &day, const uint32_t &month, const uint32_t &year) - Получить день недели
 * uint32_t get_weekday(const timestamp_t &timestamp) - Получить день недели
 * uint32_t get_minute_day(const timestamp_t &timestamp) - Получить минуту дня
 * uint32_t get_hour_day(const timestamp_t &timestamp) - Получить час дня
 * uint32_t get_second_day(const timestamp_t &timestamp) - Получить секунду дня
 * uint32_t get_day(const timestamp_t &timestamp) - Получить день
-* timestamp_t get_timestamp_beg_year(const uint32_t &year) - Получить метку времени начала года
 * uint32_t get_year(const timestamp_t &timestamp) - Получить год
 * uint32_t get_day_year(const timestamp_t &timestamp) - Получить день года
 * uint32_t get_month(const timestamp_t &timestamp) - Получить месяц года
 * uint32_t get_day_in_year(const timestamp_t &timestamp) - Получить количество дней в текущем году
 * uint32_t get_day_month(const timestamp_t &timestamp) - Получить день месяца
-* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) - Получить последнюю метку времени текущего месяца
-* timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
+
+### Задержка времени
+
+* void delay_ms(const uint32_t milliseconds) - Задержка на указанное количество миллисекунд
+* void delay(const uint64_t seconds) - Задержка на указанное количество секунд
 
 ## Быстрый обзор
 

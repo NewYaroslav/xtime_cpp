@@ -898,6 +898,55 @@ namespace xtime {
         return get_first_timestamp_day(timestamp) - SECONDS_IN_DAY;
     }
 
+
+    /** \brief Получить метку времени начала дня начала недели
+     *
+     * Данная функция найдет метку времемени начала дня начала недели.
+     * Это соответствует началу воскресенья.
+     * \param timestamp Метка времени
+     * \return вернет метку времени начала недели.
+     */
+    inline timestamp_t get_week_start_first_timestamp(const timestamp_t &timestamp) {
+        return get_first_timestamp_day(timestamp) -
+            (timestamp_t)get_weekday(timestamp) * SECONDS_IN_DAY;
+    }
+
+    /** \brief Получить метку времени начала дня конца недели
+     *
+     * Данная функция найдет метку времемени начала дня конца недели.
+     * Это соответствует началу дня субботы.
+     * \param timestamp Метка времени
+     * \return вернет метку времени начала недели.
+     */
+    inline timestamp_t get_week_end_first_timestamp(const timestamp_t &timestamp) {
+        return get_first_timestamp_day(timestamp) +
+            (timestamp_t)(SAT - get_weekday(timestamp)) * SECONDS_IN_DAY;
+    }
+
+    /** \brief Получить метку времени начала дня через указанное количество дней
+     *
+     * Данная функция полезна, если нужно найти метку времени начала дня через указанное количество дней.
+     * \param timestamp Текущая метка времени
+     * \param days Количество дней спустя
+     * \return вернет метку времени начала дня через указанное количество дней
+     */
+    inline timestamp_t get_first_timestamp_next_day(
+            const timestamp_t &timestamp,
+            const uint32_t &days) {
+        return get_first_timestamp_day(timestamp) +
+            ((timestamp_t)days * SECONDS_IN_DAY);
+    }
+
+    /** \brief Задержка на указанное количество миллисекунд
+     * \param milliseconds количество миллисекунд
+     */
+    void delay_ms(const uint64_t milliseconds);
+
+    /** \brief Задержка на указанное количество секунд
+     * \param seconds количество секунд
+     */
+    void delay(const uint64_t seconds);
+
     /** \brief Цикл для минут
      *
      * Данная функция пройдет все метки времени от минимальной до максимальной.

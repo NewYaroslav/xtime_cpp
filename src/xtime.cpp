@@ -23,12 +23,13 @@
 */
 
 #include "xtime.hpp"
-#include "stdio.h"
 #include <ctime>
+#include <thread>
 #include <vector>
 #include <algorithm>
 #include <cctype>
 #include <sys/timeb.h>
+#include <stdio.h>
 
 namespace xtime {
 
@@ -914,6 +915,14 @@ namespace xtime {
             12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,
         };
         return (is_leap_year(get_year(timestamp)) && day_year >= JAN_AND_FEB_DAY_LEAP_YEAR) ? TABLE_DAY_OF_YEAR[day_year - 1] : TABLE_DAY_OF_YEAR[day_year];
+    }
+
+    void delay_ms(const uint64_t milliseconds) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    }
+
+    void delay(const uint64_t seconds) {
+        std::this_thread::sleep_for(std::chrono::seconds(seconds));
     }
 
     void for_minutes(
