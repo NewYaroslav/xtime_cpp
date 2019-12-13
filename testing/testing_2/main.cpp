@@ -36,13 +36,13 @@ int main()
     cout << "--------------------------------------" << endl;
 
     cout << "is_leap_year " << xtime::is_leap_year(xtime::get_year(xtime::get_timestamp(29,2,2016))) << endl;
-    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(29,2,2016)) << endl;
-    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(1,3,2016)) << endl;
+    cout << "get_month " << xtime::get_month(xtime::get_timestamp(29,2,2016)) << endl;
+    cout << "get_month " << xtime::get_month(xtime::get_timestamp(1,3,2016)) << endl;
 
     cout << "is_leap_year " << xtime::is_leap_year(xtime::get_year(xtime::get_timestamp(28,2,2015))) << endl;
-    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(28,2,2015)) << endl;
-    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(1,3,2015)) << endl;
-    cout << "get_month_year " << xtime::get_month_year(xtime::get_timestamp(31,12,2015)) << endl;
+    cout << "get_month " << xtime::get_month(xtime::get_timestamp(28,2,2015)) << endl;
+    cout << "get_month " << xtime::get_month(xtime::get_timestamp(1,3,2015)) << endl;
+    cout << "get_month " << xtime::get_month(xtime::get_timestamp(31,12,2015)) << endl;
     cout << "get_num_days_month " << xtime::get_num_days_month(xtime::get_timestamp(31,12,2015)) << endl;
     cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2019,0,0,0) << endl;
@@ -113,5 +113,7 @@ int main()
     cout << "get_first_timestamp_day " << xtime::get_str_date_time(xtime::get_first_timestamp_day(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
     cout << "get_first_timestamp_hour " << xtime::get_str_date_time(xtime::get_first_timestamp_hour(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
     cout << "get_first_timestamp_minute " << xtime::get_str_date_time(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
+
+    cout << "get_minute_hour " << xtime::get_minute_hour(xtime::get_timestamp(31,12,2016,0,33,0)) << endl;
     return 0;
 }

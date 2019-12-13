@@ -234,6 +234,7 @@
 * uint32_t get_weekday(const uint32_t &day, const uint32_t &month, const uint32_t &year) - Получить день недели
 * uint32_t get_weekday(const timestamp_t &timestamp) - Получить день недели
 * uint32_t get_minute_day(const timestamp_t &timestamp) - Получить минуту дня
+* uint32_t get_minute_hour(const timestamp_t &timestamp) - Получить минуту часа
 * uint32_t get_hour_day(const timestamp_t &timestamp) - Получить час дня
 * uint32_t get_second_day(const timestamp_t &timestamp) - Получить секунду дня
 * uint32_t get_day(const timestamp_t &timestamp) - Получить день
@@ -245,7 +246,7 @@
 
 ### Задержка времени
 
-* void delay_ms(const uint32_t milliseconds) - Задержка на указанное количество миллисекунд
+* void delay_ms(const uint64_t milliseconds) - Задержка на указанное количество миллисекунд
 * void delay(const uint64_t seconds) - Задержка на указанное количество секунд
 
 ## Быстрый обзор

@@ -744,12 +744,23 @@ namespace xtime {
     }
 
     /** \brief Получить минуту дня
+     *
      * Данная функция вернет от 0 до 1439 (минуту дня)
      * \param timestamp метка времени
      * \return минута дня
      */
     inline uint32_t get_minute_day(const timestamp_t &timestamp) {
             return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_DAY);
+    }
+
+    /** \brief Получить минуту часа
+     *
+     * Данная функция вернет от 0 до 59
+     * \param timestamp метка времени
+     * \return Минута часа
+     */
+    inline uint32_t get_minute_hour(const timestamp_t &timestamp) {
+            return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_HOUR);
     }
 
     /** \brief Получить час дня
