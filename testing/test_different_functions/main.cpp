@@ -115,5 +115,20 @@ int main()
     cout << "get_first_timestamp_minute " << xtime::get_str_date_time(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
 
     cout << "get_minute_hour " << xtime::get_minute_hour(xtime::get_timestamp(31,12,2016,0,33,0)) << endl;
+    cout << "get_first_timestamp_year " << xtime::get_str_date_time(xtime::get_first_timestamp_year(xtime::get_timestamp(31,12,2016,0,33,0))) << endl;
+    cout << "get_first_timestamp_year " << xtime::get_str_date_time(xtime::get_first_timestamp_year(xtime::get_timestamp(5,11,2015,5,33,0))) << endl;
+    cout << "get_first_timestamp_year " << xtime::get_str_date_time(xtime::get_first_timestamp_year(xtime::get_timestamp(5,5,2014,3,33,0))) << endl;
+    cout << "get_first_timestamp_year " << xtime::get_str_date_time(xtime::get_first_timestamp_year(xtime::get_timestamp(1,3,2013,9,33,0))) << endl;
+
+    cout << "get_last_timestamp_year " << xtime::get_str_date_time(xtime::get_last_timestamp_year(xtime::get_timestamp(31,12,2016,0,33,0))) << endl;
+    cout << "get_last_timestamp_year " << xtime::get_str_date_time(xtime::get_last_timestamp_year(xtime::get_timestamp(5,11,2015,5,33,0))) << endl;
+    cout << "get_last_timestamp_year " << xtime::get_str_date_time(xtime::get_last_timestamp_year(xtime::get_timestamp(5,5,2014,3,33,0))) << endl;
+    cout << "get_last_timestamp_year " << xtime::get_str_date_time(xtime::get_last_timestamp_year(xtime::get_timestamp(1,3,2013,9,33,0))) << endl;
+
+    cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(1,3,2013,9,33,0))) << endl;
+    cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(7,3,2013,18,33,0))) << endl;
+    cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(5,12,2017,18,33,0))) << endl;
+    cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(31,12,2019,18,33,0))) << endl;
+    cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(28,2,2020,0,0,0))) << endl;
     return 0;
 }

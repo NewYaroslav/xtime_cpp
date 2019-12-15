@@ -660,7 +660,36 @@ namespace xtime {
         const uint32_t &second = 0,
         const uint32_t &millisecond = 0);
 
+    /** \brief Получить метку времени в начале года
+     *
+     * Данная функция обнуляет дни, месяцы, часы, минуты и секунды
+     * \param timestamp метка времени
+     * \return Метка времени начала года
+     */
+    inline timestamp_t get_first_timestamp_year(const timestamp_t &timestamp) {
+        timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
+        if(t < SECONDS_IN_YEAR) return timestamp - t;
+        else if(t < (2*SECONDS_IN_YEAR)) return timestamp + SECONDS_IN_YEAR - t;
+        else if(t < (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR)) return timestamp + (2*SECONDS_IN_YEAR) - t;
+        return timestamp + (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR) - t;
+    }
+
+    /** \brief Получить метку времени в конце года
+     *
+     * Данная функция находит последнюю метку времени текущего года
+     * \param timestamp метка времени
+     * \return Метка времени конца года
+     */
+    inline timestamp_t get_last_timestamp_year(const timestamp_t &timestamp) {
+        timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
+        if(t < SECONDS_IN_YEAR) return timestamp + SECONDS_IN_YEAR - t - 1;
+        else if(t < (2*SECONDS_IN_YEAR)) return timestamp + (2*SECONDS_IN_YEAR) - t - 1;
+        else if(t < (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR)) return timestamp + (2*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR) - t - 1;
+        return timestamp + (3*SECONDS_IN_YEAR + SECONDS_IN_LEAP_YEAR) - t - 1;
+    }
+
     /** \brief Получить метку времени в начале дня
+     *
      * Данная функция обнуляет часы, минуты и секунды
      * \param timestamp метка времени
      * \return метка времени в начале дня
@@ -814,7 +843,6 @@ namespace xtime {
      */
     inline timestamp_t get_timestamp_beg_year(const uint32_t &year) {
         uint32_t diff = (year - FIRST_YEAR_UNIX);
-        if(diff < 0) return 0;
         timestamp_t t = (diff / 4) * SECONDS_IN_4_YEAR;
         uint32_t temp = diff % 4;
         if(temp == 0) return t;
@@ -859,6 +887,18 @@ namespace xtime {
      * \return месяц года
      */
     uint32_t get_month(const timestamp_t &timestamp);
+
+
+    /** \brief Получить метку времени в начале текущего месяца
+     * \param timestamp Метка времени
+     * \return Метка времени в начале текущего месяца
+     */
+    inline timestamp_t get_first_timestamp_month(const timestamp_t &timestamp) {
+        uint32_t day = get_day_month(timestamp);
+        timestamp_t timestamp_new = get_first_timestamp_day(timestamp);
+        timestamp_new -= (day - 1) * SECONDS_IN_DAY;
+        return timestamp_new;
+    }
 
     /** \brief Получить последнюю метку времени текущего месяца
      * \param timestamp Метка времени

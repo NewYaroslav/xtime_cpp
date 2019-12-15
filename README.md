@@ -7,7 +7,7 @@
 ## Описание
 
 Зачем нужна эта библиотека? Данная библиотека поможет в случаях, когда есть необходимость часто использовать метку времени и искать данные, имеющие взаимосвязь с разными промежутками времени.
-Например, когда нужно перебирать данные, у которых  индекс элемента - метка времени, данная библиотека может очень пригодится, она позволит легко получить из метки времени час или минуту дня, позволит найти последний день месяца, получить день недели или текущий год и т.д.
+Например, когда нужно перебирать данные, у которых  индекс элемента - метка времени, данная библиотека может очень пригодится, она позволит легко получить из метки времени час или минуту дня, найти метку времени начала текущего месяца или найти последний день месяца, получить день недели или текущий год и т.д.
 Данная библиотека позволяет удобно и быстро работать с меткой времени (*timestamp*) и "понятной датой" (*human readable date*). Например: 
 
 * Можно получить синхронизированное время с интернетом
@@ -217,13 +217,16 @@
 
 ### Различные преобразования и вычисления
 
+* timestamp_t get_first_timestamp_year(const timestamp_t &timestamp) - Получить метку времени в начале года
+* timestamp_t get_last_timestamp_year(const timestamp_t &timestamp) - Получить метку времени в конце года
+* timestamp_t get_first_timestamp_month(const timestamp_t &timestamp) - Получить метку времени в начале текущего месяца
+* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) - Получить последнюю метку времени текущего месяца
 * timestamp_t get_first_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в начале дня
 * timestamp_t get_last_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в конце дня
 * timestamp_t get_first_timestamp_hour(const timestamp_t &timestamp) - Получить метку времени в начале часа
 * timestamp_t get_first_timestamp_minute(const timestamp_t &timestamp) - Получить метку времени в начале минуты
 * timestamp_t get_first_timestamp_previous_day(const timestamp_t &timestamp) - Получить метку времени начала предыдущего дня
 * timestamp_t get_timestamp_beg_year(const uint32_t &year) - Получить метку времени начала года
-* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) - Получить последнюю метку времени текущего месяца
 * timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
 * timestamp_t get_week_start_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня начала недели
 * timestamp_t get_week_end_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня конца недели
