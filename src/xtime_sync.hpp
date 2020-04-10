@@ -122,6 +122,7 @@ namespace xtime {
             CURL *curl = curl_easy_init();
             if(!curl) return XTIME_CURL_ERROR;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+			curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
             sert_file_mutex.lock();
             curl_easy_setopt(curl, CURLOPT_CAINFO, sert_file.c_str());
             sert_file_mutex.unlock();
