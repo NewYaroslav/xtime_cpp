@@ -48,5 +48,7 @@ int main()
     cout << "EET TO GMT " << xtime::get_str_date_time(xtime::convert_eet_to_gmt(xtime::get_timestamp(25, 10, 2009, 3, 0, 0))) << endl;
     cout << "" << endl;
     cout << "********************************************************************************" << endl;
+    cout << "GMT " << xtime::get_str_date_time(xtime::get_timestamp()) << endl;
+    std::system("pause");
     return 0;
 }

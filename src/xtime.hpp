@@ -109,25 +109,25 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Дата автоматизации OLE
      */
-    oadate_t convert_timestamp_to_oadate(const timestamp_t &timestamp);
+    oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp);
 
     /** \brief Получить дату автоматизации OLE из метки времени c плавающей точкой
      * \param timestamp Метка времени c плавающей точкой
      * \return Дата автоматизации OLE
      */
-    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t &timestamp);
+    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp);
 
     /** \brief Преобразовать дату автоматизации OLE в метку времени
      * \param oadate Дата автоматизации OLE
      * \return Метка времени
      */
-    timestamp_t convert_oadate_to_timestamp(const oadate_t &oadate);
+    timestamp_t convert_oadate_to_timestamp(const oadate_t oadate);
 
     /** \brief Преобразовать дату автоматизации OLE в метку времени  плавающей точкой
      * \param oadate Дата автоматизации OLE
      * \return Метка времени с плавающей точкой
      */
-    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t &oadate);
+    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate);
 
     /** \brief Получить дату автоматизации OLE
      * \return дата автоматизации OLE
@@ -145,13 +145,13 @@ namespace xtime {
      * \return дата автоматизации OLE
      */
     oadate_t get_oadate(
-        const uint32_t &day,
-        const uint32_t &month,
-        const uint32_t &year,
-        const uint32_t &hour = 0,
-        const uint32_t &minute = 0,
-        const uint32_t &second = 0,
-        const uint32_t &millisecond = 0);
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year,
+        const uint32_t hour = 0,
+        const uint32_t minute = 0,
+        const uint32_t second = 0,
+        const uint32_t millisecond = 0);
 
     #define get_ole_automation_date get_oadate
 
@@ -160,35 +160,35 @@ namespace xtime {
      * \param timestamp метка времен
      * \return строка, содержащая время и дату
      */
-    std::string get_str_date_time(const timestamp_t &timestamp);
+    std::string get_str_date_time(const timestamp_t timestamp);
 
     /** \brief Получить время и дату в виде строки
      * Формат строки: DD.MM.YYYY HH:MM:SS.ms
      * \param timestamp метка времен
      * \return строка, содержащая время и дату
      */
-    std::string get_str_date_time_ms(const ftimestamp_t &timestamp);
+    std::string get_str_date_time_ms(const ftimestamp_t timestamp);
 
     /** \brief Получить дату в виде строки
      * Формат строки: DD.MM.YYYY
      * \param timestamp метка времен
      * \return строка, содержащая дату
      */
-    std::string get_str_date(const timestamp_t &timestamp);
+    std::string get_str_date(const timestamp_t timestamp);
 
     /** \brief Получить время в виде строки
      * Формат строки: HH:MM:SS
      * \param timestamp метка времен
      * \return строка, содержащая время
      */
-    std::string get_str_time(const timestamp_t &timestamp);
+    std::string get_str_time(const timestamp_t timestamp);
 
     /** \brief Получить время с миллисекундами в виде строки
      * Формат строки: HH:MM:SS.fff
      * \param timestamp метка времен
      * \return строка, содержащая время
      */
-    std::string get_str_time_ms(const ftimestamp_t &timestamp);
+    std::string get_str_time_ms(const ftimestamp_t timestamp);
 
     /** \brief Получить время и дату компьютера в виде строки
      * Формат строки: DD.MM.YYYY HH:MM:SS
@@ -251,12 +251,12 @@ namespace xtime {
      * \return метка времени
      */
     timestamp_t get_timestamp(
-        const uint32_t &day,
-        const uint32_t &month,
-        const uint32_t &year,
-        const uint32_t &hour = 0,
-        const uint32_t &minute = 0,
-        const uint32_t &second = 0);
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year,
+        const uint32_t hour = 0,
+        const uint32_t minute = 0,
+        const uint32_t second = 0);
 
     /** \brief Получить метку времени с миллисекундами из даты и стандартного времени
      * \param day день
@@ -269,13 +269,13 @@ namespace xtime {
      * \return метка времени
      */
     ftimestamp_t get_ftimestamp(
-        const uint32_t &day,
-        const uint32_t &month,
-        const uint32_t &year,
-        const uint32_t &hour = 0,
-        const uint32_t &minute = 0,
-        const uint32_t &second = 0,
-        const uint32_t &millisecond = 0);
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year,
+        const uint32_t hour = 0,
+        const uint32_t minute = 0,
+        const uint32_t second = 0,
+        const uint32_t millisecond = 0);
 
     /** \brief Класс для хранения времени
      */
@@ -335,23 +335,23 @@ namespace xtime {
          * \param millisecond миллисекунды
          */
         DateTime(
-            const uint32_t &day,
-            const uint32_t &month,
-            const uint32_t &year,
-            const uint32_t &hour = 0,
-            const uint32_t &minute = 0,
-            const uint32_t &second = 0,
-            const uint32_t &millisecond = 0);
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year,
+            const uint32_t hour = 0,
+            const uint32_t minute = 0,
+            const uint32_t second = 0,
+            const uint32_t millisecond = 0);
 
         /** \brief Инициализация с указанием unix-времени
          * \param timestamp метка времени
          */
-        DateTime(const timestamp_t &timestamp);
+        DateTime(const timestamp_t timestamp);
 
         /** \brief Инициализация с указанием unix-времени
          * \param timestamp метка времени
          */
-        DateTime(const ftimestamp_t &ftimestamp);
+        DateTime(const ftimestamp_t ftimestamp);
 
         /** \brief Инициализация с указанием unix-времени в формате ISO
          * Пример формата ISO: 2013-12-06T15:23:01+00:00
@@ -372,12 +372,12 @@ namespace xtime {
         /** \brief Установить время
          * \param timestamp метка времени
          */
-        void set_timestamp(const timestamp_t &timestamp);
+        void set_timestamp(const timestamp_t timestamp);
 
         /** \brief Установить время с миллисекундами
          * \param timestamp метка времени
          */
-        void set_ftimestamp(const ftimestamp_t &ftimestamp);
+        void set_ftimestamp(const ftimestamp_t ftimestamp);
 
         /** \brief Вывести время и дату на экран
          */
@@ -436,7 +436,7 @@ namespace xtime {
         /** \brief Установить дату автоматизации OLE
          * \param oadate Дата автоматизации OLE
          */
-        void set_oadate(const oadate_t &oadate);
+        void set_oadate(const oadate_t oadate);
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса DateTime
@@ -455,15 +455,15 @@ namespace xtime {
      * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
      */
     uint32_t get_weekday(
-        const uint32_t &day,
-        const uint32_t &month,
-        const uint32_t &year);
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year);
 
     /** \brief Получить день недели
      * \param timestamp метка времени
      * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
      */
-    inline uint32_t get_weekday(const timestamp_t &timestamp) {
+    inline uint32_t get_weekday(const timestamp_t timestamp) {
         return ((timestamp/SECONDS_IN_DAY + THU) % DAYS_IN_WEEK);
     }
 
@@ -477,7 +477,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день месяца
      */
-    uint32_t get_day_month(const timestamp_t &timestamp);
+    uint32_t get_day_month(const timestamp_t timestamp);
 
     /** \brief Преобразует строку в timestamp
      *
@@ -500,25 +500,25 @@ namespace xtime {
      * \param timestamp метка времени
      * \return класс DateTime
      */
-    DateTime convert_timestamp_to_datetime(const timestamp_t &timestamp);
+    DateTime convert_timestamp_to_datetime(const timestamp_t timestamp);
 
     /** \brief Напечатать дату и время
      * \param timestamp метка времени
      */
-    void print_date_time(const timestamp_t &timestamp);
+    void print_date_time(const timestamp_t timestamp);
 
     /** \brief Получить количество дней в месяце
      * \param month месяц
      * \param year год
      * \return количество дней в месяце
      */
-    uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year);
+    uint32_t get_num_days_month(const uint32_t month, const uint32_t year);
 
     /** \brief Получить количество дней в месяце
      * \param timestamp метка времени
      * \return количество дней в месяце
      */
-    uint32_t get_num_days_month(const timestamp_t &timestamp);
+    uint32_t get_num_days_month(const timestamp_t timestamp);
 
     /** \brief Переводит время GMT во время CET
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -527,7 +527,7 @@ namespace xtime {
      * \param gmt метка времени, время GMT
      * \return время CET
      */
-    timestamp_t convert_gmt_to_cet(const timestamp_t &gmt);
+    timestamp_t convert_gmt_to_cet(const timestamp_t gmt);
 
     /** \brief Переводит время GMT во время EET
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -536,13 +536,13 @@ namespace xtime {
      * \param gmt метка времени, время GMT
      * \return время EET
      */
-    timestamp_t convert_gmt_to_eet(const timestamp_t &gmt);
+    timestamp_t convert_gmt_to_eet(const timestamp_t gmt);
 
     /** \brief Переводит время GMT во время MSK
      * \param gmt метка времени, время GMT
      * \return время MSK
      */
-    timestamp_t convert_gmt_to_msk(const timestamp_t &gmt);
+    timestamp_t convert_gmt_to_msk(const timestamp_t gmt);
 
     /** \brief Переводит время CET во время GMT
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -551,7 +551,7 @@ namespace xtime {
      * \param cet метка времени c измененым часовым поясом, время CET
      * \return время GMT
      */
-    timestamp_t convert_cet_to_gmt(const timestamp_t &cet);
+    timestamp_t convert_cet_to_gmt(const timestamp_t cet);
 
     /** \brief Переводит время EET во время GMT
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -560,19 +560,19 @@ namespace xtime {
      * \param eet метка времени c измененым часовым поясом, время EET
      * \return время GMT
      */
-    timestamp_t convert_eet_to_gmt(const timestamp_t &eet);
+    timestamp_t convert_eet_to_gmt(const timestamp_t eet);
 
     /** \brief Переводит время MSK во время GMT
      * \param msk метка времени c измененым часовым поясом, время MSK
      * \return время GMT
      */
-    timestamp_t convert_msk_to_gmt(const timestamp_t &msk);
+    timestamp_t convert_msk_to_gmt(const timestamp_t msk);
 
     /** \brief Проверить начало получаса
      * \param timestamp метка времени
      * \return вернет true, если начало получаса
      */
-    inline bool is_beg_half_hour(const timestamp_t &timestamp) {
+    inline bool is_beg_half_hour(const timestamp_t timestamp) {
         return timestamp % SECONDS_IN_HALF_HOUR == 0;
     }
 
@@ -580,7 +580,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало часа
      */
-    inline bool is_beg_hour(const timestamp_t &timestamp) {
+    inline bool is_beg_hour(const timestamp_t timestamp) {
         return timestamp % SECONDS_IN_HOUR == 0;
     }
 
@@ -588,7 +588,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало дня
      */
-    inline bool is_beg_day(const timestamp_t &timestamp) {
+    inline bool is_beg_day(const timestamp_t timestamp) {
         return (timestamp % SECONDS_IN_DAY == 0);
     }
 
@@ -598,7 +598,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало недели
      */
-    inline bool is_beg_week(const timestamp_t &timestamp){
+    inline bool is_beg_week(const timestamp_t timestamp){
         return get_weekday(timestamp) == SUN;
     }
 
@@ -618,7 +618,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если конец месяца
      */
-    bool is_end_month(const timestamp_t &timestamp);
+    bool is_end_month(const timestamp_t timestamp);
 
     /** \brief Проверить корректность даты
      * \param day день
@@ -626,7 +626,7 @@ namespace xtime {
      * \param year год
      * \return вернет true, если заданная дата возможна
      */
-    bool is_correct_date(const uint32_t &day, const uint32_t &month, const uint32_t &year);
+    bool is_correct_date(const uint32_t day, const uint32_t month, const uint32_t year);
 
     /** \brief Проверить корректность времени
      * \param hour час
@@ -636,10 +636,10 @@ namespace xtime {
      * \return вернет true, если заданное время корректно
      */
     bool is_correct_time(
-        const uint32_t &hour,
-        const uint32_t &minutes = 0,
-        const uint32_t &seconds = 0,
-        const uint32_t &milliseconds = 0);
+        const uint32_t hour,
+        const uint32_t minutes = 0,
+        const uint32_t seconds = 0,
+        const uint32_t milliseconds = 0);
 
     /** \brief Проверить корректность даты и времени
      * \param day день
@@ -652,13 +652,13 @@ namespace xtime {
      * \return вернет true, если заданное время корректно
      */
     bool is_correct_date_time(
-        const uint32_t &day,
-        const uint32_t &month,
-        const uint32_t &year,
-        const uint32_t &hour = 0,
-        const uint32_t &minute = 0,
-        const uint32_t &second = 0,
-        const uint32_t &millisecond = 0);
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year,
+        const uint32_t hour = 0,
+        const uint32_t minute = 0,
+        const uint32_t second = 0,
+        const uint32_t millisecond = 0);
 
     /** \brief Получить метку времени в начале года
      *
@@ -666,7 +666,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Метка времени начала года
      */
-    inline timestamp_t get_first_timestamp_year(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_year(const timestamp_t timestamp) {
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return timestamp - t;
         else if(t < (2*SECONDS_IN_YEAR)) return timestamp + SECONDS_IN_YEAR - t;
@@ -680,7 +680,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Метка времени конца года
      */
-    inline timestamp_t get_last_timestamp_year(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_year(const timestamp_t timestamp = get_timestamp()) {
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return timestamp + SECONDS_IN_YEAR - t - 1;
         else if(t < (2*SECONDS_IN_YEAR)) return timestamp + (2*SECONDS_IN_YEAR) - t - 1;
@@ -690,11 +690,12 @@ namespace xtime {
 
     /** \brief Получить метку времени в начале дня
      *
-     * Данная функция обнуляет часы, минуты и секунды
+     * Данная функция вернет метку времени в начале дня.
+     * Функция обнуляет часы, минуты и секунды
      * \param timestamp метка времени
      * \return метка времени в начале дня
      */
-    inline timestamp_t get_first_timestamp_day(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_day(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_DAY);
     }
 
@@ -703,7 +704,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в конце дня
      */
-    inline timestamp_t get_last_timestamp_day(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_day(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_DAY) + SECONDS_IN_DAY - 1;
     }
 
@@ -712,7 +713,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в начале часа
      */
-    inline timestamp_t get_first_timestamp_hour(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_hour(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_HOUR);
     }
 
@@ -721,7 +722,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в конце часа
      */
-    inline timestamp_t get_last_timestamp_hour(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_hour(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_HOUR) + SECONDS_IN_HOUR - 1;
     }
 
@@ -730,7 +731,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в начале минуты
      */
-    inline timestamp_t get_first_timestamp_minute(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_minute(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_MINUTE);
     }
 
@@ -739,7 +740,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в конце минуты
      */
-    inline timestamp_t get_last_timestamp_minute(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_minute(const timestamp_t timestamp = get_timestamp()) {
         return timestamp - (timestamp % SECONDS_IN_MINUTE) + SECONDS_IN_MINUTE - 1;
     }
 
@@ -747,7 +748,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true если выходной день
      */
-    inline bool is_day_off(const timestamp_t &timestamp) {
+    inline bool is_day_off(const timestamp_t timestamp = get_timestamp()) {
         uint32_t wday = get_weekday(timestamp);
         if(wday == xtime::SUN || wday == xtime::SAT) return true;
         return false;
@@ -757,7 +758,7 @@ namespace xtime {
      * \param day день с начала отсчета Unix-времени
      * \return вернет true если выходной день
      */
-    inline bool is_day_off_for_day(const uint32_t &day) {
+    inline bool is_day_off_for_day(const uint32_t day) {
         uint32_t wday = (day + THU) % DAYS_IN_WEEK;
         if(wday == xtime::SUN || wday == xtime::SAT) return true;
         return false;
@@ -767,7 +768,7 @@ namespace xtime {
      * \param year год
      * \return вернет true, если год високосный
      */
-    inline bool is_leap_year(const uint32_t &year) {
+    inline bool is_leap_year(const uint32_t year) {
         if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
         return false;
     }
@@ -778,7 +779,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return минута дня
      */
-    inline uint32_t get_minute_day(const timestamp_t &timestamp) {
+    inline uint32_t get_minute_day(const timestamp_t timestamp) {
             return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_DAY);
     }
 
@@ -788,7 +789,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Минута часа
      */
-    inline uint32_t get_minute_hour(const timestamp_t &timestamp) {
+    inline uint32_t get_minute_hour(const timestamp_t timestamp) {
             return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_HOUR);
     }
 
@@ -797,7 +798,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return час дня
      */
-    inline uint32_t get_hour_day(const timestamp_t &timestamp) {
+    inline uint32_t get_hour_day(const timestamp_t timestamp) {
             return (uint32_t)((timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY);
     }
 
@@ -806,7 +807,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда минуты
      */
-    inline uint32_t get_second_minute(const timestamp_t &timestamp) {
+    inline uint32_t get_second_minute(const timestamp_t timestamp) {
             return (uint32_t)(timestamp % SECONDS_IN_MINUTE);
     }
 
@@ -815,7 +816,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда часа
      */
-    inline uint32_t get_second_hour(const timestamp_t &timestamp) {
+    inline uint32_t get_second_hour(const timestamp_t timestamp) {
             return (uint32_t)(timestamp % SECONDS_IN_HOUR);
     }
 
@@ -824,7 +825,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда дня
      */
-    inline uint32_t get_second_day(const timestamp_t &timestamp) {
+    inline uint32_t get_second_day(const timestamp_t timestamp) {
             return (uint32_t)(timestamp % SECONDS_IN_DAY);
     }
 
@@ -833,7 +834,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день с начала UNIX времени
      */
-    inline uint32_t get_day(const timestamp_t &timestamp) {
+    inline uint32_t get_day(const timestamp_t timestamp) {
             return (uint32_t)(timestamp / SECONDS_IN_DAY);
     }
 
@@ -841,7 +842,7 @@ namespace xtime {
      * \param year год
      * \return метка времени начала года
      */
-    inline timestamp_t get_timestamp_beg_year(const uint32_t &year) {
+    inline timestamp_t get_timestamp_beg_year(const uint32_t year) {
         uint32_t diff = (year - FIRST_YEAR_UNIX);
         timestamp_t t = (diff / 4) * SECONDS_IN_4_YEAR;
         uint32_t temp = diff % 4;
@@ -855,7 +856,7 @@ namespace xtime {
      * \param unix_day день с начала UNIX-времени
      * \return метка времени начала дня с момента начала UNIX-времени
      */
-    inline timestamp_t get_timestamp_day(const uint32_t &unix_day) {
+    inline timestamp_t get_timestamp_day(const uint32_t unix_day) {
         return (timestamp_t)unix_day * SECONDS_IN_DAY;
     }
 
@@ -864,7 +865,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return год UNIX времени
      */
-    inline uint32_t get_year(const timestamp_t &timestamp) {
+    inline uint32_t get_year(const timestamp_t timestamp) {
         uint32_t year = FIRST_YEAR_UNIX + 4 * (timestamp / SECONDS_IN_4_YEAR);
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return year;
@@ -877,7 +878,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день года
      */
-    inline uint32_t get_day_year(const timestamp_t &timestamp) {
+    inline uint32_t get_day_year(const timestamp_t timestamp) {
         uint32_t year = get_year(timestamp);
         return get_day(timestamp) - get_day(get_timestamp_beg_year(year)) + 1;
     }
@@ -886,14 +887,14 @@ namespace xtime {
      * \param timestamp метка времени
      * \return месяц года
      */
-    uint32_t get_month(const timestamp_t &timestamp);
+    uint32_t get_month(const timestamp_t timestamp);
 
 
     /** \brief Получить метку времени в начале текущего месяца
      * \param timestamp Метка времени
      * \return Метка времени в начале текущего месяца
      */
-    inline timestamp_t get_first_timestamp_month(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_month(const timestamp_t timestamp) {
         uint32_t day = get_day_month(timestamp);
         timestamp_t timestamp_new = get_first_timestamp_day(timestamp);
         timestamp_new -= (day - 1) * SECONDS_IN_DAY;
@@ -904,7 +905,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Последняя метка времени текущего месяца
      */
-    inline timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_month(const timestamp_t timestamp) {
         uint32_t days_month = get_num_days_month(timestamp);
         uint32_t day = get_day_month(timestamp);
         timestamp_t timestamp_new = get_last_timestamp_day(timestamp);
@@ -917,7 +918,7 @@ namespace xtime {
      * \param timestamp Метка времениm
      * \return Последняя метка времени текущего последнего воскресения текущего месяца
      */
-    inline timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp) {
+    inline timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp) {
         timestamp_t last_timestamp = get_last_timestamp_month(timestamp);
         uint32_t weekday = get_weekday(timestamp);
         last_timestamp -= weekday * SECONDS_IN_DAY;
@@ -928,7 +929,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return дней в текущем году
      */
-    inline uint32_t get_day_in_year(const timestamp_t &timestamp) {
+    inline uint32_t get_day_in_year(const timestamp_t timestamp) {
         if(is_leap_year(get_year(timestamp))) return DAYS_IN_LEAP_YEAR;
         return DAYS_IN_YEAR;
     }
@@ -937,7 +938,7 @@ namespace xtime {
      * \param day день с начала unix-времени
      * \return метка времени
      */
-    inline timestamp_t get_first_timestamp_for_day(const uint32_t &day) {
+    inline timestamp_t get_first_timestamp_for_day(const uint32_t day) {
         return day * SECONDS_IN_DAY;
     }
 
@@ -945,7 +946,7 @@ namespace xtime {
      * \param timestamp Метка времени текущего дня
      * \return метка времени начала предыдущего дня
      */
-    inline timestamp_t get_first_timestamp_previous_day(const timestamp_t &timestamp) {
+    inline timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp) {
         return get_first_timestamp_day(timestamp) - SECONDS_IN_DAY;
     }
 
@@ -957,7 +958,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return вернет метку времени начала недели.
      */
-    inline timestamp_t get_week_start_first_timestamp(const timestamp_t &timestamp) {
+    inline timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp) {
         return get_first_timestamp_day(timestamp) -
             (timestamp_t)get_weekday(timestamp) * SECONDS_IN_DAY;
     }
@@ -969,7 +970,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return вернет метку времени начала недели.
      */
-    inline timestamp_t get_week_end_first_timestamp(const timestamp_t &timestamp) {
+    inline timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp) {
         return get_first_timestamp_day(timestamp) +
             (timestamp_t)(SAT - get_weekday(timestamp)) * SECONDS_IN_DAY;
     }
@@ -982,8 +983,8 @@ namespace xtime {
      * \return вернет метку времени начала дня через указанное количество дней
      */
     inline timestamp_t get_first_timestamp_next_day(
-            const timestamp_t &timestamp,
-            const uint32_t &days) {
+            const timestamp_t timestamp,
+            const uint32_t days) {
         return get_first_timestamp_day(timestamp) +
             ((timestamp_t)days * SECONDS_IN_DAY);
     }
@@ -1008,7 +1009,7 @@ namespace xtime {
     void for_minutes(
             const timestamp_t min_timestamp,
             const timestamp_t max_timestamp,
-            std::function<void(const timestamp_t &timestamp)> f);
+            std::function<void(const timestamp_t timestamp)> f);
 
     /** \brief Цикл для часов
      *
@@ -1020,7 +1021,7 @@ namespace xtime {
     void for_hours(
             const timestamp_t min_timestamp,
             const timestamp_t max_timestamp,
-            std::function<void(const timestamp_t &timestamp)> f);
+            std::function<void(const timestamp_t timestamp)> f);
 
     /** \brief Цикл для дней
      *
@@ -1032,7 +1033,7 @@ namespace xtime {
     void for_days(
             const timestamp_t min_timestamp,
             const timestamp_t max_timestamp,
-            std::function<void(const timestamp_t &timestamp)> f);
+            std::function<void(const timestamp_t timestamp)> f);
 }
 
 #endif // XTIME_HPP_INCLUDED
