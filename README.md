@@ -28,9 +28,9 @@
 
 ## Типы данных
 
-* timestamp_t - Тип длиной 64 бита для хранения метки времени.
-* ftimestamp_t - Тип с плавающей точкой длиной 64 бита для хранения метки времени с дробной частью секунд.
-* oadate_t - Тип даты автоматизации (OADate) с плавающей точкой
+* **timestamp_t** - Тип длиной 64 бита для хранения метки времени.
+* **ftimestamp_t** - Тип с плавающей точкой длиной 64 бита для хранения метки времени с дробной частью секунд.
+* **oadate_t** - Тип даты автоматизации (OADate) с плавающей точкой
 
 ## Перечисления и константы
 ```C++
@@ -100,6 +100,16 @@
         "July","Aug","Sept",
         "Oct","Nov","Dec",
     }; /**< Сокращенные имена месяцев */
+	
+	const std::array<std::string, DAYS_IN_WEEK> weekday_name_short = {
+        "SUN",
+        "MON",
+        "TUS",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+    }; /**< Сокращенные имена дней недели */
 ```
 ## Функции и методы
 
@@ -131,37 +141,77 @@
 
 ### Преобразование времени в строку или вывод на экран
 
-* std::string get_str_date_time(const timestamp_t &timestamp) - Получить время и дату в виде строки из метки времени 
+* std::string to_string(const std::string &mode, const xtime::ftimestamp_t timestamp) - Преобразовать время и дату в строку с пользовательскими настройками.
+
+В качестве параметров функция принимает следующие аргументы:
+
+**%YYYY** - год
+
+**%YY** - последние два числа года
+
+**%Y** - год, без ограничений в 4 символа
+
+**%MM** - месяц (число)
+
+**%M** - месяц (скоращенное имя)
+
+**%DD** - день месяца
+
+**%hh** - час дня
+
+**%mm** - минуты часа
+
+**%ss** - секунды
+
+**%sss** - миллисекунды
+
+**%W** - день недели (число)
+
+**%w** - день недели (скоращенное имя)
+
+
+Пример:
+
+```C++
+cout << "to_string " << xtime::to_string("%YYYY-%MM-%DD",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+cout << "to_string " << xtime::to_string("%DD-%MM-%YYYY %hh:%mm:%ss",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+cout << "to_string " << xtime::to_string("%hh:%mm",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31,12,2016,22,55,56,567)) << endl;
+```
+
+* std::string get_str_iso_8601(const xtime::ftimestamp_t timestamp, const int64_t offset) - Получить строку в формате ISO 8601
+
+* std::string get_str_date_time(const timestamp_t timestamp) - Получить время и дату в виде строки из метки времени 
 
 (Формат строки: DD.MM.YYYY HH:MM:SS)
-* std::string get_str_date_time_ms(const timestamp_ms_t &timestamp) - Получить время и дату в виде строки из метки времени
+
+* std::string get_str_date_time_ms(const ftimestamp_t timestamp) - Получить время и дату в виде строки из метки времени
  
 (Формат строки: DD.MM.YYYY HH:MM:SS.fff)
-* std::string get_str_date(const timestamp_t &timestamp) - Получить время и дату в виде строки из метки времени 
+
+* std::string get_str_date(const timestamp_t timestamp) - Получить время и дату в виде строки из метки времени 
 
 (Формат строки: DD.MM.YYYY)
-* std::string get_str_time(const timestamp_t &timestamp) - Получить время и дату в виде строки из метки времени
+
+* std::string get_str_time(const timestamp_t timestamp) - Получить время и дату в виде строки из метки времени
  
 (Формат строки: HH:MM:SS)
-* std::string get_str_time_ms(const timestamp_ms_t &timestamp) - Получить время и дату в виде строки из метки времени
+
+* std::string get_str_time_ms(const ftimestamp timestamp) - Получить время и дату в виде строки из метки времени
  
 (Формат строки: HH:MM:SS.fff)
+
 * std::string get_str_date_time() - Получить время и дату компьютера в виде строки 
 
 (Формат строки: DD.MM.YYYY HH:MM:SS)
+
 * std::string get_str_date_time_ms() - Получить время и дату компьютера в виде строки 
 
 (Формат строки: DD.MM.YYYY HH:MM:SS.fff)
-* print_date_time(const timestamp_t &timestamp) - Напечатать дату и время метки времени 
+
+* print_date_time(const timestamp_t timestamp) - Напечатать дату и время метки времени 
 
 (Формат строки: DD.MM.YYYY HH:MM:SS)
-
-Данные функции выводят время и дату в следующих форматах:
-* DD.MM.YYYY HH:MM:SS
-* DD.MM.YYYY
-* HH:MM:SS
-* DD.MM.YYYY HH:MM:SS.fff
-* HH:MM:SS.fff
 
 ### Преобразование строки в метку времени и не только
 
@@ -196,56 +246,56 @@
 
 ### Проверки различных условий
 
-* bool is_beg_half_hour(const timestamp_t &timestamp) - Проверить начало получаса
-* bool is_beg_hour(const timestamp_t &timestamp) - Проверить начало часа
-* bool is_beg_day(const timestamp_t &timestamp) - Проверить начало дня
-* bool is_beg_week(const timestamp_t &timestamp) - Проверить начало недели
-* bool is_beg_month(timestamp_t &timestamp) - Проверить начало месяца (Данная функция проверят только день! Она не проверяет секунды, минуты, часы)
-* bool is_end_month(const timestamp_t &timestamp) - Проверить конец месяца (Данная функция проверят только день! Она не проверяет секунды, минуты, часы)
-* bool is_correct_date(const uint32_t &day, const uint32_t &month, const uint32_t &year) - Проверить корректность даты
-* bool is_correct_time(const uint32_t &hour, const uint32_t &minute = 0, const uint32_t &second = 0) - Проверить корректность времени
+* bool is_beg_half_hour(const timestamp_t timestamp) - Проверить начало получаса
+* bool is_beg_hour(const timestamp_t timestamp) - Проверить начало часа
+* bool is_beg_day(const timestamp_t timestamp) - Проверить начало дня
+* bool is_beg_week(const timestamp_t timestamp) - Проверить начало недели
+* bool is_beg_month(timestamp_t timestamp) - Проверить начало месяца (Данная функция проверят только день! Она не проверяет секунды, минуты, часы)
+* bool is_end_month(const timestamp_t timestamp) - Проверить конец месяца (Данная функция проверят только день! Она не проверяет секунды, минуты, часы)
+* bool is_correct_date(const uint32_t day, const uint32_t month, const uint32_t year) - Проверить корректность даты
+* bool is_correct_time(const uint32_t hour, const uint32_t minute = 0, const uint32_t second = 0) - Проверить корректность времени
 * bool is_correct_date_time(
-	const uint32_t &day,
-	const uint32_t &month,
-	const uint32_t &year, 
-	const uint32_t &hour = 0, 
-	const uint32_t &minute = 0, 
-	const uint32_t &second = 0) - Проверить корректность даты и времени
-* bool is_day_off(const timestamp_t &timestamp) - Проверить выходной день (суббота и воскресение)
-* bool is_day_off_for_day(const uint32_t &day) - Проверить день с начала отсчета Unix-времени на выходной день (суббота и воскресение)
-* bool is_leap_year(const uint32_t &year) - Проверка високосного года
+	const uint32_t day,
+	const uint32_t month,
+	const uint32_t year, 
+	const uint32_t hour = 0, 
+	const uint32_t minute = 0, 
+	const uint32_t second = 0) - Проверить корректность даты и времени
+* bool is_day_off(const timestamp_t timestamp) - Проверить выходной день (суббота и воскресение)
+* bool is_day_off_for_day(const uint32_t day) - Проверить день с начала отсчета Unix-времени на выходной день (суббота и воскресение)
+* bool is_leap_year(const uint32_t year) - Проверка високосного года
 
 ### Различные преобразования и вычисления
 
-* timestamp_t get_first_timestamp_year(const timestamp_t &timestamp) - Получить метку времени в начале года
-* timestamp_t get_last_timestamp_year(const timestamp_t &timestamp) - Получить метку времени в конце года
-* timestamp_t get_first_timestamp_month(const timestamp_t &timestamp) - Получить метку времени в начале текущего месяца
-* timestamp_t get_last_timestamp_month(const timestamp_t &timestamp) - Получить последнюю метку времени текущего месяца
-* timestamp_t get_first_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в начале дня
-* timestamp_t get_last_timestamp_day(const timestamp_t &timestamp) - Получить метку времени в конце дня
-* timestamp_t get_first_timestamp_hour(const timestamp_t &timestamp) - Получить метку времени в начале часа
-* timestamp_t get_first_timestamp_minute(const timestamp_t &timestamp) - Получить метку времени в начале минуты
-* timestamp_t get_first_timestamp_previous_day(const timestamp_t &timestamp) - Получить метку времени начала предыдущего дня
-* timestamp_t get_timestamp_beg_year(const uint32_t &year) - Получить метку времени начала года
-* timestamp_t get_last_timestamp_sunday_month(const timestamp_t &timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
-* timestamp_t get_week_start_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня начала недели
-* timestamp_t get_week_end_first_timestamp(const timestamp_t &timestamp) - Получить метку времени начала дня конца недели
-* timestamp_t get_first_timestamp_next_day(const timestamp_t &timestamp, const uint32_t &days) - Получить метку времени начала дня через указанное количество дней
+* timestamp_t get_first_timestamp_year(const timestamp_t timestamp) - Получить метку времени в начале года
+* timestamp_t get_last_timestamp_year(const timestamp_t timestamp) - Получить метку времени в конце года
+* timestamp_t get_first_timestamp_month(const timestamp_t timestamp) - Получить метку времени в начале текущего месяца
+* timestamp_t get_last_timestamp_month(const timestamp_t timestamp) - Получить последнюю метку времени текущего месяца
+* timestamp_t get_first_timestamp_day(const timestamp_t timestamp) - Получить метку времени в начале дня
+* timestamp_t get_last_timestamp_day(const timestamp_t timestamp) - Получить метку времени в конце дня
+* timestamp_t get_first_timestamp_hour(const timestamp_t timestamp) - Получить метку времени в начале часа
+* timestamp_t get_first_timestamp_minute(const timestamp_t timestamp) - Получить метку времени в начале минуты
+* timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp) - Получить метку времени начала предыдущего дня
+* timestamp_t get_timestamp_beg_year(const uint32_t year) - Получить метку времени начала года
+* timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
+* timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp) - Получить метку времени начала дня начала недели
+* timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp) - Получить метку времени начала дня конца недели
+* timestamp_t get_first_timestamp_next_day(const timestamp_t timestamp, const uint32_t days) - Получить метку времени начала дня через указанное количество дней
 
-* uint32_t get_num_days_month(const uint32_t &month, const uint32_t &year) - Получить количество дней в месяце
-* uint32_t get_num_days_month(const timestamp_t &timestamp) - Получить количество дней в месяце
-* uint32_t get_weekday(const uint32_t &day, const uint32_t &month, const uint32_t &year) - Получить день недели
-* uint32_t get_weekday(const timestamp_t &timestamp) - Получить день недели
-* uint32_t get_minute_day(const timestamp_t &timestamp) - Получить минуту дня
-* uint32_t get_minute_hour(const timestamp_t &timestamp) - Получить минуту часа
-* uint32_t get_hour_day(const timestamp_t &timestamp) - Получить час дня
-* uint32_t get_second_day(const timestamp_t &timestamp) - Получить секунду дня
-* uint32_t get_day(const timestamp_t &timestamp) - Получить день
-* uint32_t get_year(const timestamp_t &timestamp) - Получить год
-* uint32_t get_day_year(const timestamp_t &timestamp) - Получить день года
-* uint32_t get_month(const timestamp_t &timestamp) - Получить месяц года
-* uint32_t get_day_in_year(const timestamp_t &timestamp) - Получить количество дней в текущем году
-* uint32_t get_day_month(const timestamp_t &timestamp) - Получить день месяца
+* uint32_t get_num_days_month(const uint32_t month, const uint32_t year) - Получить количество дней в месяце
+* uint32_t get_num_days_month(const timestamp_t timestamp) - Получить количество дней в месяце
+* uint32_t get_weekday(const uint32_t day, const uint32_t month, const uint32_t year) - Получить день недели
+* uint32_t get_weekday(const timestamp_t timestamp) - Получить день недели
+* uint32_t get_minute_day(const timestamp_t timestamp) - Получить минуту дня
+* uint32_t get_minute_hour(const timestamp_t timestamp) - Получить минуту часа
+* uint32_t get_hour_day(const timestamp_t timestamp) - Получить час дня
+* uint32_t get_second_day(const timestamp_t timestamp) - Получить секунду дня
+* uint32_t get_day(const timestamp_t timestamp) - Получить день
+* uint32_t get_year(const timestamp_t timestamp) - Получить год
+* uint32_t get_day_year(const timestamp_t timestamp) - Получить день года
+* uint32_t get_month(const timestamp_t timestamp) - Получить месяц года
+* uint32_t get_day_in_year(const timestamp_t timestamp) - Получить количество дней в текущем году
+* uint32_t get_day_month(const timestamp_t timestamp) - Получить день месяца
 
 ### Задержка времени
 

@@ -17,12 +17,13 @@ int main()
 
     cout << "--------------------------------------" << endl;
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2016) << endl; // 1483142400
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(31,12,2016)) << endl;
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(1,1,2017)) << endl;
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(2,1,2017)) << endl;
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(3,1,2017)) << endl;
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(4,1,2017)) << endl;
-    cout << "get_str_date_time " << xtime::get_str_date(xtime::get_timestamp(5,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(31,12,2016)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(1,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(2,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(3,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(4,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date(xtime::get_timestamp(5,1,2017)) << endl;
+    cout << "get_str_date " << xtime::get_str_date() << endl;
     cout << "--------------------------------------" << endl;
 
     cout << "get_weekday " << xtime::get_weekday(24,3,2018) << endl; // Суббота
@@ -62,6 +63,7 @@ int main()
     cout << "get_timestamp " << xtime::get_timestamp(31,12,2016,22,55,56) << endl;
     cout << "get_str_date_time " << xtime::get_str_date_time(xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
     cout << "get_str_time " << xtime::get_str_time(xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+
     cout << "--------------------------------------" << endl;
 
     cout << "get_str_date " << xtime::get_str_date(xtime::get_first_timestamp_minute(xtime::get_timestamp(31,12,2016,22,55,56))) << endl;
@@ -130,5 +132,19 @@ int main()
     cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(5,12,2017,18,33,0))) << endl;
     cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(31,12,2019,18,33,0))) << endl;
     cout << "get_first_timestamp_month " << xtime::get_str_date_time(xtime::get_first_timestamp_month(xtime::get_timestamp(28,2,2020,0,0,0))) << endl;
+
+    cout << "--------------------------------------" << endl;
+    cout << "get_str_time " << xtime::get_str_time(xtime::get_timestamp(31,12,2016,22,55,56), false) << endl;
+    cout << "get_str_time " << xtime::get_str_iso_8601(xtime::get_ftimestamp(31,12,2016,22,55,56,567), 0) << endl;
+    cout << "get_str_time " << xtime::get_str_iso_8601(xtime::get_ftimestamp(31,12,2016,22,55,56,567), xtime::SECONDS_IN_HOUR) << endl;
+    cout << "--------------------------------------" << endl;
+    cout << "to_string " << xtime::to_string("",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%YYYY",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%Y",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%YY",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%YYYY-%MM-%DD",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%DD-%MM-%YYYY %hh:%mm:%ss",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%hh:%mm",xtime::get_timestamp(31,12,2016,22,55,56)) << endl;
+    cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31,12,2016,22,55,56,567)) << endl;
     return 0;
 }

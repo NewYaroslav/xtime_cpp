@@ -305,17 +305,23 @@ namespace xtime {
     }
 
     std::string DateTime::get_str_date() {
-        char text[12] = {};
+        char text[16] = {};
         sprintf(text,"%.2d.%.2d.%.4d", (uint32_t)day, (uint32_t)month, (uint32_t)year);
         return std::string(text);
     }
 
-    std::string DateTime::get_str_time() {
-        char text[10] = {};
-        sprintf(text,"%.2d:%.2d:%.2d",
-            (uint32_t)hour,
-            (uint32_t)minute,
-            (uint32_t)second);
+    std::string DateTime::get_str_time(const bool is_use_seconds) {
+        char text[16] = {};
+        if(is_use_seconds) {
+            sprintf(text,"%.2d:%.2d:%.2d",
+                (uint32_t)hour,
+                (uint32_t)minute,
+                (uint32_t)second);
+        } else {
+            sprintf(text,"%.2d:%.2d",
+                (uint32_t)hour,
+                (uint32_t)minute);
+        }
         return std::string(text);
     }
 
@@ -524,24 +530,6 @@ namespace xtime {
     void print_date_time(const timestamp_t &timestamp) {
         DateTime t(timestamp);
         t.print();
-    }
-
-    std::string get_str_date_time() {
-        DateTime t;
-        t.set_timestamp(get_timestamp());
-        return t.get_str_date_time();
-    }
-
-    std::string get_str_date_time_ms() {
-        DateTime t;
-        t.set_ftimestamp(get_ftimestamp());
-        return t.get_str_date_time_ms();
-    }
-
-    std::string get_str_time_ms() {
-        DateTime t;
-        t.set_ftimestamp(get_ftimestamp());
-        return t.get_str_time_ms();
     }
 
     uint32_t get_num_days_month(const uint32_t month, const uint32_t year) {
@@ -822,14 +810,172 @@ namespace xtime {
         return iTime.get_str_date();
     }
 
-    std::string get_str_time(const timestamp_t timestamp) {
+    std::string get_str_time(const timestamp_t timestamp, const bool is_use_seconds) {
         DateTime iTime(timestamp);
-        return iTime.get_str_time();
+        return iTime.get_str_time(is_use_seconds);
     }
 
     std::string get_str_time_ms(const ftimestamp_t timestamp) {
         DateTime iTime(timestamp);
         return iTime.get_str_time_ms();
+    }
+
+    std::string get_str_iso_8601(const xtime::ftimestamp_t timestamp, const int64_t offset) {
+        // YYYY-MM-DDThh:mm:ss.sssZ
+        DateTime t(timestamp);
+        std::string text_zone;
+        if(offset == 0) {
+            text_zone += "Z";
+        } else {
+            char text[32] = {};
+            const uint64_t temp = std::abs(offset);
+            sprintf(text,"%.2d:%.2d",
+                xtime::get_hour_day(temp),
+                xtime::get_minute_hour(temp));
+            if(offset > 0) text_zone += "+";
+            else text_zone += "-";
+            text_zone += std::string(text);
+        }
+        char text[32] = {};
+        sprintf(text,"%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.%.3d",
+            (uint32_t)t.year,
+            (uint32_t)t.month,
+            (uint32_t)t.day,
+            (uint32_t)t.hour,
+            (uint32_t)t.minute,
+            (uint32_t)t.second,
+            (uint32_t)t.millisecond);
+        return (std::string(text) + text_zone);
+    }
+
+    std::string to_string(const std::string &mode, const xtime::ftimestamp_t timestamp) {
+        if(mode.size() == 0) return std::string();
+        DateTime t(timestamp);
+        std::string text;
+        uint32_t tick = 0;
+        char str_temp[15];
+        char previous_character = mode[0];
+        bool is_cmd = mode[0] == '%' ? true : false;
+        const size_t max_size = mode.size() + 1;
+        for(size_t i = 0; i < max_size; ++i) {
+            const char current_character = i >= mode.size() ? '\0' : mode[i];
+            if(previous_character != current_character) {
+                switch(previous_character) {
+                    case '%':
+                        if(tick <= 1) {
+                            is_cmd = true;
+                        } else if(tick == 2) {
+                            tick = 0;
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'Y':
+                        if(is_cmd) {
+                            if(tick == 4) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.4d", (uint32_t)t.year);
+                                text += std::string(str_temp);
+                            } else
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)(t.year % 100));
+                                text += std::string(str_temp);
+                            } else
+                            if(tick == 1) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%d", (uint32_t)t.year);
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'M':
+                        if(is_cmd) {
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)t.month);
+                                text += std::string(str_temp);
+                            } else
+                            if(tick == 1) {
+                                text += month_name_short[t.month];
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'D':
+                        if(is_cmd) {
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)t.day);
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'W':
+                        if(is_cmd) {
+                            if(tick == 1) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.1d", (uint32_t)t.get_weekday());
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'w':
+                        if(is_cmd) {
+                            if(tick == 1) {
+                                text += weekday_name_short[t.get_weekday()];
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'H':
+                    case 'h':
+                        if(is_cmd) {
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)t.hour);
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'm':
+                        if(is_cmd) {
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)t.minute);
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                    case 'S':
+                    case 's':
+                        if(is_cmd) {
+                            if(tick == 2) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.2d", (uint32_t)t.second);
+                                text += std::string(str_temp);
+                            } else
+                            if(tick == 3) {
+                                std::fill(str_temp, str_temp + sizeof(str_temp), '\0');
+                                sprintf(str_temp,"%.3d", (uint32_t)t.millisecond);
+                                text += std::string(str_temp);
+                            }
+                            is_cmd = false;
+                        }
+                        break;
+                }
+                tick = 1;
+                previous_character = current_character;
+            } else {
+                ++tick;
+            }
+            if(!is_cmd && i < mode.size() && !(current_character == '%' && tick == 1)) text += current_character;
+        }
+        return text;
     }
 
     bool is_end_month(const timestamp_t timestamp) {

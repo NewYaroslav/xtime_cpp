@@ -105,114 +105,15 @@ namespace xtime {
         "Oct","Nov","Dec",
     }; /**< Сокращенные имена месяцев */
 
-    /** \brief Получить дату автоматизации OLE из метки времени
-     * \param timestamp Метка времени
-     * \return Дата автоматизации OLE
-     */
-    oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp);
-
-    /** \brief Получить дату автоматизации OLE из метки времени c плавающей точкой
-     * \param timestamp Метка времени c плавающей точкой
-     * \return Дата автоматизации OLE
-     */
-    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp);
-
-    /** \brief Преобразовать дату автоматизации OLE в метку времени
-     * \param oadate Дата автоматизации OLE
-     * \return Метка времени
-     */
-    timestamp_t convert_oadate_to_timestamp(const oadate_t oadate);
-
-    /** \brief Преобразовать дату автоматизации OLE в метку времени  плавающей точкой
-     * \param oadate Дата автоматизации OLE
-     * \return Метка времени с плавающей точкой
-     */
-    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate);
-
-    /** \brief Получить дату автоматизации OLE
-     * \return дата автоматизации OLE
-     */
-    oadate_t get_oadate();
-
-    /** \brief Получить дату автоматизации OLE
-     * \param day день
-     * \param month месяц
-     * \param year год
-     * \param hour час
-     * \param minute минуты
-     * \param second секунды
-     * \param millisecond миллисекунды
-     * \return дата автоматизации OLE
-     */
-    oadate_t get_oadate(
-        const uint32_t day,
-        const uint32_t month,
-        const uint32_t year,
-        const uint32_t hour = 0,
-        const uint32_t minute = 0,
-        const uint32_t second = 0,
-        const uint32_t millisecond = 0);
-
-    #define get_ole_automation_date get_oadate
-
-    /** \brief Получить время и дату в виде строки
-     * Формат строки: DD.MM.YYYY HH:MM:SS
-     * \param timestamp метка времен
-     * \return строка, содержащая время и дату
-     */
-    std::string get_str_date_time(const timestamp_t timestamp);
-
-    /** \brief Получить время и дату в виде строки
-     * Формат строки: DD.MM.YYYY HH:MM:SS.ms
-     * \param timestamp метка времен
-     * \return строка, содержащая время и дату
-     */
-    std::string get_str_date_time_ms(const ftimestamp_t timestamp);
-
-    /** \brief Получить дату в виде строки
-     * Формат строки: DD.MM.YYYY
-     * \param timestamp метка времен
-     * \return строка, содержащая дату
-     */
-    std::string get_str_date(const timestamp_t timestamp);
-
-    /** \brief Получить время в виде строки
-     * Формат строки: HH:MM:SS
-     * \param timestamp метка времен
-     * \return строка, содержащая время
-     */
-    std::string get_str_time(const timestamp_t timestamp);
-
-    /** \brief Получить время с миллисекундами в виде строки
-     * Формат строки: HH:MM:SS.fff
-     * \param timestamp метка времен
-     * \return строка, содержащая время
-     */
-    std::string get_str_time_ms(const ftimestamp_t timestamp);
-
-    /** \brief Получить время и дату компьютера в виде строки
-     * Формат строки: DD.MM.YYYY HH:MM:SS
-     * Данная функция напечатает UTC/GMT время
-     * \param timestamp unix время
-     * \return строка, содержащая время
-     */
-    std::string get_str_date_time();
-
-    /** \brief Получить время с миллисекундами и дату компьютера в виде строки
-     * Формат строки: DD.MM.YYYY HH:MM:SS.fff
-     * Данная функция напечатает UTC/GMT время
-     * \param timestamp unix время
-     * \return строка, содержащая время
-     */
-    std::string get_str_date_time_ms();
-
-    /** \brief Получить время компьютера в виде строки с миллисекундами
-     * Формат строки: DD.MM.YYYY HH:MM:SS
-     * Данная функция напечатает UTC/GMT время
-     * \param timestamp unix время
-     * \return строка, содержащая время
-     */
-    std::string get_str_time_ms();
+    const std::array<std::string, DAYS_IN_WEEK> weekday_name_short = {
+        "SUN",
+        "MON",
+        "TUS",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+    }; /**< Сокращенные имена дней недели */
 
     /** \brief Получить миллисекунду
      * \return миллисекунда
@@ -276,6 +177,127 @@ namespace xtime {
         const uint32_t minute = 0,
         const uint32_t second = 0,
         const uint32_t millisecond = 0);
+
+    /** \brief Получить дату автоматизации OLE из метки времени
+     * \param timestamp Метка времени
+     * \return Дата автоматизации OLE
+     */
+    oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp);
+
+    /** \brief Получить дату автоматизации OLE из метки времени c плавающей точкой
+     * \param timestamp Метка времени c плавающей точкой
+     * \return Дата автоматизации OLE
+     */
+    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp);
+
+    /** \brief Преобразовать дату автоматизации OLE в метку времени
+     * \param oadate Дата автоматизации OLE
+     * \return Метка времени
+     */
+    timestamp_t convert_oadate_to_timestamp(const oadate_t oadate);
+
+    /** \brief Преобразовать дату автоматизации OLE в метку времени  плавающей точкой
+     * \param oadate Дата автоматизации OLE
+     * \return Метка времени с плавающей точкой
+     */
+    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate);
+
+    /** \brief Получить дату автоматизации OLE
+     * \return дата автоматизации OLE
+     */
+    oadate_t get_oadate();
+
+    /** \brief Получить дату автоматизации OLE
+     * \param day день
+     * \param month месяц
+     * \param year год
+     * \param hour час
+     * \param minute минуты
+     * \param second секунды
+     * \param millisecond миллисекунды
+     * \return дата автоматизации OLE
+     */
+    oadate_t get_oadate(
+        const uint32_t day,
+        const uint32_t month,
+        const uint32_t year,
+        const uint32_t hour = 0,
+        const uint32_t minute = 0,
+        const uint32_t second = 0,
+        const uint32_t millisecond = 0);
+
+    #define get_ole_automation_date get_oadate
+
+    /** \brief Получить время и дату в виде строки
+     * Формат строки: DD.MM.YYYY HH:MM:SS
+     * Если не указать метку времени, данная функция вернет строку с UTC/GMT временем компьютера
+     * \param timestamp метка времен
+     * \return строка, содержащая время и дату
+     */
+    std::string get_str_date_time(const timestamp_t timestamp = get_timestamp());
+
+    /** \brief Получить время и дату в виде строки
+     * Формат строки: DD.MM.YYYY HH:MM:SS.sss
+     * Если не указать метку времени, данная функция вернет строку с UTC/GMT временем компьютера
+     * \param timestamp метка времен
+     * \return строка, содержащая время и дату
+     */
+    std::string get_str_date_time_ms(const ftimestamp_t timestamp = get_ftimestamp());
+
+    /** \brief Получить дату в виде строки
+     * Формат строки: DD.MM.YYYY
+     * Если не указать метку времени, данная функция вернет строку с UTC/GMT временем компьютера
+     * \param timestamp метка времен
+     * \return строка, содержащая дату
+     */
+    std::string get_str_date(const timestamp_t timestamp = get_timestamp());
+
+    /** \brief Получить время в виде строки
+     * Формат строки: HH:MM:SS или HH:MM
+     * Если не указать метку времени, данная функция вернет строку с UTC/GMT временем компьютера
+     * \param timestamp метка времен
+     * \param is_use_seconds Флаг, который добавляет секунды
+     * \return строка, содержащая время
+     */
+    std::string get_str_time(const timestamp_t timestamp = get_timestamp(), const bool is_use_seconds = true);
+
+    /** \brief Получить время с миллисекундами в виде строки
+     * Формат строки: HH:MM:SS.sss
+     * Если не указать метку времени, данная функция вернет строку с UTC/GMT временем компьютера
+     * \param timestamp метка времен
+     * \return строка, содержащая время
+     */
+    std::string get_str_time_ms(const ftimestamp_t timestamp = get_ftimestamp());
+
+    /** \brief Получить строку в формате ISO 8601
+     * Функция возвращает строку с временем и датой,
+     * сформированную по стандарту ISO 8601,
+     * в котором строка имеет следующий формат: YYYY-MM-DDThh:mm:ss.sssZ.
+     * Если установлен часовой пояс, то буква "Z" заменяется значением +hh:mm или -hh.mm
+     * \param timestamp Метка времен
+     * \param offset Смещение в секундах, определяет часовой пояс.
+     * \return Строка, содержащая время
+     */
+    std::string get_str_iso_8601(const xtime::ftimestamp_t timestamp, const int64_t offset = 0);
+
+    /** \brief Преобразовать метку времени в строку с пользовательскими настройками преобразования
+     * В качестве параметров функция принимает следующие аргументы:
+     * %YYYY - год
+     * %YY - последние два числа года
+     * %Y - год, без ограничений в 4 символа
+     * %MM - месяц
+     * %DD - день месяца
+     * %hh - час дня
+     * %mm - минуты часа
+     * %ss - секунды
+     * %sss - миллисекунды
+     * %W - день недели (число)
+     * %w - день недели (скоращенное имя)
+     * \param mode Строка с параметрами пользователя, например "%YYYY-%MM-%DD"
+     * \param timestamp Метка времени
+     * \return Вернет строку в формате, заданным пользователем
+     */
+    std::string to_string(const std::string &mode, const xtime::ftimestamp_t timestamp = get_ftimestamp());
 
     /** \brief Класс для хранения времени
      */
@@ -403,12 +425,13 @@ namespace xtime {
 
         /** \brief Получить время в виде строки
          * Формат строки: HH:MM:SS
+         * \param is_use_seconds Флаг, включает использование секунд
          * \return строка, содержащая время
          */
-        std::string get_str_time();
+        std::string get_str_time(const bool is_use_seconds = true);
 
         /** \brief Получить время в виде строки
-         * Формат строки: HH:MM:SS
+         * Формат строки: HH:MM:SS.sss
          * \return строка, содержащая время
          */
         std::string get_str_time_ms();
@@ -477,7 +500,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день месяца
      */
-    uint32_t get_day_month(const timestamp_t timestamp);
+    uint32_t get_day_month(const timestamp_t timestamp = get_timestamp());
 
     /** \brief Преобразует строку в timestamp
      *
@@ -500,12 +523,12 @@ namespace xtime {
      * \param timestamp метка времени
      * \return класс DateTime
      */
-    DateTime convert_timestamp_to_datetime(const timestamp_t timestamp);
+    DateTime convert_timestamp_to_datetime(const timestamp_t timestamp = get_timestamp());
 
     /** \brief Напечатать дату и время
      * \param timestamp метка времени
      */
-    void print_date_time(const timestamp_t timestamp);
+    void print_date_time(const timestamp_t timestamp = get_timestamp());
 
     /** \brief Получить количество дней в месяце
      * \param month месяц
@@ -518,7 +541,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return количество дней в месяце
      */
-    uint32_t get_num_days_month(const timestamp_t timestamp);
+    uint32_t get_num_days_month(const timestamp_t timestamp = get_timestamp());
 
     /** \brief Переводит время GMT во время CET
      * До 2002 года в Европе переход на летнее время осуществлялся в последнее воскресенье марта в 2:00 переводом часов на 1 час вперёд
@@ -572,7 +595,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало получаса
      */
-    inline bool is_beg_half_hour(const timestamp_t timestamp) {
+    inline bool is_beg_half_hour(const timestamp_t timestamp = get_timestamp()) {
         return timestamp % SECONDS_IN_HALF_HOUR == 0;
     }
 
@@ -580,7 +603,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало часа
      */
-    inline bool is_beg_hour(const timestamp_t timestamp) {
+    inline bool is_beg_hour(const timestamp_t timestamp = get_timestamp()) {
         return timestamp % SECONDS_IN_HOUR == 0;
     }
 
@@ -588,7 +611,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало дня
      */
-    inline bool is_beg_day(const timestamp_t timestamp) {
+    inline bool is_beg_day(const timestamp_t timestamp = get_timestamp()) {
         return (timestamp % SECONDS_IN_DAY == 0);
     }
 
@@ -598,7 +621,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало недели
      */
-    inline bool is_beg_week(const timestamp_t timestamp){
+    inline bool is_beg_week(const timestamp_t timestamp = get_timestamp()){
         return get_weekday(timestamp) == SUN;
     }
 
@@ -608,7 +631,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если начало месяца
      */
-    inline bool is_beg_month(timestamp_t timestamp) {
+    inline bool is_beg_month(timestamp_t timestamp = get_timestamp()) {
         return get_day_month(timestamp) == 1;
     }
 
@@ -618,7 +641,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true, если конец месяца
      */
-    bool is_end_month(const timestamp_t timestamp);
+    bool is_end_month(const timestamp_t timestamp = get_timestamp());
 
     /** \brief Проверить корректность даты
      * \param day день
