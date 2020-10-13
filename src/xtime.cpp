@@ -352,7 +352,6 @@ namespace xtime {
         day = get_num_days_month(month, year);
     }
 
-
     oadate_t DateTime::get_oadate() {
         return xtime::get_oadate(
             day,
@@ -371,20 +370,31 @@ namespace xtime {
     bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t) {
         const std::string &word = str_iso_formatted_utc_datetime;
         if(word.size() >= 26) {
-            // находим дату и время
+            // находим дату и время, пример 2020-10-12T14:48:46.618757Z
             t.year = std::atoi(word.substr(0, 4).c_str());
             t.month = std::atoi(word.substr(5, 2).c_str());
             t.day = std::atoi(word.substr(8, 2).c_str());
             t.hour = std::atoi(word.substr(11, 2).c_str());
             t.minute = std::atoi(word.substr(14, 2).c_str());
             t.second = std::atoi(word.substr(17, 2).c_str());
-            int gh = std::atoi(word.substr(20, 2).c_str());
-            int gm = std::atoi(word.substr(23, 2).c_str());
-            int offset = gh * 3600 + gm * 60;
-            timestamp_t timestamp = t.get_timestamp();
-            if(word.substr(19, 1) == "+") timestamp -= offset;
-            else if(word.substr(19, 1) == "-") timestamp += offset;
-            t.set_timestamp(timestamp);
+
+            if(word.substr(19, 1) == "+") {
+                // 2013-12-06T15:23:01+00:00
+                int gh = std::atoi(word.substr(20, 2).c_str());
+                int gm = std::atoi(word.substr(23, 2).c_str());
+                int offset = gh * 3600 + gm * 60;
+                timestamp_t timestamp = t.get_timestamp();
+                if(word.substr(19, 1) == "+") timestamp -= offset;
+                else if(word.substr(19, 1) == "-") timestamp += offset;
+                t.set_timestamp(timestamp);
+            } else
+            if(word.substr(19, 1) == "." && word.size() >= 27) {
+                // 2020-10-12T14:48:46.618757Z
+                int ms = std::atoi(word.substr(20, 6).c_str());
+                t.millisecond = ms / 1000;
+            } else {
+                return false;
+            }
             return true;
         }
         return false;
