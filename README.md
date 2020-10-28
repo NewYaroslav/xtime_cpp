@@ -10,21 +10,26 @@
 Например, когда нужно перебирать данные, у которых  индекс элемента - метка времени, данная библиотека может очень пригодится, она позволит легко получить из метки времени час или минуту дня, найти метку времени начала текущего месяца или найти последний день месяца, получить день недели или текущий год и т.д.
 Данная библиотека позволяет удобно и быстро работать с меткой времени (*timestamp*) и "понятной датой" (*human readable date*). Например: 
 
-* Можно получить синхронизированное время с интернетом
-* Можно легко преобразовать дату в timestamp или сделать обратную операцию 
-* Можно легко получить реальное GMT время компьютера
-* Можно преобразовать GMT в CET и обратно
-* Получить день недели, количество дней в месяце, день месяца, день года, день с начала UNIX времени, год и т.д.
+* Можно преобразовать дату в timestamp или сделать обратную операцию 
+* Можно получить реальное GMT время компьютера
+* Можно преобразовать GMT в CET и обратно, с учетом истории изменений перехода на летнее и зимнее время
+* Получить секунду часа, секунду дня, день недели, количество дней в месяце, день месяца, день года, день с начала UNIX времени, год и т.д.
 * Можно преобразовать UINX время в OLE Automation Date и обратно
+* Можно получить синхронизированное время с интернетом
 * И многое другое
 
-Смотрите файл *xtime.hpp*, он содежрит подробные комментарии функций, классов и их методов.
+Смотрите файлы *xtime.hpp*, *xtime_cpu_time.hpp*, *xtime_sync.hpp*. Они содежрут подробные комментарии функций, классов и их методов.
 Для хранения и преобразования меток времени используется тип данных *uint64*, поэтому у данной библиотеки нет [проблемы 2038 года](https://en.wikipedia.org/wiki/Year_2038_problem)
 
-Синхронизированное время реализовано в файле *xtime_sync.hpp* и для его работы вам понадобится *curl* с поддержкой *https*. Пример есть в папке *code_blocks*. Для сокращения времени запуска примера советую использовать готовые сборки *curl*, например: [https://github.com/NewYaroslav/curl-7.60.0-win64-mingw](https://github.com/NewYaroslav/curl-7.60.0-win64-mingw). Время синхронизируется при помощи [https://time.is/](https://time.is/), Time.is отображает точное, официальное атомное время в любом часовом поясе.
+Синхронизированное время реализовано в файле *xtime_sync.hpp* и для его работы вам понадобится *curl* с поддержкой *https*. Примеры есть в папке *code_blocks*. 
+Для сокращения времени запуска примера советую использовать готовые сборки *curl*, например: [https://github.com/NewYaroslav/curl-7.60.0-win64-mingw](https://github.com/NewYaroslav/curl-7.60.0-win64-mingw). Время синхронизируется при помощи [https://time.is/](https://time.is/), Time.is отображает точное, официальное атомное время в любом часовом поясе.
+
+Примеры использования различных функций и классов можно найти в папке *testing*.
 
 ## Как установить?
-Просто добавьте файлы *xtime.hpp* и *xtime.cpp* в свой проект или соберите библиотеку. Готовый файл *libxtime.a* есть в папке *lib*
+
+Просто добавьте файл *xtime.cpp* в свой проект. Подключите заголовочный файл *xtime.hpp*, а также, если нужно, *xtime_cpu_time.hpp*, *xtime_sync.hpp*.
+Дальше просто используйте! 
 
 ## Типы данных
 
@@ -37,18 +42,20 @@
     const oadate_t OADATE_MAX = 9223372036854775807; ///< Максимально возможное значение даты автоматизации (OADate)
     const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
 
-    /// Количество секунд в минуте, часе и т.д.
+    /// Различные периоды
     enum {
-        SECONDS_IN_MINUTE = 60,				///< Количество секунд в одной минуте
-        SECONDS_IN_HALF_HOUR = 1800,		///< Количество секунд в получасе
-        SECONDS_IN_HOUR = 3600,				///< Количество секунд в одном часе
-        SECONDS_IN_DAY = 86400,				///< Количество секунд в одном дне
-        SECONDS_IN_YEAR = 31536000,			///< Количество секунд за год
+        SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
+        SECONDS_IN_HALF_HOUR = 1800,        ///< Количество секунд в получасе
+        SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в одном часе
+        SECONDS_IN_DAY = 86400,	            ///< Количество секунд в одном дне
+        SECONDS_IN_YEAR = 31536000,	        ///< Количество секунд за год
         SECONDS_IN_LEAP_YEAR = 31622400,	///< Количество секунд за високосный год
-        AVERAGE_SECONDS_IN_YEAR = 31557600,	///< Среднее количество секунд за год
-        SECONDS_IN_4_YEAR = 126230400,		///< Количество секунд за 4 года
+        AVERAGE_SECONDS_IN_YEAR = 31557600, ///< Среднее количество секунд за год
+        SECONDS_IN_4_YEAR = 126230400,	    ///< Количество секунд за 4 года
         MINUTES_IN_HOUR = 60,               ///< Количество минут в одном часе
         MINUTES_IN_DAY = 1440,              ///< Количество минут в одном дне
+		MINUTES_IN_WEEK = 10080,            ///< Количество минут в одной неделе
+		MINUTES_IN_MONTH = 40320,           ///< Количество минут в одном месяце
         HOURS_IN_DAY = 24,                  ///< Количество часов в одном дне
         MONTHS_IN_YEAR = 12,                ///< Количество месяцев в году
         DAYS_IN_WEEK = 7,                   ///< Количество дней в неделе
@@ -131,6 +138,8 @@
 * uint32_t get_weekday() - получить день недели
 * is_leap_year() - получить флаг високосного года (если год високосный, вернет true)
 * uint32_t get_num_days_current_month() - получить кол-во дней в текущшем месяце
+* set_oadate() - Установить дату автоматизации OLE
+* oadate_t get_oadate() - Получить дату автоматизации OLE
 
 ### Получение времени компьютера
 
@@ -267,40 +276,93 @@ cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31
 
 ### Различные преобразования и вычисления
 
-* timestamp_t get_first_timestamp_year(const timestamp_t timestamp) - Получить метку времени в начале года
-* timestamp_t get_last_timestamp_year(const timestamp_t timestamp) - Получить метку времени в конце года
-* timestamp_t get_first_timestamp_month(const timestamp_t timestamp) - Получить метку времени в начале текущего месяца
-* timestamp_t get_last_timestamp_month(const timestamp_t timestamp) - Получить последнюю метку времени текущего месяца
-* timestamp_t get_first_timestamp_day(const timestamp_t timestamp) - Получить метку времени в начале дня
-* timestamp_t get_last_timestamp_day(const timestamp_t timestamp) - Получить метку времени в конце дня
-* timestamp_t get_first_timestamp_hour(const timestamp_t timestamp) - Получить метку времени в начале часа
-* timestamp_t get_first_timestamp_minute(const timestamp_t timestamp) - Получить метку времени в начале минуты
-* timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp) - Получить метку времени начала предыдущего дня
+* timestamp_t get_first_timestamp_year(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в начале года
+* timestamp_t get_last_timestamp_year(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в конце года
+* timestamp_t get_first_timestamp_month(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в начале текущего месяца
+* timestamp_t get_last_timestamp_month(const timestamp_t timestamp = get_timestamp()) - Получить последнюю метку времени текущего месяца
+* timestamp_t get_first_timestamp_day(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в начале дня
+* timestamp_t get_last_timestamp_day(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в конце дня
+* timestamp_t get_first_timestamp_hour(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в начале часа
+* timestamp_t get_first_timestamp_minute(const timestamp_t timestamp = get_timestamp()) - Получить метку времени в начале минуты
+* timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp = get_timestamp()) - Получить метку времени начала предыдущего дня
 * timestamp_t get_timestamp_beg_year(const uint32_t year) - Получить метку времени начала года
-* timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp) - Получить последнюю метку времени последнего воскресения текущего месяца
-* timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp) - Получить метку времени начала дня начала недели
-* timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp) - Получить метку времени начала дня конца недели
+* timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp = get_timestamp()) - Получить последнюю метку времени последнего воскресения текущего месяца
+* timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp = get_timestamp()) - Получить метку времени начала дня начала недели
+* timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp = get_timestamp()) - Получить метку времени начала дня конца недели
 * timestamp_t get_first_timestamp_next_day(const timestamp_t timestamp, const uint32_t days) - Получить метку времени начала дня через указанное количество дней
+* timestamp_t get_first_timestamp_for_day(const uint32_t day) - Получить метку времени начала дня от начала unix-времени
+* timestamp_t get_timestamp_day(const uint32_t unix_day) - Получить метку времени дня UINX-времени
 
 * uint32_t get_num_days_month(const uint32_t month, const uint32_t year) - Получить количество дней в месяце
 * uint32_t get_num_days_month(const timestamp_t timestamp) - Получить количество дней в месяце
 * uint32_t get_weekday(const uint32_t day, const uint32_t month, const uint32_t year) - Получить день недели
-* uint32_t get_weekday(const timestamp_t timestamp) - Получить день недели
-* uint32_t get_minute_day(const timestamp_t timestamp) - Получить минуту дня
-* uint32_t get_minute_hour(const timestamp_t timestamp) - Получить минуту часа
-* uint32_t get_hour_day(const timestamp_t timestamp) - Получить час дня
-* uint32_t get_second_day(const timestamp_t timestamp) - Получить секунду дня
-* uint32_t get_day(const timestamp_t timestamp) - Получить день
-* uint32_t get_year(const timestamp_t timestamp) - Получить год
-* uint32_t get_day_year(const timestamp_t timestamp) - Получить день года
-* uint32_t get_month(const timestamp_t timestamp) - Получить месяц года
-* uint32_t get_day_in_year(const timestamp_t timestamp) - Получить количество дней в текущем году
-* uint32_t get_day_month(const timestamp_t timestamp) - Получить день месяца
+* uint32_t get_weekday(const timestamp_t timestamp = get_timestamp()) - Получить день недели
+* uint32_t get_minute_day(const timestamp_t timestamp = get_timestamp()) - Получить минуту дня
+* uint32_t get_minute_hour(const timestamp_t timestamp = get_timestamp()) - Получить минуту часа
+* uint32_t get_hour_day(const timestamp_t timestamp = get_timestamp()) - Получить час дня
+* uint32_t get_second_day(const timestamp_t timestamp = get_timestamp()) - Получить секунду дня
+* uint32_t get_second_minute(const timestamp_t timestamp = get_timestamp()) - Получить секунду минуты
+* uint32_t get_day(const timestamp_t timestamp = get_timestamp()) - Получить день
+* uint32_t get_year(const timestamp_t timestamp = get_timestamp()) - Получить год
+* uint32_t get_day_year(const timestamp_t timestamp = get_timestamp()) - Получить день года
+* uint32_t get_month(const timestamp_t timestamp = get_timestamp()) - Получить месяц года
+* uint32_t get_day_in_year(const timestamp_t timestamp = get_timestamp()) - Получить количество дней в текущем году
+* uint32_t get_day_month(const timestamp_t timestamp = get_timestamp()) - Получить день месяца
+* uint32_t get_first_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) - Получить метку времени в начале периода
+* uint32_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) - Получить метку времени в конце периода
 
 ### Задержка времени
 
 * void delay_ms(const uint64_t milliseconds) - Задержка на указанное количество миллисекунд
 * void delay(const uint64_t seconds) - Задержка на указанное количество секунд
+
+### Замер времени выполнения
+
+Класс **Timer** предоставляет следующие методы:
+
+```C++
+
+/** \brief Сбросить значение таймера
+ *
+ * Данный метод нужно применять только вместе с методом elapsed()
+ * При использовании метода
+ * get_average_measurements() сбрасывать таймер не нужно!
+ */
+inline void reset();
+
+/** \brief Получить замер времени
+ * \return Время в секундах с момента инициализации класса или после reset()
+ */
+inline double get_elapsed();
+
+/** \brief Сбросить все замеры
+ *
+ * Данный метод обнуляет сумму замеров и их количество
+ */
+inline void reset_measurement();
+
+/** \brief Начать замер
+ *
+ * Данный метод использовать вместе с методами stop_measurement()
+ * и get_average_measurements()
+ */
+inline void start_measurement();
+
+/** \brief Остановить замер
+ *
+ * Данный метод использовать вместе с методами start_measurement()
+ * и get_average_measurements()
+ */
+inline void stop_measurement();
+
+/** \brief Получить результаты замеров
+ *
+ * Данный метод использовать вместе с методами start_measurement()
+ * и stop_measurement(). Метод возвращает средний результат замеров
+ * \return Среднее время замеров в секундах
+ */
+inline double get_average_measurements();
+```
 
 ## Быстрый обзор
 
