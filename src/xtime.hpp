@@ -853,7 +853,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в начале периода
      */
-    inline uint32_t get_first_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
         return timestamp - (timestamp % period);
     }
 
@@ -863,7 +863,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в конце периода
      */
-    inline uint32_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
         return timestamp - (timestamp % period) + period - 1;
     }
 
