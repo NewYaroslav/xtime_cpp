@@ -31,8 +31,6 @@
 #include <sys/timeb.h>
 #include <stdio.h>
 
-#include <iostream>
-
 namespace xtime {
 
     /* Дата автоматизации OLE реализована в виде числа с плавающей запятой,
@@ -393,8 +391,9 @@ namespace xtime {
                 else if(str_end == "-") timestamp += offset;
                 t.set_timestamp(timestamp);
             } else
-            if(str_end == "." && word.size() >= 27) {
+            if(str_end == "." && word.size() >= 26) {
                 // 2020-10-12T14:48:46.618757Z
+                // 2020-12-09T17:14:16.117642
                 int ms = std::atoi(word.substr(20, 6).c_str());
                 t.millisecond = ms / 1000;
             } else
