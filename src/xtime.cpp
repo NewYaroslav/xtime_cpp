@@ -31,6 +31,8 @@
 #include <sys/timeb.h>
 #include <stdio.h>
 
+#include <iostream>
+
 namespace xtime {
 
     /* Дата автоматизации OLE реализована в виде числа с плавающей запятой,
@@ -369,7 +371,7 @@ namespace xtime {
 
     bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t) {
         const std::string &word = str_iso_formatted_utc_datetime;
-        if(word.size() >= 26) {
+        if(word.size() >= 20) {
             // находим дату и время, пример 2020-10-12T14:48:46.618757Z
             t.year = std::atoi(word.substr(0, 4).c_str());
             t.month = std::atoi(word.substr(5, 2).c_str());
@@ -378,20 +380,27 @@ namespace xtime {
             t.minute = std::atoi(word.substr(14, 2).c_str());
             t.second = std::atoi(word.substr(17, 2).c_str());
 
-            if(word.substr(19, 1) == "+") {
+            std::string str_end = word.substr(19, 1);
+
+            if(str_end == "+") {
                 // 2013-12-06T15:23:01+00:00
-                int gh = std::atoi(word.substr(20, 2).c_str());
-                int gm = std::atoi(word.substr(23, 2).c_str());
+                std::string str_offset = word.substr(20, 2);
+                int gh = std::atoi(str_offset.c_str());
+                int gm = std::atoi(str_offset.c_str());
                 int offset = gh * 3600 + gm * 60;
                 timestamp_t timestamp = t.get_timestamp();
-                if(word.substr(19, 1) == "+") timestamp -= offset;
-                else if(word.substr(19, 1) == "-") timestamp += offset;
+                if(str_end == "+") timestamp -= offset;
+                else if(str_end == "-") timestamp += offset;
                 t.set_timestamp(timestamp);
             } else
-            if(word.substr(19, 1) == "." && word.size() >= 27) {
+            if(str_end == "." && word.size() >= 27) {
                 // 2020-10-12T14:48:46.618757Z
                 int ms = std::atoi(word.substr(20, 6).c_str());
                 t.millisecond = ms / 1000;
+            } else
+            if(str_end == "Z" && word.size() >= 20) {
+                // 2020-10-12T14:48:46Z
+                t.millisecond = 0;
             } else {
                 return false;
             }

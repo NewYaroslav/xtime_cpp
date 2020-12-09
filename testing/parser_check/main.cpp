@@ -62,5 +62,11 @@ int main()
     if(is_convert10) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time10.get_ftimestamp()) << endl;
     else cout << "convert_iso error" << endl << endl;
 
+    cout << "parser check (4): 2020-12-09T17:21:00Z" << endl;
+    xtime::DateTime date_time11;
+    bool is_convert11 = xtime::convert_iso("2020-12-09T17:21:15Z", date_time11);
+    if(is_convert11) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time11.get_ftimestamp()) << endl;
+    else cout << "convert_iso error" << endl << endl;
+
     return 0;
 }
