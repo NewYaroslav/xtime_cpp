@@ -71,8 +71,22 @@ int main()
     cout << "parser check (5): 2020-12-09T17:14:16.117642" << endl;
     xtime::DateTime date_time12;
     bool is_convert12 = xtime::convert_iso("2020-12-09T17:14:16.117642", date_time12);
-    if(is_convert12) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time11.get_ftimestamp()) << endl;
+    if(is_convert12) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time12.get_ftimestamp()) << endl;
     else cout << "convert_iso error" << endl << endl;
 
+    cout << "parser check (6): 2017-10-19T15:45:44.941Z" << endl;
+    xtime::DateTime date_time13;
+    bool is_convert13 = xtime::convert_iso("2017-10-19T15:45:44.941Z", date_time13);
+    if(is_convert13) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time13.get_ftimestamp()) << endl;
+    else cout << "convert_iso error" << endl << endl;
+
+    cout << "parser check (7):  2013-12-06T15:23:01+01:33" << endl;
+    xtime::DateTime date_time14;
+    bool is_convert14 = xtime::convert_iso("2013-12-06T15:23:01+01:33", date_time14);
+    if(is_convert14) cout << "get_ftimestamp " << xtime::get_str_date_time_ms(date_time14.get_ftimestamp()) << endl;
+    else cout << "convert_iso error" << endl << endl;
+
+    cout << "parser check (8): 2017-10-19T15:45:44.941Z" << endl;
+    cout << "get_ftimestamp " << xtime::get_str_date_time_ms(xtime::convert_iso("2017-10-19T15:45:44.941Z")) << endl;
     return 0;
 }

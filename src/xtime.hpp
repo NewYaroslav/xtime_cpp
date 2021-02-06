@@ -543,13 +543,19 @@ namespace xtime {
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса DateTime
-     * \param str_iso_formatted_utc_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
+     * \param str_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
      * \param t класс времени и даты DateTime, который будет заполнен.
      * \return вернет true если преобразование завершилось успешно
      */
     bool convert_iso(
-        const std::string &str_iso_formatted_utc_datetime,
+        const std::string &str_datetime,
         DateTime& t);
+
+    /** \brief Конвертировать строку в формате ISO в метку времени с дробной частью
+     * \param str_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
+     * \return Вернет метку времени, если преобразование завершилось успешно, или 0 в случае провала
+     */
+    xtime::ftimestamp_t convert_iso(const std::string &str_datetime);
 
     /** \brief Получить день недели
      * \param day день

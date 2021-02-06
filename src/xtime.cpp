@@ -367,8 +367,8 @@ namespace xtime {
         set_ftimestamp(xtime::convert_oadate_to_ftimestamp(oadate));
     }
 
-    bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t) {
-        const std::string &word = str_iso_formatted_utc_datetime;
+    bool convert_iso(const std::string &str_datetime, DateTime& t) {
+        const std::string &word = str_datetime;
         if(word.size() >= 20) {
             // находим дату и время, пример 2020-10-12T14:48:46.618757Z
             t.year = std::atoi(word.substr(0, 4).c_str());
@@ -378,26 +378,32 @@ namespace xtime {
             t.minute = std::atoi(word.substr(14, 2).c_str());
             t.second = std::atoi(word.substr(17, 2).c_str());
 
-            std::string str_end = word.substr(19, 1);
+            const char str_end = (word.substr(19, 1))[0];
 
-            if(str_end == "+") {
+            if (str_end == '+' || str_end == '-') {
                 // 2013-12-06T15:23:01+00:00
                 std::string str_offset = word.substr(20, 2);
-                int gh = std::atoi(str_offset.c_str());
-                int gm = std::atoi(str_offset.c_str());
-                int offset = gh * 3600 + gm * 60;
+                const int gh = std::atoi(word.substr(20, 2).c_str());
+                const int gm = std::atoi(word.substr(23, 2).c_str());
+                const int offset = gh * 3600 + gm * 60;
                 timestamp_t timestamp = t.get_timestamp();
-                if(str_end == "+") timestamp -= offset;
-                else if(str_end == "-") timestamp += offset;
+                if(str_end == '+') timestamp += offset;
+                else if(str_end == '-') timestamp -= offset;
                 t.set_timestamp(timestamp);
             } else
-            if(str_end == "." && word.size() >= 26) {
-                // 2020-10-12T14:48:46.618757Z
-                // 2020-12-09T17:14:16.117642
-                int ms = std::atoi(word.substr(20, 6).c_str());
-                t.millisecond = ms / 1000;
+            if (str_end == '.') {
+                if(word.size() >= 26) {
+                    // 2020-10-12T14:48:46.618757Z
+                    // 2020-12-09T17:14:16.117642
+                    int ms = std::atoi(word.substr(20, 6).c_str());
+                    t.millisecond = ms / 1000;
+                } else
+                if(word.size() >= 23) {
+                    // 2017-10-19T15:45:44.941Z
+                    t.millisecond = std::atoi(word.substr(20, 3).c_str());
+                }
             } else
-            if(str_end == "Z" && word.size() >= 20) {
+            if(str_end == 'Z' && word.size() >= 20) {
                 // 2020-10-12T14:48:46Z
                 t.millisecond = 0;
             } else {
@@ -406,6 +412,53 @@ namespace xtime {
             return true;
         }
         return false;
+    }
+
+    xtime::ftimestamp_t convert_iso(const std::string &str_datetime) {
+        DateTime t;
+        const size_t str_size = str_datetime.size();
+        if(str_size >= 20) {
+            // находим дату и время, пример 2020-10-12T14:48:46.618757Z
+            t.year = std::stoi(str_datetime.substr(0, 4));
+            t.month = std::stoi(str_datetime.substr(5, 2));
+            t.day = std::stoi(str_datetime.substr(8, 2));
+            t.hour = std::stoi(str_datetime.substr(11, 2));
+            t.minute = std::stoi(str_datetime.substr(14, 2));
+            t.second = std::stoi(str_datetime.substr(17, 2));
+
+            const char str_end = (str_datetime.substr(19, 1))[0];
+
+            if (str_end == '+' || str_end == '-') {
+                // 2013-12-06T15:23:01+00:00
+                const int gh = std::stoi(str_datetime.substr(20, 2));
+                const int gm = std::stoi(str_datetime.substr(23, 2));
+                const int offset = gh * 3600 + gm * 60;
+                timestamp_t timestamp = t.get_timestamp();
+                if(str_end == '+') timestamp += offset;
+                else if(str_end == '-') timestamp -= offset;
+                t.set_timestamp(timestamp);
+            } else
+            if (str_end == '.') {
+                if(str_size >= 26) {
+                    // 2020-10-12T14:48:46.618757Z
+                    // 2020-12-09T17:14:16.117642
+                    const int ms = std::stoi(str_datetime.substr(20, 6));
+                    t.millisecond = ms / 1000;
+                } else
+                if(str_size >= 23) {
+                    // 2017-10-19T15:45:44.941Z
+                    t.millisecond = std::stoi(str_datetime.substr(20, 3));
+                }
+            } else
+            if(str_end == 'Z' && str_size >= 20) {
+                // 2020-10-12T14:48:46Z
+                t.millisecond = 0;
+            } else {
+                return 0;
+            }
+            return t.get_ftimestamp();
+        }
+        return 0;
     }
 
     uint32_t get_month(std::string month) {

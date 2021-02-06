@@ -224,8 +224,10 @@ cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31
 
 ### Преобразование строки в метку времени и не только
 
-* bool convert_iso(const std::string &str_iso_formatted_utc_datetime, DateTime& t) - Конвертировать строку в формате ISO в данные класса DateTime
+* xtime::ftimestamp_t convert_iso(const std::string &str_datetime) - Конвертировать строку в формате ISO в метку времени
+* bool convert_iso(const std::string &str_datetime, DateTime& t) - Конвертировать строку в формате ISO в данные класса DateTime
 * bool convert_str_to_timestamp(std::string str, timestamp_t& t) - Преобразует строку в timestamp
+
 Функция *convert_str_to_timestamp* подерживает следующий список разделителей чисел (/\_:-.,<пробел>) 
 
 Данная функия способна распрасить время и дату и поддерживает следующие форматы времени:
