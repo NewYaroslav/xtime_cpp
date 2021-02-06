@@ -54,8 +54,8 @@
         SECONDS_IN_4_YEAR = 126230400,	    ///< Количество секунд за 4 года
         MINUTES_IN_HOUR = 60,               ///< Количество минут в одном часе
         MINUTES_IN_DAY = 1440,              ///< Количество минут в одном дне
-		MINUTES_IN_WEEK = 10080,            ///< Количество минут в одной неделе
-		MINUTES_IN_MONTH = 40320,           ///< Количество минут в одном месяце
+	MINUTES_IN_WEEK = 10080,            ///< Количество минут в одной неделе
+	MINUTES_IN_MONTH = 40320,           ///< Количество минут в одном месяце
         HOURS_IN_DAY = 24,                  ///< Количество часов в одном дне
         MONTHS_IN_YEAR = 12,                ///< Количество месяцев в году
         DAYS_IN_WEEK = 7,                   ///< Количество дней в неделе
@@ -108,7 +108,7 @@
         "Oct","Nov","Dec",
     }; /**< Сокращенные имена месяцев */
 	
-	const std::array<std::string, DAYS_IN_WEEK> weekday_name_short = {
+    const std::array<std::string, DAYS_IN_WEEK> weekday_name_short = {
         "SUN",
         "MON",
         "TUS",
@@ -578,49 +578,3 @@ while(true) {
 }
 ```
 
-## Дополнительные возможности
-
-Достаточно часто при написании кода возникала ошибка, когда цикл с меткой времени, который должен обходить метки времени с шагом в миунут или день, по инерции записывался с инкрементом метки времени.
-
-Пример ошибки:
-
-```C++
-for(xtime::timestamp_t t = min_timestamp; t < max_timestamp; ++t) {
-//...
-}
-```
-
-Как должно быть:
-
-```C++
-for(xtime::timestamp_t t = min_timestamp; t < max_timestamp; t += xtime::SECONDS_IN_DAY) {
-//...
-}
-```
-
-В итоге цикл обходил метку времени с шагом в секунду. Также подобный цикл обычно смотрится громоздки из-за использования достаточно длинных имен. Поэтому было решено добавить пару функций-циклов.
-
-```C++
-
-xtime::for_minutes(
-		xtime::get_timestamp(1,1,2019),
-		xtime::get_timestamp(1,2,2019),
-		[&](const xtime::timestamp_t &timestamp){
-	std::cout << xtime::get_str_date_time(timestamp) << std::endl;
-});
-
-xtime::for_hours(
-		xtime::get_timestamp(1,1,2019),
-		xtime::get_timestamp(1,2,2019),
-		[&](const xtime::timestamp_t &timestamp){
-	std::cout << xtime::get_str_date_time(timestamp) << std::endl;
-});
-
-xtime::for_days(
-		xtime::get_timestamp(1,1,2019),
-		xtime::get_timestamp(1,2,2019),
-		[&](const xtime::timestamp_t &timestamp){
-	std::cout << xtime::get_str_date_time(timestamp) << std::endl;
-});
-
-```
