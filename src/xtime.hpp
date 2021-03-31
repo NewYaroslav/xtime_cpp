@@ -29,6 +29,7 @@
 #include <array>
 #include <chrono>
 #include <functional>
+#include <algorithm>
 
 namespace xtime {
     /* для того, чтобы можно было работать и после 19 января 2038 года,
@@ -44,7 +45,8 @@ namespace xtime {
 
     /// Различные периоды
     enum {
-        SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
+        MILLISECONDS_IN_SECOND = 1000,		///< Количество миллисекунд в одной секунде
+		SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
         SECONDS_IN_HALF_HOUR = 1800,        ///< Количество секунд в получасе
         SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в одном часе
         SECONDS_IN_DAY = 86400,	            ///< Количество секунд в одном дне
@@ -93,6 +95,21 @@ namespace xtime {
         NOV,        ///< Ноябрь
         DEC,        ///< Декабрь
     };
+
+    template<class T>
+    struct Period {
+        T start;
+        T stop;
+
+        Period() : start(0), stop(0) {};
+
+        Period(T &a, T &b) : start(a), stop(b) {};
+
+        Period(const T &a, const T &b) : start(a), stop(b) {};
+    };
+
+    typedef Period<uint64_t> period_t;  ///< Целочисленный тип периода времени
+    typedef Period<double> fperiod_t;   ///< Тип периода времени с плавающей точкой
 
     const std::array<std::string, MONTHS_IN_YEAR> month_name_long = {
         "January","February","March",
@@ -154,13 +171,30 @@ namespace xtime {
      * \param second секунды
      * \return метка времени
      */
-    timestamp_t get_timestamp(
-        const uint32_t day,
-        const uint32_t month,
-        const uint32_t year,
-        const uint32_t hour = 0,
-        const uint32_t minute = 0,
-        const uint32_t second = 0);
+    constexpr inline timestamp_t get_timestamp(
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year,
+            const uint32_t hour = 0,
+            const uint32_t minute = 0,
+            const uint32_t second = 0) noexcept {
+        long _mon = month - 1;
+        const long _TBIAS_YEAR = 1900;
+        const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+        const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+        long _year = year - _TBIAS_YEAR;
+        // для предотвращения проблемы 2038 года переменная должна быть больше 32 бит
+        long long _days = (((_year - 1) / 4) + ((((_year) & 03) || ((_year) == 0)) ? mos[_mon] : lmos[_mon])) - 1;
+        _days += DAYS_IN_YEAR * _year;
+        _days += day;
+        const long _TBIAS_DAYS = 25567;
+        _days -= _TBIAS_DAYS;
+        timestamp_t _secs = SECONDS_IN_HOUR * hour;
+        _secs += SECONDS_IN_MINUTE * minute;
+        _secs += second;
+        _secs += _days * SECONDS_IN_DAY;
+        return _secs;
+    }
 
     /** \brief Получить метку времени с миллисекундами из даты и стандартного времени
      * \param day день
@@ -172,43 +206,73 @@ namespace xtime {
      * \param milliseconds миллисекунды
      * \return метка времени
      */
-    ftimestamp_t get_ftimestamp(
-        const uint32_t day,
-        const uint32_t month,
-        const uint32_t year,
-        const uint32_t hour = 0,
-        const uint32_t minute = 0,
-        const uint32_t second = 0,
-        const uint32_t millisecond = 0);
+    constexpr inline ftimestamp_t get_ftimestamp(
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year,
+            const uint32_t hour = 0,
+            const uint32_t minute = 0,
+            const uint32_t second = 0,
+            const uint32_t millisecond = 0) noexcept {
+        timestamp_t t = get_timestamp(day, month, year, hour, minute, second);
+        return (double)t + (double)millisecond/1000.0;
+    }
+
+	/* Дата автоматизации OLE реализована в виде числа с плавающей запятой,
+     * неотъемлемым компонентом которого является число дней до
+     * или после полуночи 30 декабря 1899 года,
+     * а дробный компонент представляет время этого дня, деленное на 24.
+     * Например, полночь 31 декабря 1899 представлен 1,0; 6 утра,
+     * 1 января 1900 года представлено 2,25;
+     * полночь 29 декабря 1899 года представлена -1,0;
+     * и 6 часов утра 29 декабря 1899 года - -1,25.
+     *
+     * Базовая дата автоматизации OLE - полночь 30 декабря 1899 года.
+     * Минимальная дата автоматизации OLE - полночь 1 января 0100 года.
+     * Максимальная дата автоматизации OLE такая же,
+     * как DateTime.MaxValue, последний момент 31 декабря 9999 года.
+     */
 
     /** \brief Получить дату автоматизации OLE из метки времени
      * \param timestamp Метка времени
      * \return Дата автоматизации OLE
      */
-    oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp);
+    constexpr inline oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp) noexcept {
+		return (const oadate_t)OADATE_UNIX_EPOCH + (const oadate_t)timestamp / (const oadate_t)SECONDS_IN_DAY;
+	}
 
     /** \brief Получить дату автоматизации OLE из метки времени c плавающей точкой
      * \param timestamp Метка времени c плавающей точкой
      * \return Дата автоматизации OLE
      */
-    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp);
+    constexpr inline oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp) noexcept {
+        return (const oadate_t)OADATE_UNIX_EPOCH + (const oadate_t)timestamp / (const oadate_t)SECONDS_IN_DAY;
+    }
 
     /** \brief Преобразовать дату автоматизации OLE в метку времени
      * \param oadate Дата автоматизации OLE
      * \return Метка времени
      */
-    timestamp_t convert_oadate_to_timestamp(const oadate_t oadate);
+    constexpr inline timestamp_t convert_oadate_to_timestamp(const oadate_t oadate) noexcept {
+        if(oadate < (const oadate_t)OADATE_UNIX_EPOCH) return 0;
+        return (timestamp_t)((oadate - (oadate_t)OADATE_UNIX_EPOCH) * (oadate_t)SECONDS_IN_DAY);
+    }
 
     /** \brief Преобразовать дату автоматизации OLE в метку времени  плавающей точкой
      * \param oadate Дата автоматизации OLE
      * \return Метка времени с плавающей точкой
      */
-    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate);
+    constexpr inline ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate) noexcept {
+        if(oadate < (const oadate_t)OADATE_UNIX_EPOCH) return 0;
+        return (ftimestamp_t)((oadate - (oadate_t)OADATE_UNIX_EPOCH) * (oadate_t)SECONDS_IN_DAY);
+    }
 
     /** \brief Получить дату автоматизации OLE
      * \return дата автоматизации OLE
      */
-    oadate_t get_oadate();
+    inline oadate_t get_oadate() noexcept {
+        return convert_ftimestamp_to_oadate(get_ftimestamp());
+    }
 
     /** \brief Получить дату автоматизации OLE
      * \param day день
@@ -220,14 +284,23 @@ namespace xtime {
      * \param millisecond миллисекунды
      * \return дата автоматизации OLE
      */
-    oadate_t get_oadate(
-        const uint32_t day,
-        const uint32_t month,
-        const uint32_t year,
-        const uint32_t hour = 0,
-        const uint32_t minute = 0,
-        const uint32_t second = 0,
-        const uint32_t millisecond = 0);
+    constexpr inline oadate_t get_oadate(
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year,
+            const uint32_t hour = 0,
+            const uint32_t minute = 0,
+            const uint32_t second = 0,
+            const uint32_t millisecond = 0) noexcept {
+        return convert_ftimestamp_to_oadate(get_ftimestamp(
+            day,
+            month,
+            year,
+            hour,
+            minute,
+            second,
+            millisecond));
+    }
 
     #define get_ole_automation_date get_oadate
 
@@ -572,8 +645,8 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день недели (SUN = 0, MON = 1, ... SAT = 6)
      */
-    inline uint32_t get_weekday(const timestamp_t timestamp) {
-        return ((timestamp/SECONDS_IN_DAY + THU) % DAYS_IN_WEEK);
+    constexpr inline uint32_t get_weekday(const timestamp_t timestamp) noexcept {
+        return ((timestamp / SECONDS_IN_DAY + THU) % DAYS_IN_WEEK);
     }
 
     /** \brief Получить номер месяца по названию
@@ -775,7 +848,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Метка времени начала года
      */
-    inline timestamp_t get_first_timestamp_year(const timestamp_t timestamp) {
+    inline timestamp_t get_first_timestamp_year(const timestamp_t timestamp) noexcept {
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return timestamp - t;
         else if(t < (2*SECONDS_IN_YEAR)) return timestamp + SECONDS_IN_YEAR - t;
@@ -789,7 +862,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Метка времени конца года
      */
-    inline timestamp_t get_last_timestamp_year(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_year(const timestamp_t timestamp = get_timestamp()) noexcept {
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return timestamp + SECONDS_IN_YEAR - t - 1;
         else if(t < (2*SECONDS_IN_YEAR)) return timestamp + (2*SECONDS_IN_YEAR) - t - 1;
@@ -804,7 +877,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в начале дня
      */
-    inline timestamp_t get_first_timestamp_day(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_DAY);
     }
 
@@ -813,7 +886,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в конце дня
      */
-    inline timestamp_t get_last_timestamp_day(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_DAY) + SECONDS_IN_DAY - 1;
     }
 
@@ -822,7 +895,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в начале часа
      */
-    inline timestamp_t get_first_timestamp_hour(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_HOUR);
     }
 
@@ -831,7 +904,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return метка времени в конце часа
      */
-    inline timestamp_t get_last_timestamp_hour(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_HOUR) + SECONDS_IN_HOUR - 1;
     }
 
@@ -840,7 +913,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в начале минуты
      */
-    inline timestamp_t get_first_timestamp_minute(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_MINUTE);
     }
 
@@ -849,7 +922,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в конце минуты
      */
-    inline timestamp_t get_last_timestamp_minute(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_MINUTE) + SECONDS_IN_MINUTE - 1;
     }
 
@@ -859,7 +932,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в начале периода
      */
-    inline timestamp_t get_first_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) noexcept {
         return timestamp - (timestamp % period);
     }
 
@@ -869,7 +942,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в конце периода
      */
-    inline timestamp_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) noexcept {
         return timestamp - (timestamp % period) + period - 1;
     }
 
@@ -877,7 +950,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return вернет true если выходной день
      */
-    inline bool is_day_off(const timestamp_t timestamp = get_timestamp()) {
+    inline bool is_day_off(const timestamp_t timestamp = get_timestamp()) noexcept {
         uint32_t wday = get_weekday(timestamp);
         if(wday == xtime::SUN || wday == xtime::SAT) return true;
         return false;
@@ -887,7 +960,7 @@ namespace xtime {
      * \param day день с начала отсчета Unix-времени
      * \return вернет true если выходной день
      */
-    inline bool is_day_off_for_day(const uint32_t day) {
+    inline bool is_day_off_for_day(const uint32_t day) noexcept {
         uint32_t wday = (day + THU) % DAYS_IN_WEEK;
         if(wday == xtime::SUN || wday == xtime::SAT) return true;
         return false;
@@ -897,7 +970,7 @@ namespace xtime {
      * \param year год
      * \return вернет true, если год високосный
      */
-    inline bool is_leap_year(const uint32_t year) {
+    inline bool is_leap_year(const uint32_t year) noexcept {
         if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
         return false;
     }
@@ -908,7 +981,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return минута дня
      */
-    inline uint32_t get_minute_day(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_minute_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_DAY);
     }
 
@@ -918,7 +991,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return Минута часа
      */
-    inline uint32_t get_minute_hour(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_minute_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)((timestamp / SECONDS_IN_MINUTE) % MINUTES_IN_HOUR);
     }
 
@@ -927,7 +1000,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return час дня
      */
-    inline uint32_t get_hour_day(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_hour_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)((timestamp / SECONDS_IN_HOUR) % HOURS_IN_DAY);
     }
 
@@ -936,7 +1009,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда минуты
      */
-    inline uint32_t get_second_minute(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_second_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)(timestamp % SECONDS_IN_MINUTE);
     }
 
@@ -945,7 +1018,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда часа
      */
-    inline uint32_t get_second_hour(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_second_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)(timestamp % SECONDS_IN_HOUR);
     }
 
@@ -954,7 +1027,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return секунда дня
      */
-    inline uint32_t get_second_day(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_second_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)(timestamp % SECONDS_IN_DAY);
     }
 
@@ -963,7 +1036,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день с начала UNIX времени
      */
-    inline uint32_t get_day(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return (uint32_t)(timestamp / SECONDS_IN_DAY);
     }
 
@@ -971,7 +1044,7 @@ namespace xtime {
      * \param year год
      * \return метка времени начала года
      */
-    inline timestamp_t get_timestamp_beg_year(const uint32_t year) {
+    inline timestamp_t get_timestamp_beg_year(const uint32_t year) noexcept {
         uint32_t diff = (year - FIRST_YEAR_UNIX);
         timestamp_t t = (diff / 4) * SECONDS_IN_4_YEAR;
         uint32_t temp = diff % 4;
@@ -985,7 +1058,7 @@ namespace xtime {
      * \param unix_day день с начала UNIX-времени
      * \return метка времени начала дня с момента начала UNIX-времени
      */
-    inline timestamp_t get_timestamp_day(const uint32_t unix_day) {
+    inline timestamp_t get_timestamp_day(const uint32_t unix_day) noexcept {
         return (timestamp_t)unix_day * SECONDS_IN_DAY;
     }
 
@@ -994,7 +1067,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return год UNIX времени
      */
-    inline uint32_t get_year(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_year(const timestamp_t timestamp = get_timestamp()) noexcept {
         uint32_t year = FIRST_YEAR_UNIX + 4 * (timestamp / SECONDS_IN_4_YEAR);
         timestamp_t t = timestamp % SECONDS_IN_4_YEAR;
         if(t < SECONDS_IN_YEAR) return year;
@@ -1007,7 +1080,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return день года
      */
-    inline uint32_t get_day_year(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_day_year(const timestamp_t timestamp = get_timestamp()) noexcept {
         uint32_t year = get_year(timestamp);
         return get_day(timestamp) - get_day(get_timestamp_beg_year(year)) + 1;
     }
@@ -1022,7 +1095,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Метка времени в начале текущего месяца
      */
-    inline timestamp_t get_first_timestamp_month(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_month(const timestamp_t timestamp = get_timestamp()) noexcept {
         uint32_t day = get_day_month(timestamp);
         timestamp_t timestamp_new = get_first_timestamp_day(timestamp);
         timestamp_new -= (day - 1) * SECONDS_IN_DAY;
@@ -1033,7 +1106,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return Последняя метка времени текущего месяца
      */
-    inline timestamp_t get_last_timestamp_month(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_month(const timestamp_t timestamp = get_timestamp()) noexcept {
         uint32_t days_month = get_num_days_month(timestamp);
         uint32_t day = get_day_month(timestamp);
         timestamp_t timestamp_new = get_last_timestamp_day(timestamp);
@@ -1046,7 +1119,7 @@ namespace xtime {
      * \param timestamp Метка времениm
      * \return Последняя метка времени текущего последнего воскресения текущего месяца
      */
-    inline timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_last_timestamp_sunday_month(const timestamp_t timestamp = get_timestamp()) noexcept {
         timestamp_t last_timestamp = get_last_timestamp_month(timestamp);
         uint32_t weekday = get_weekday(timestamp);
         last_timestamp -= weekday * SECONDS_IN_DAY;
@@ -1057,7 +1130,7 @@ namespace xtime {
      * \param timestamp метка времени
      * \return дней в текущем году
      */
-    inline uint32_t get_day_in_year(const timestamp_t timestamp = get_timestamp()) {
+    inline uint32_t get_day_in_year(const timestamp_t timestamp = get_timestamp()) noexcept {
         if(is_leap_year(get_year(timestamp))) return DAYS_IN_LEAP_YEAR;
         return DAYS_IN_YEAR;
     }
@@ -1066,7 +1139,7 @@ namespace xtime {
      * \param day день с начала unix-времени
      * \return метка времени
      */
-    inline timestamp_t get_first_timestamp_for_day(const uint32_t day) {
+    inline timestamp_t get_first_timestamp_for_day(const uint32_t day) noexcept {
         return day * SECONDS_IN_DAY;
     }
 
@@ -1074,7 +1147,7 @@ namespace xtime {
      * \param timestamp Метка времени текущего дня
      * \return метка времени начала предыдущего дня
      */
-    inline timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_first_timestamp_previous_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return get_first_timestamp_day(timestamp) - SECONDS_IN_DAY;
     }
 
@@ -1086,7 +1159,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return вернет метку времени начала недели.
      */
-    inline timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_week_start_first_timestamp(const timestamp_t timestamp = get_timestamp()) noexcept {
         return get_first_timestamp_day(timestamp) -
             (timestamp_t)get_weekday(timestamp) * SECONDS_IN_DAY;
     }
@@ -1098,7 +1171,7 @@ namespace xtime {
      * \param timestamp Метка времени
      * \return вернет метку времени начала недели.
      */
-    inline timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp = get_timestamp()) {
+    inline timestamp_t get_week_end_first_timestamp(const timestamp_t timestamp = get_timestamp()) noexcept {
         return get_first_timestamp_day(timestamp) +
             (timestamp_t)(SAT - get_weekday(timestamp)) * SECONDS_IN_DAY;
     }
@@ -1112,7 +1185,7 @@ namespace xtime {
      */
     inline timestamp_t get_first_timestamp_next_day(
             const timestamp_t timestamp,
-            const uint32_t days) {
+            const uint32_t days) noexcept {
         return get_first_timestamp_day(timestamp) +
             ((timestamp_t)days * SECONDS_IN_DAY);
     }
@@ -1162,6 +1235,148 @@ namespace xtime {
             const timestamp_t min_timestamp,
             const timestamp_t max_timestamp,
             std::function<void(const timestamp_t timestamp)> f);
+
+    /** \brief Проверить пересечение периодов
+     * \param a Первый период
+     * \param b Второй период
+     * \return Вернет true, если есть пересечение периодов
+     */
+    template<class PERIOD_TYPE>
+    constexpr inline bool intersection_periods(
+            const PERIOD_TYPE &a,
+            const PERIOD_TYPE &b) noexcept {
+        return ((a.start <= b.start && b.start <= a.stop) ||
+            (a.start <= b.stop && b.stop <= a.stop));
+    }
+
+    /** \brief Проверить вложенность периодов
+     * \param test_period   Тестируемый период
+     * \param main_period   Основной период, который может включать в себя тестируемый период
+     * \return Вернет true, если тестируемый период умещается в основной перпиод
+     */
+    template<class PERIOD_TYPE>
+    constexpr inline bool internal_period(
+            const PERIOD_TYPE &test_period,
+            const PERIOD_TYPE &main_period) noexcept {
+        return (test_period.start >= main_period.start &&
+            test_period.stop <= main_period.stop);
+    }
+
+    /** \brief Отсортировать контейнер с периодами
+     *
+     * Контейнер должен содержать периоды типа period_t или fperiod_t
+     * \param periods Неотсортированный контейнер с периодами
+     */
+    template<class PERIOD_CONTAINER_TYPE>
+    constexpr inline void sort_periods(PERIOD_CONTAINER_TYPE &periods) noexcept {
+        typedef typename PERIOD_CONTAINER_TYPE::value_type period_type;
+        if (periods.size() <= 1) return;
+        if (!std::is_sorted(
+            periods.begin(),
+            periods.end(),
+            [](const period_type & a, const period_type & b) {
+                return a.start < b.start;
+            })) {
+            std::sort(periods.begin(), periods.end(),
+            [](const period_type & a, const period_type & b) {
+                return a.start < b.start;
+            });
+        }
+    }
+
+    /** \brief Найти период в контейнере
+     *
+     * Данная функция вернет указатель на элемент в заранее отсортированном конейтенере с периодами
+     * \param periods   Отсортированный контейнер с периодами
+     * \param timestamp Метка времени
+     * \return Указатель на элемент отсортированного контейнера с периодами или на конец контейнера, если период не найден
+     */
+    template<class PERIOD_CONTAINER_TYPE, class TIMESTAMP_TYPE>
+    constexpr inline auto find_period(const PERIOD_CONTAINER_TYPE &periods, const TIMESTAMP_TYPE timestamp) noexcept {
+        typedef typename PERIOD_CONTAINER_TYPE::value_type period_type;
+        if (periods.empty()) return periods.end();
+        auto it = std::lower_bound(
+                periods.begin(),
+                periods.end(),
+                timestamp,
+                [](const period_type & l, const TIMESTAMP_TYPE timestamp) {
+                    return  l.start < timestamp;
+                });
+        if ((it == periods.begin() || it != periods.end()) && it->start == timestamp) return it;
+        if (it != periods.begin()) {
+            auto prev_it = std::prev(it, 1);
+            if (prev_it->start <= timestamp && prev_it->stop >= timestamp) return prev_it;
+        }
+        return periods.end();
+    }
+
+    /** \brief Объединить пересекающиеся периоды
+     * \param periods   Отсортированный контейнер с периодами
+     * \return Вернет true, если есть объединенные периоды
+     */
+    template<class PERIOD_CONTAINER_TYPE>
+    inline bool merge_periods(PERIOD_CONTAINER_TYPE &periods) noexcept {
+        typedef typename PERIOD_CONTAINER_TYPE::value_type period_type;
+        size_t i = 0;
+        bool changed = false;
+        while(i < periods.size()) {
+            size_t j = i + 1;
+            while(j < periods.size()) {
+                if (intersection_periods(periods[i], periods[j])) {
+                    /* периоды пересекаются, склеиваем их */
+                    period_type new_period(
+                        std::min(periods[i].start, periods[j].start),
+                        std::max(periods[i].stop, periods[j].stop));
+                    periods[i] = new_period;
+                    periods.erase(periods.begin() + j);
+                    changed = true;
+                } else {
+                    ++j;
+                }
+            } // while(j < all_periods.size())
+            ++i;
+        } // while(i < all_periods.size())
+        return changed;
+    }
+
+    /** \brief Объединить пересекающиеся периоды
+     * \param periods           Отсортированный контейнер с периодами
+     * \param insert_periods    Массив периодов, которые были добавлены
+     * \param remove_periods    Массив периодов, которые были удалены
+     * \return Вернет true, если есть объединенные периоды
+     */
+    template<class PERIOD_CONTAINER_TYPE_1,
+        class PERIOD_CONTAINER_TYPE_2,
+        class PERIOD_CONTAINER_TYPE_3>
+    inline bool merge_periods(
+            PERIOD_CONTAINER_TYPE_1 &periods,
+            PERIOD_CONTAINER_TYPE_2 &insert_periods,
+            PERIOD_CONTAINER_TYPE_3 &remove_periods) noexcept {
+        typedef typename PERIOD_CONTAINER_TYPE_1::value_type period_type;
+        size_t i = 0;
+        bool changed = false;
+        while(i < periods.size()) {
+            size_t j = i + 1;
+            while(j < periods.size()) {
+                if (intersection_periods(periods[i], periods[j])) {
+                    /* периоды пересекаются, склеиваем их */
+                    period_type new_period(
+                        std::min(periods[i].start, periods[j].start),
+                        std::max(periods[i].stop, periods[j].stop));
+                    remove_periods.insert(remove_periods.end(), periods[i]);
+                    remove_periods.insert(remove_periods.end(), periods[j]);
+                    insert_periods.insert(insert_periods.end(), new_period);
+                    periods[i] = new_period;
+                    periods.erase(periods.begin() + j);
+                    changed = true;
+                } else {
+                    ++j;
+                }
+            } // while(j < all_periods.size())
+            ++i;
+        } // while(i < all_periods.size())
+        return changed;
+    }
 }
 
 #endif // XTIME_HPP_INCLUDED

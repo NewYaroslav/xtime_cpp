@@ -10,7 +10,6 @@ int main()
     double seconds = 0;
     for(uint32_t i = 0; i < 100000; ++i) {
         clock_t start = clock();
-        xtime::timestamp_t timestamp = xtime::get_timestamp();
         clock_t end = clock();
         seconds += (double)(end - start);
     }

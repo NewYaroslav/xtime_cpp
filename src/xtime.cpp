@@ -33,60 +33,6 @@
 
 namespace xtime {
 
-    /* Дата автоматизации OLE реализована в виде числа с плавающей запятой,
-     * неотъемлемым компонентом которого является число дней до
-     * или после полуночи 30 декабря 1899 года,
-     * а дробный компонент представляет время этого дня, деленное на 24.
-     * Например, полночь 31 декабря 1899 представлен 1,0; 6 утра,
-     * 1 января 1900 года представлено 2,25;
-     * полночь 29 декабря 1899 года представлена -1,0;
-     * и 6 часов утра 29 декабря 1899 года - -1,25.
-     *
-     * Базовая дата автоматизации OLE - полночь 30 декабря 1899 года.
-     * Минимальная дата автоматизации OLE - полночь 1 января 0100 года.
-     * Максимальная дата автоматизации OLE такая же,
-    * как DateTime.MaxValue, последний момент 31 декабря 9999 года.
-    */
-    oadate_t convert_timestamp_to_oadate(const timestamp_t timestamp) {
-        return (oadate_t)OADATE_UNIX_EPOCH + (oadate_t)timestamp / (oadate_t)SECONDS_IN_DAY;
-    }
-
-    oadate_t convert_ftimestamp_to_oadate(const ftimestamp_t timestamp) {
-        return (oadate_t)OADATE_UNIX_EPOCH + (oadate_t)timestamp / (oadate_t)SECONDS_IN_DAY;
-    }
-
-    timestamp_t convert_oadate_to_timestamp(const oadate_t oadate) {
-        if(oadate < OADATE_UNIX_EPOCH) return 0;
-        return (timestamp_t)((oadate - (oadate_t)OADATE_UNIX_EPOCH) * (oadate_t)SECONDS_IN_DAY);
-    }
-
-    ftimestamp_t convert_oadate_to_ftimestamp(const oadate_t oadate) {
-        if(oadate < OADATE_UNIX_EPOCH) return 0;
-        return (ftimestamp_t)((oadate - (oadate_t)OADATE_UNIX_EPOCH) * (oadate_t)SECONDS_IN_DAY);
-    }
-
-    oadate_t get_oadate() {
-        return convert_ftimestamp_to_oadate(get_ftimestamp());
-    }
-
-    oadate_t get_oadate(
-            const uint32_t day,
-            const uint32_t month,
-            const uint32_t year,
-            const uint32_t hour,
-            const uint32_t minute,
-            const uint32_t second,
-            const uint32_t millisecond) {
-        return convert_ftimestamp_to_oadate(get_ftimestamp(
-            day,
-            month,
-            year,
-            hour,
-            minute,
-            second,
-            millisecond));
-    }
-
     timestamp_t get_timestamp() {
         time_t rawtime;
         time(&rawtime);
@@ -136,45 +82,6 @@ namespace xtime {
         timestamp_t temp = get_timestamp(value);
         timestamp_t t = temp / 1000;
         return (double)(temp - t*1000)/1000.0 + (double)t;
-    }
-
-    timestamp_t get_timestamp(
-            const uint32_t day,
-            const uint32_t month,
-            const uint32_t year,
-            const uint32_t hour,
-            const uint32_t minute,
-            const uint32_t second) {
-        timestamp_t _secs;
-        long _mon, _year;
-        long long _days; // для предотвращения проблемы 2038 года переменная должна быть больше 32 бит
-        _mon = month - 1;
-        const long _TBIAS_YEAR = 1900;
-        const long	lmos[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-        const long	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-        _year = year - _TBIAS_YEAR;
-        _days = (((_year - 1) / 4) + ((((_year) & 03) || ((_year) == 0)) ? mos[_mon] : lmos[_mon])) - 1;
-        _days += DAYS_IN_YEAR * _year;
-        _days += day;
-        const long _TBIAS_DAYS = 25567;
-        _days -= _TBIAS_DAYS;
-        _secs = SECONDS_IN_HOUR * hour;
-        _secs += SECONDS_IN_MINUTE * minute;
-        _secs += second;
-        _secs += _days * SECONDS_IN_DAY;
-        return _secs;
-    }
-
-    ftimestamp_t get_ftimestamp(
-        const uint32_t day,
-        const uint32_t month,
-        const uint32_t year,
-        const uint32_t hour,
-        const uint32_t minute,
-        const uint32_t second,
-        const uint32_t millisecond) {
-        timestamp_t t = get_timestamp(day, month, year, hour, minute, second);
-        return (double)t + (double)millisecond/1000.0;
     }
 
     DateTime::DateTime() :
