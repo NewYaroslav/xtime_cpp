@@ -1286,13 +1286,13 @@ namespace xtime {
 
     /** \brief Найти период в контейнере
      *
-     * Данная функция вернет указатель на элемент в заранее отсортированном конейтенере с периодами
+     * Данная функция вернет указатель на период в заранее отсортированном конейтенере с периодами, в котором находится указанная метка времени
      * \param periods   Отсортированный контейнер с периодами
      * \param timestamp Метка времени
      * \return Указатель на элемент отсортированного контейнера с периодами или на конец контейнера, если период не найден
      */
     template<class PERIOD_CONTAINER_TYPE, class TIMESTAMP_TYPE>
-    constexpr inline auto find_period(const PERIOD_CONTAINER_TYPE &periods, const TIMESTAMP_TYPE timestamp) noexcept {
+    constexpr inline auto find_period(PERIOD_CONTAINER_TYPE &periods, const TIMESTAMP_TYPE timestamp) noexcept {
         typedef typename PERIOD_CONTAINER_TYPE::value_type period_type;
         if (periods.empty()) return periods.end();
         auto it = std::lower_bound(
