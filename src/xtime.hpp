@@ -40,16 +40,21 @@ namespace xtime {
     typedef double ftimestamp_t;            ///< Тип метки времени с плавающей точкой
     typedef double oadate_t;                ///< Тип даты автоматизации (OADate) с плавающей точкой
 
-    const oadate_t OADATE_MAX = 9223372036854775807; ///< Максимально возможное значение даты автоматизации (OADate)
+    const timestamp_t TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFF;   ///< Максимально возможное значение для типа timestamp_t
+    const oadate_t OADATE_MAX = 9223372036854775807;    ///< Максимально возможное значение даты автоматизации (OADate)
     const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
 
     /// Различные периоды
     enum {
         MILLISECONDS_IN_SECOND = 1000,		///< Количество миллисекунд в одной секунде
+        MILLISECONDS_IN_MINUTE = 60000,		///< Количество миллисекунд в одной минуте
+        MILLISECONDS_IN_HALF_HOUR = 1800000,///< Количество миллисекунд в получасе
+        MILLISECONDS_IN_HOUR = 3600000,     ///< Количество миллисекунд в часе
+        MILLISECONDS_IN_DAY = 86400000,     ///< Количество миллисекунд в одном дне
 		SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
         SECONDS_IN_HALF_HOUR = 1800,        ///< Количество секунд в получасе
-        SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в одном часе
-        SECONDS_IN_DAY = 86400,	            ///< Количество секунд в одном дне
+        SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в часе
+        SECONDS_IN_DAY = 86400,	            ///< Количество секунд в дне
         SECONDS_IN_YEAR = 31536000,	        ///< Количество секунд за год
         SECONDS_IN_LEAP_YEAR = 31622400,	///< Количество секунд за високосный год
         AVERAGE_SECONDS_IN_YEAR = 31557600, ///< Среднее количество секунд за год
@@ -141,35 +146,42 @@ namespace xtime {
     uint32_t get_millisecond();
 
     /** \brief Получить метку времени компьютера
-     * \return метка времен
+     * \return Метка времени
      */
     timestamp_t get_timestamp();
 
+    /** \brief Получить метку времени компьютера в миллисекундах
+     * \return Метка времени
+     */
+    inline timestamp_t get_timestamp_ms() noexcept {
+        return get_timestamp() * MILLISECONDS_IN_SECOND + get_millisecond();
+    }
+
     /** \brief Получить метку времени
      * \param value строковое представление числа
-     * \return метка времен
+     * \return Метка времени
      */
     timestamp_t get_timestamp(std::string value);
 
     /** \brief Получить метку времени
      * \param value строковое представление числа
-     * \return метка времен
+     * \return Метка времени
      */
     ftimestamp_t get_ftimestamp(const std::string &value);
 
     /** \brief Получить метку времени компьютера с миллисекундами
-     * \return метка времен
+     * \return Метка времени
      */
     ftimestamp_t get_ftimestamp();
 
     /** \brief Получить метку времени из даты и стандартного времени
-     * \param day день
-     * \param month месяц
-     * \param year год
-     * \param hour час
-     * \param minute минуты
-     * \param second секунды
-     * \return метка времени
+     * \param day       День
+     * \param month     Месяц
+     * \param year      Год
+     * \param hour      Час
+     * \param minute    Минуты
+     * \param second    Секунды
+     * \return Метка времени
      */
     constexpr inline timestamp_t get_timestamp(
             const uint32_t day,
@@ -268,7 +280,7 @@ namespace xtime {
     }
 
     /** \brief Получить дату автоматизации OLE
-     * \return дата автоматизации OLE
+     * \return Дата автоматизации OLE
      */
     inline oadate_t get_oadate() noexcept {
         return convert_ftimestamp_to_oadate(get_ftimestamp());
@@ -1188,6 +1200,16 @@ namespace xtime {
             const uint32_t days) noexcept {
         return get_first_timestamp_day(timestamp) +
             ((timestamp_t)days * SECONDS_IN_DAY);
+    }
+
+    template<class T1, class T2>
+    inline T1 to_timestamp_ms(const T2 timestamp) noexcept {
+        return (T1)timestamp * (T1)MILLISECONDS_IN_SECOND;
+    }
+
+    template<class T1, class T2>
+    inline to_timestamp(const T2 timestamp_ms) noexcept {
+        return (T1)timestamp_ms / (T1)MILLISECONDS_IN_SECOND;
     }
 
     /** \brief Задержка на указанное количество миллисекунд

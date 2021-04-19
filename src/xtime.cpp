@@ -39,8 +39,9 @@ namespace xtime {
         struct tm* ptm;
 
         ptm = gmtime(&rawtime);
-        DateTime iTime(ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-        return iTime.get_timestamp();
+        //DateTime iTime(ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+        //return iTime.get_timestamp();
+        return get_timestamp(ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
     }
 
     ftimestamp_t get_ftimestamp() {
