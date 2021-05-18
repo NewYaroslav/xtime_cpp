@@ -58,25 +58,35 @@ namespace xtime {
     }
 
     timestamp_t get_timestamp(std::string value) {
-        auto new_end = std::remove_if(value.begin(), value.end(), [](const char& c){
-            return !std::isdigit(c);
+        const bool is_digit = std::all_of(value.begin(),value.end(),[](const char &c) {
+            return isdigit(c);
         });
-        value.erase(new_end, value.end());
-        uint32_t digit = (uint32_t)value.size() - 1;
-        timestamp_t t = 0;
-        const timestamp_t factors[] = {
-            1,10,100,
-            1000,10000,100000,
-            1000000,10000000,100000000,
-            1000000000,10000000000,100000000000,
-            1000000000000,10000000000000,100000000000000,
-            1000000000000000,10000000000000000,100000000000000000,
-            1000000000000000000};
-        uint32_t start = value.size() > 19 ? (uint32_t)value.size() - 19 : 0;
-        for(uint32_t d = start; d <= digit; ++d) {
-            t += ((timestamp_t)(value[d] - '0') * factors[digit - d]);
+
+        if (is_digit) {
+            auto new_end = std::remove_if(value.begin(), value.end(), [](const char& c){
+                return !std::isdigit(c);
+            });
+            value.erase(new_end, value.end());
+            uint32_t digit = (uint32_t)value.size() - 1;
+            timestamp_t t = 0;
+            const timestamp_t factors[] = {
+                1,10,100,
+                1000,10000,100000,
+                1000000,10000000,100000000,
+                1000000000,10000000000,100000000000,
+                1000000000000,10000000000000,100000000000000,
+                1000000000000000,10000000000000000,100000000000000000,
+                1000000000000000000};
+            uint32_t start = value.size() > 19 ? (uint32_t)value.size() - 19 : 0;
+            for(uint32_t d = start; d <= digit; ++d) {
+                t += ((timestamp_t)(value[d] - '0') * factors[digit - d]);
+            }
+            return t;
+        } else {
+            timestamp_t t = 0;
+            if (!convert_str_to_timestamp(value, t)) return 0;
+            return t;
         }
-        return t;
     }
 
     ftimestamp_t get_ftimestamp(const std::string &value) {
@@ -322,7 +332,7 @@ namespace xtime {
         return false;
     }
 
-    xtime::ftimestamp_t convert_iso(const std::string &str_datetime) {
+    xtime::ftimestamp_t convert_iso_to_ftimestamp(const std::string &str_datetime) {
         DateTime t;
         const size_t str_size = str_datetime.size();
         if(str_size >= 20) {

@@ -30,6 +30,7 @@
 #include <chrono>
 #include <functional>
 #include <algorithm>
+#include <cmath>
 
 namespace xtime {
     /* для того, чтобы можно было работать и после 19 января 2038 года,
@@ -101,6 +102,18 @@ namespace xtime {
         DEC,        ///< Декабрь
     };
 
+    /// Фазы Луны
+    enum {
+        WAXING_CRESCENT_MOON,
+        FIRST_QUARTER_MOON,
+        WAXING_GIBBOUS_MOON,
+        FULL_MOON,
+        WANING_GIBBOUS_MOON,
+        LAST_QUARTER_MOON,
+        WANING_CRESCENT_MOON,
+        NEW_MOON,
+    };
+
     template<class T>
     struct Period {
         T start;
@@ -158,7 +171,7 @@ namespace xtime {
     }
 
     /** \brief Получить метку времени
-     * \param value строковое представление числа
+     * \param value Cтроковое представление метки времени
      * \return Метка времени
      */
     timestamp_t get_timestamp(std::string value);
@@ -287,14 +300,14 @@ namespace xtime {
     }
 
     /** \brief Получить дату автоматизации OLE
-     * \param day день
-     * \param month месяц
-     * \param year год
-     * \param hour час
-     * \param minute минуты
-     * \param second секунды
-     * \param millisecond миллисекунды
-     * \return дата автоматизации OLE
+     * \param day           День
+     * \param month         Месяц
+     * \param year          Год
+     * \param hour          Час
+     * \param minute        Минуты
+     * \param second        Секунды
+     * \param millisecond   Миллисекунды
+     * \return Дата автоматизации OLE
      */
     constexpr inline oadate_t get_oadate(
             const uint32_t day,
@@ -315,6 +328,148 @@ namespace xtime {
     }
 
     #define get_ole_automation_date get_oadate
+
+    /** \brief Получить юлианскую дату (JD) с дробной частью по метке времени
+     * \param timestamp Метка времени с дробной частью
+     * \return Число дней по юлианскому календарю с дробной частью (JD)
+     */
+    constexpr inline double get_julian_date(const ftimestamp_t timestamp) {
+        return 2440587.5 + (timestamp / 86400.0d);
+    }
+
+    /** \brief Получить юлианскую дату (JD) с дробной частью по дате григорианского календаря
+     *
+     * Исходник алгоритма: http://www.krutov.org/algorithms/julianday/
+     * \param day   День, может быть с дробной частью
+     * \param month Месяц
+     * \param year  Год
+     * \return Число дней по юлианскому календарю с дробной частью (JD)
+     */
+    constexpr inline double get_julian_date(
+            double day,
+            int64_t month,
+            int64_t year) {
+        if (month == 1 || month == 2) {
+            year -= 1;
+            month += 12;
+        }
+        const double a = std::floor((double)year / 100.0d);
+        const double b = 2.0d - a + std::floor((double)a / 4.0d);
+        const double jdn = std::floor(365.25d * ((double)year + 4716.0d)) + std::floor(30.6000001d * ((double)month + 1.0d)) + (double)day + b - 1524.5d;
+        return jdn;
+    }
+
+    /** \brief Получить юлианскую дату (JD) с дробной частью по дате григорианского календаря
+     *
+     * Исходник алгоритма: http://www.krutov.org/algorithms/julianday/
+     * \param day           День
+     * \param month         Месяц
+     * \param year          Год
+     * \param hour          Час
+     * \param minute        Минуты
+     * \param second        Секунды
+     * \param millisecond   Миллисекунды
+     * \return Число дней по юлианскому календарю с дробной частью (JD)
+     */
+    constexpr inline double get_julian_date(
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year,
+            const uint32_t hour,
+            const uint32_t minute,
+            const uint32_t second = 0,
+            const uint32_t millisecond = 0) {
+        const double offset = ((double)hour / 24.0d) + ((double)minute / 1440.0d) + (((double)second + ((double)millisecond / 1000.0d)) / 84600.0d);
+        return get_julian_date((double)day + offset, month, year);
+    }
+
+    #define get_julian_day                      get_julian_date
+    #define convert_gregorian_to_julian_date    get_julian_date
+    #define convert_gregorian_to_julian_day     get_julian_date
+    #define convert_gregorian_to_julian         get_julian_date
+    #define convert_gregorian_to_jd             get_julian_date
+    #define to_julian_date                      get_julian_date
+    #define to_jd                               get_julian_date
+
+    /** \brief Получить модифицированный юлианский день (MJD) с дробной частью по дате григорианского календаря
+     *
+     * Исходник алгоритма: http://www.krutov.org/algorithms/julianday/
+     * \param day   День, может быть с дробной частью
+     * \param month Месяц
+     * \param year  Год
+     * \return Число дней по юлианскому календарю (JDN)
+     */
+    constexpr inline double get_modified_julian_day(
+            double day,
+            int64_t month,
+            int64_t year) {
+        return get_julian_date(day, month, year) - 2400000.5d;
+    }
+
+    /** \brief Получить модифицированный юлианский день (MJD) с дробной частью по дате григорианского календаря
+     * \param timestamp Метка времени с дробной частью
+     * \return Число дней по юлианскому календарю (JDN)
+     */
+    constexpr inline double get_modified_julian_day(const ftimestamp_t timestamp) {
+        return get_julian_date(timestamp) - 2400000.5d;
+    }
+
+    #define convert_gregorian_to_modified_julian_day    get_modified_julian_day
+    #define convert_gregorian_to_mjd                    get_modified_julian_day
+    #define to_modified_julian_day                      get_modified_julian_day
+    #define to_mjd                                      get_modified_julian_day
+
+    /** \brief Получить число дней по юлианскому календарю (JDN) по дате григорианского календаря
+     * \param day   День
+     * \param month Месяц
+     * \param year  Год
+     * \return Число дней по юлианскому календарю (JDN)
+     */
+    constexpr inline uint64_t get_julian_day_number(
+            uint32_t day,
+            uint32_t month,
+            uint32_t year) {
+        const uint64_t a = ((14LL - month) / 12LL);
+        const uint64_t y = year + 4800LL - a;
+        const uint64_t m = month + 12LL * a - 3LL;
+        const uint64_t jdn = day + ((153LL * m + 2LL) / 5LL) + (365LL * y) + (y / 4LL) - (y / 100LL) + (y / 400LL) - 32045LL;
+        return jdn;
+    }
+
+    #define convert_gregorian_to_julian_day_number      get_julian_day_number
+    #define convert_gregorian_to_jdn                    get_julian_day_number
+    #define to_julian_day_number                        get_julian_day_number
+    #define to_jdn                                      get_julian_day_number
+
+    /* проверкить JD и JDN можно тут:
+     * http://cosmos-online.myhomeinet.ru/jd.php
+     * https://www.aavso.org/jd-calculator
+     * http://www.michurin.net/online-tools/julian-day.html
+     * https://quasar.as.utexas.edu/BillInfo/JulianDateCalc.html
+     */
+
+    /** \brief Получить фазу Луны
+     *
+     * Алгоритм: https://web.archive.org/web/20090218203728/http://home.att.net/~srschmitt/lunarphasecalc.html
+     * \param timestamp Метка времени с плавающей точкой
+     * \return Вернет значение от 0 до 1
+     */
+    constexpr inline double get_moon_phase(const ftimestamp_t timestamp) {
+        double temp = (get_julian_date(timestamp) - 2451550.1d) / 29.530588853d;
+        temp = temp - std::floor(temp);
+        if (temp < 0) temp += 1.0d;
+        return temp;
+    }
+
+    /** \brief Получить возраст Луны в днях
+     *
+     * Алгоритм: https://web.archive.org/web/20090218203728/http://home.att.net/~srschmitt/lunarphasecalc.html
+     * \param timestamp Метка времени с плавающей точкой
+     * \return Вернет значение от 0 до 29.53
+     */
+    constexpr inline double get_moon_age(const ftimestamp_t timestamp) {
+        return get_moon_phase(timestamp) * 29.53d;
+    }
 
     /** \brief Получить время и дату в виде строки
      * Формат строки: DD.MM.YYYY HH:MM:SS
@@ -628,9 +783,9 @@ namespace xtime {
     };
 
     /** \brief Конвертировать строку в формате ISO в данные класса DateTime
-     * \param str_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
-     * \param t класс времени и даты DateTime, который будет заполнен.
-     * \return вернет true если преобразование завершилось успешно
+     * \param str_datetime  Cтрока в формате ISO, например 2013-12-06T15:23:01+00:00
+     * \param t             Класс времени и даты DateTime, который будет заполнен.
+     * \return Вернет true если преобразование завершилось успешно
      */
     bool convert_iso(
         const std::string &str_datetime,
@@ -640,7 +795,7 @@ namespace xtime {
      * \param str_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
      * \return Вернет метку времени, если преобразование завершилось успешно, или 0 в случае провала
      */
-    xtime::ftimestamp_t convert_iso(const std::string &str_datetime);
+    xtime::ftimestamp_t convert_iso_to_ftimestamp(const std::string &str_datetime);
 
     /** \brief Получить день недели
      * \param day день
@@ -662,14 +817,14 @@ namespace xtime {
     }
 
     /** \brief Получить номер месяца по названию
-     * \param month Имя месяца
+     * \param month     Имя месяца
      * \return номер месяца
      */
     uint32_t get_month(std::string month);
 
     /** \brief Получить день месяца
-     * \param timestamp метка времени
-     * \return день месяца
+     * \param timestamp     Метка времени
+     * \return День месяца
      */
     uint32_t get_day_month(const timestamp_t timestamp = get_timestamp());
 
@@ -857,7 +1012,7 @@ namespace xtime {
     /** \brief Получить метку времени в начале года
      *
      * Данная функция обнуляет дни, месяцы, часы, минуты и секунды
-     * \param timestamp метка времени
+     * \param timestamp     Метка времени
      * \return Метка времени начала года
      */
     inline timestamp_t get_first_timestamp_year(const timestamp_t timestamp) noexcept {
@@ -871,7 +1026,7 @@ namespace xtime {
     /** \brief Получить метку времени в конце года
      *
      * Данная функция находит последнюю метку времени текущего года
-     * \param timestamp метка времени
+     * \param timestamp     Метка времени
      * \return Метка времени конца года
      */
     inline timestamp_t get_last_timestamp_year(const timestamp_t timestamp = get_timestamp()) noexcept {
@@ -886,8 +1041,8 @@ namespace xtime {
      *
      * Данная функция вернет метку времени в начале дня.
      * Функция обнуляет часы, минуты и секунды
-     * \param timestamp метка времени
-     * \return метка времени в начале дня
+     * \param timestamp     Метка времени
+     * \return Метка времени в начале дня
      */
     inline timestamp_t get_first_timestamp_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_DAY);
@@ -895,8 +1050,8 @@ namespace xtime {
 
     /** \brief Получить метку времени в конце дня
      * Данная функция устанавливает час 23, минута 59 и секунда 59
-     * \param timestamp метка времени
-     * \return метка времени в конце дня
+     * \param timestamp     Метка времени
+     * \return Метка времени в конце дня
      */
     inline timestamp_t get_last_timestamp_day(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_DAY) + SECONDS_IN_DAY - 1;
@@ -904,8 +1059,8 @@ namespace xtime {
 
     /** \brief Получить метку времени в начале часа
      * Данная функция обнуляет минуты и секунды
-     * \param timestamp метка времени
-     * \return метка времени в начале часа
+     * \param timestamp     Метка времени
+     * \return Метка времени в начале часа
      */
     inline timestamp_t get_first_timestamp_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_HOUR);
@@ -913,8 +1068,8 @@ namespace xtime {
 
     /** \brief Получить метку времени в конце часа
      * Данная функция обнуляет минуты и секунды
-     * \param timestamp метка времени
-     * \return метка времени в конце часа
+     * \param timestamp     Метка времени
+     * \return Метка времени в конце часа
      */
     inline timestamp_t get_last_timestamp_hour(const timestamp_t timestamp = get_timestamp()) noexcept {
         return timestamp - (timestamp % SECONDS_IN_HOUR) + SECONDS_IN_HOUR - 1;
@@ -922,7 +1077,7 @@ namespace xtime {
 
     /** \brief Получить метку времени в начале минуты
      * Данная функция обнуляет секунды
-     * \param timestamp Метка времени
+     * \param timestamp     Метка времени
      * \return Метка времени в начале минуты
      */
     inline timestamp_t get_first_timestamp_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
@@ -931,7 +1086,7 @@ namespace xtime {
 
     /** \brief Получить метку времени в конце минуты
      * Данная функция обнуляет секунды
-     * \param timestamp Метка времени
+     * \param timestamp     Метка времени
      * \return Метка времени в конце минуты
      */
     inline timestamp_t get_last_timestamp_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
@@ -951,7 +1106,7 @@ namespace xtime {
     /** \brief Получить метку времени в конце периода
      *
      * \param period Период
-     * \param timestamp Метка времени
+     * \param timestamp     Метка времени
      * \return Метка времени в конце периода
      */
     inline timestamp_t get_last_timestamp_period(const uint32_t period, const timestamp_t timestamp  = get_timestamp()) noexcept {
@@ -979,12 +1134,53 @@ namespace xtime {
     }
 
     /** \brief Проверка високосного года
-     * \param year год
+     * \param year  Год
      * \return вернет true, если год високосный
      */
     inline bool is_leap_year(const uint32_t year) noexcept {
-        if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
+        //if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) return true;
+        if ((year & 3) == 0 && ((year % 25) != 0 || (year & 15) == 0)) return true;
         return false;
+    }
+
+    /** \brief Проверить корректность дня месяца
+     * \param day   День
+     * \param month Месяц
+     * \param year  Год
+     * \return Вернет true, если день месяца правильный
+     */
+    constexpr inline bool is_day_of_month(
+            const uint32_t day,
+            const uint32_t month,
+            const uint32_t year) {
+        if ((month < 1) || (12 < month)) return false;
+        uint32_t days_of_month = 0;
+        switch(month) {
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            days_of_month = 30;
+            break;
+        case 2:
+            days_of_month = 28;
+            if (is_leap_year(year)) days_of_month = 29;
+            break;
+        default:
+            days_of_month = 30;
+            break;
+        };
+        return (0 < day) and (day <= days_of_month);
+    };
+
+    /** \brief Получить минуту
+     *
+     * Данная функция вернет минуту с начала UNIX
+     * \param timestamp Метка времени
+     * \return Минута с начала UNIX
+     */
+    inline uint64_t get_minute(const timestamp_t timestamp = get_timestamp()) noexcept {
+        return (uint64_t)(timestamp / SECONDS_IN_MINUTE);
     }
 
     /** \brief Получить минуту дня
@@ -1163,7 +1359,6 @@ namespace xtime {
         return get_first_timestamp_day(timestamp) - SECONDS_IN_DAY;
     }
 
-
     /** \brief Получить метку времени начала дня начала недели
      *
      * Данная функция найдет метку времемени начала дня начала недели.
@@ -1202,11 +1397,19 @@ namespace xtime {
             ((timestamp_t)days * SECONDS_IN_DAY);
     }
 
+    /** \brief Преобразовать метку времени в секундах в метку времени в миллисекундах
+     * \param timestamp Метка времени в секундах
+     * \return Метка времени в миллисекундах
+     */
     template<class T1, class T2>
     inline T1 to_timestamp_ms(const T2 timestamp) noexcept {
         return (T1)timestamp * (T1)MILLISECONDS_IN_SECOND;
     }
 
+    /** \brief Преобразовать метку времени в миллисекундах в метку времени в секундах
+     * \param timestamp_ms  Метка времени в миллисекундах
+     * \return Метка времени в секундах
+     */
     template<class T1, class T2>
     inline to_timestamp(const T2 timestamp_ms) noexcept {
         return (T1)timestamp_ms / (T1)MILLISECONDS_IN_SECOND;
@@ -1399,6 +1602,353 @@ namespace xtime {
         } // while(i < all_periods.size())
         return changed;
     }
-}
+
+    /** \brief Параметры фазы Луны
+     *
+     * Оригинальный алгоритм №1: https://github.com/solarissmoke/php-moon-phase/blob/master/Solaris/MoonPhase.php
+     * Оригинальный алгоритм №2: https://www.fourmilab.ch/moontoolw/
+     */
+    class MoonPhase {
+    private:
+        // Astronomical constants. 1980 January 0.0
+        const double epoch = 2444238.5;
+
+        // Constants defining the Sun's apparent orbit
+        const double elonge = 278.833540;		// Ecliptic longitude of the Sun at epoch 1980.0
+        const double elongp = 282.596403;		// Ecliptic longitude of the Sun at perigee
+        const double eccent = 0.016718;			// Eccentricity of Earth's orbit
+        const double sunsmax = 1.495985e8;		// Semi-major axis of Earth's orbit, km
+        const double sunangsiz = 0.533128;		// Sun's angular size, degrees, at semi-major axis distance
+
+        // Elements of the Moon's orbit, epoch 1980.0
+        const double mmlong = 64.975464;		// Moon's mean longitude at the epoch
+        const double mmlongp = 349.383063;		// Mean longitude of the perigee at the epoch
+        const double mlnode = 151.950429;		// Mean longitude of the node at the epoch
+        const double minc = 5.145396;			// Inclination of the Moon's orbit
+        const double mecc = 0.054900;			// Eccentricity of the Moon's orbit
+        const double mangsiz = 0.5181;			// Moon's angular size at distance a from Earth
+        const double msmax = 384401;			// Semi-major axis of Moon's orbit in km
+        const double mparallax = 0.9507;		// Parallax at distance a from Earth
+        const double synmonth = 29.53058868;	// Synodic month (new Moon to new Moon)
+
+        inline double deg2rad (double degrees) noexcept {
+            static const double pi_on_180 = 3.14159265358979323846d / 180.0d;
+            return degrees * pi_on_180;
+        }
+
+        inline double rad2deg(double angle) noexcept {
+            static const double coeff = 180.0d / 3.14159265358979323846d;
+            return angle * coeff;
+        }
+
+        inline double fixangle(const double a) noexcept {
+            return (a - 360.0d * std::floor(a / 360.0d));
+        }
+
+        inline double kepler(double m, const double ecc) noexcept {
+            // 1E-6
+            const double epsilon = 0.000001;
+            double e = m = deg2rad(m);
+            double delta;
+            do {
+                delta = e - ecc * std::sin(e) - m;
+                e -= delta / (1 - ecc * std::cos(e));
+            } while (std::abs(delta) > epsilon);
+            return e;
+        }
+    public:
+
+        double phase = 0;                               // Phase (0 to 1)
+        double illumination = 0;					    // Illuminated fraction (0 to 1)
+        double age = 0;						            // Age of moon (days)
+        double distance = 0;							// Distance (kilometres)
+        double diameter = 0;							// Angular diameter (degrees)
+        double age_in_degrees = 0;						//Age of the Moon in degrees
+        double sundistance = 0;							// Distance to Sun (kilometres)
+        double sundiameter = 0;							// Sun's angular diameter (degrees)
+
+        std::array<double, 8> quarters = {0,0,0,0,0,0,0,0};
+
+        void init(const xtime::ftimestamp_t timestamp) noexcept {
+            const double date = get_julian_date(timestamp);
+
+            // Calculation of the Sun's position
+            const double Day = date - epoch;				    // Date within epoch
+            const double N = fixangle((360 / 365.2422) * Day);	// Mean anomaly of the Sun
+            const double M = fixangle(N + elonge - elongp);		// Convert from perigee co-ordinates to epoch 1980.0
+            double Ec = kepler(M, eccent);				        // Solve equation of Kepler
+            Ec = std::sqrt((1 + eccent) / (1 - eccent)) * std::tan(Ec / 2);
+            Ec = 2 * rad2deg(std::atan(Ec));		            // True anomaly
+            const double Lambdasun = fixangle(Ec + elongp);     // Sun's geocentric ecliptic longitude
+
+            const double F = ((1 + eccent * std::cos(deg2rad(Ec))) / (1 - eccent * eccent));    // Orbital distance factor
+            const double SunDist = sunsmax / F;	    // Distance to Sun in km
+            const double SunAng = F * sunangsiz;	// Sun's angular size in degrees
+
+            // Calculation of the Moon's position
+            const double ml = fixangle(13.1763966 * Day + mmlong);			// Moon's mean longitude
+            const double MM = fixangle(ml - 0.1114041 * Day - mmlongp);		// Moon's mean anomaly
+            //const double MN = fixangle(mlnode - 0.0529539 * Day);			// Moon's ascending node mean longitude
+            const double Ev = 1.2739 * std::sin(deg2rad(2 * (ml - Lambdasun) - MM));// Evection
+            const double Ae = 0.1858 * std::sin(deg2rad(M));						// Annual equation
+            const double A3 = 0.37 * std::sin(deg2rad(M));							// Correction term
+            const double MmP = MM + Ev - Ae - A3;									// Corrected anomaly
+            const double mEc = 6.2886 * std::sin(deg2rad(MmP));						// Correction for the equation of the centre
+            const double A4 = 0.214 * std::sin(deg2rad(2 * MmP));					// Another correction term
+            const double lP = ml + Ev + mEc - Ae + A4;								// Corrected longitude
+            const double V = 0.6583 * std::sin(deg2rad(2 * (lP - Lambdasun)));		// Variation
+            const double lPP = lP + V;												// True longitude
+            //const double NP = MN - 0.16 * std::sin(deg2rad(M));						// Corrected longitude of the node
+            //const double y = std::sin(deg2rad(lPP - NP)) * std::cos(deg2rad(minc));	// Y inclination coordinate
+            //const double x = std::cos(deg2rad(lPP - NP));							// X inclination coordinate
+
+            //const double Lambdamoon = rad2deg(std::atan2(y, x)) + NP;				// Ecliptic longitude
+            //const double BetaM = rad2deg(std::asin(std::sin(deg2rad(lPP - NP)) * std::sin(deg2rad(minc)))); // Ecliptic latitude
+
+            // Calculation of the phase of the Moon
+            const double MoonAge = lPP - Lambdasun;						// Age of the Moon in degrees
+            const double MoonPhase = (1 - std::cos(deg2rad(MoonAge))) / 2;	// Phase of the Moon
+
+            // Distance of moon from the centre of the Earth
+            const double MoonDist = (msmax * (1 - mecc * mecc)) / (1 + mecc * std::cos(deg2rad(MmP + mEc)));
+
+            const double MoonDFrac = MoonDist / msmax;
+            const double MoonAng = mangsiz / MoonDFrac;		// Moon's angular diameter
+            // $MoonPar = $mparallax / $MoonDFrac;			// Moon's parallax
+
+            // Store results
+            phase = fixangle(MoonAge) / 360;		        // Phase (0 to 1)
+            illumination = MoonPhase;					    // Illuminated fraction (0 to 1)
+            age = synmonth * phase;							// Age of moon (days)
+            distance = MoonDist;							// Distance (kilometres)
+            diameter = MoonAng;								// Angular diameter (degrees)
+            age_in_degrees = MoonAge;						//Age of the Moon in degrees
+            sundistance = SunDist;							// Distance to Sun (kilometres)
+            sundiameter = SunAng;							// Sun's angular diameter (degrees)
+        }
+
+        void init_only_phase(const xtime::ftimestamp_t timestamp) noexcept {
+            const double date = get_julian_date(timestamp);
+
+            // Calculation of the Sun's position
+            const double Day = date - epoch;				    // Date within epoch
+            const double N = fixangle((360 / 365.2422) * Day);	// Mean anomaly of the Sun
+            const double M = fixangle(N + elonge - elongp);		// Convert from perigee co-ordinates to epoch 1980.0
+            double Ec = kepler(M, eccent);				        // Solve equation of Kepler
+            Ec = std::sqrt((1 + eccent) / (1 - eccent)) * std::tan(Ec / 2);
+            Ec = 2 * rad2deg(std::atan(Ec));		            // True anomaly
+            const double Lambdasun = fixangle(Ec + elongp);     // Sun's geocentric ecliptic longitude
+
+            //const double F = ((1 + eccent * std::cos(deg2rad(Ec))) / (1 - eccent * eccent));    // Orbital distance factor
+            //const double SunDist = sunsmax / F;	    // Distance to Sun in km
+            //const double SunAng = F * sunangsiz;	// Sun's angular size in degrees
+
+            // Calculation of the Moon's position
+            const double ml = fixangle(13.1763966 * Day + mmlong);			// Moon's mean longitude
+            const double MM = fixangle(ml - 0.1114041 * Day - mmlongp);		// Moon's mean anomaly
+            //const double MN = fixangle(mlnode - 0.0529539 * Day);			// Moon's ascending node mean longitude
+            const double Ev = 1.2739 * std::sin(deg2rad(2 * (ml - Lambdasun) - MM));// Evection
+            const double Ae = 0.1858 * std::sin(deg2rad(M));						// Annual equation
+            const double A3 = 0.37 * std::sin(deg2rad(M));							// Correction term
+            const double MmP = MM + Ev - Ae - A3;									// Corrected anomaly
+            const double mEc = 6.2886 * std::sin(deg2rad(MmP));						// Correction for the equation of the centre
+            const double A4 = 0.214 * std::sin(deg2rad(2 * MmP));					// Another correction term
+            const double lP = ml + Ev + mEc - Ae + A4;								// Corrected longitude
+            const double V = 0.6583 * std::sin(deg2rad(2 * (lP - Lambdasun)));		// Variation
+            const double lPP = lP + V;												// True longitude
+            //const double NP = MN - 0.16 * std::sin(deg2rad(M));						// Corrected longitude of the node
+            //const double y = std::sin(deg2rad(lPP - NP)) * std::cos(deg2rad(minc));	// Y inclination coordinate
+            //const double x = std::cos(deg2rad(lPP - NP));							// X inclination coordinate
+
+            //const double Lambdamoon = rad2deg(std::atan2(y, x)) + NP;				// Ecliptic longitude
+            //const double BetaM = rad2deg(std::asin(std::sin(deg2rad(lPP - NP)) * std::sin(deg2rad(minc)))); // Ecliptic latitude
+
+            // Calculation of the phase of the Moon
+            const double MoonAge = lPP - Lambdasun;						// Age of the Moon in degrees
+            // Store results
+            phase = fixangle(MoonAge) / 360;		        // Phase (0 to 1)
+        }
+
+        MoonPhase() {};
+
+        MoonPhase(const xtime::ftimestamp_t timestamp) {
+            init(timestamp);
+        };
+
+        double meanphase(const xtime::ftimestamp_t date, double k) noexcept {
+            // Time in Julian centuries from 1900 January 0.5
+            const double jt = (date - 2415020.0) / 36525;
+            const double t2 = jt * jt;
+            const double t3 = t2 * jt;
+
+            const double  nt1 = 2415020.75933 + synmonth * k
+                + 0.0001178 * t2
+                - 0.000000155 * t3
+                + 0.00033 * std::sin(deg2rad(166.56 + 132.87 * jt - 0.009173 * t2));
+            return nt1;
+        }
+
+        double truephase(double k, double phase) noexcept {
+            bool apcor = false;
+            k += phase;				// Add phase to new moon time
+            const double t = k / 1236.85;   // Time in Julian centuries from 1900 January 0.5
+            const double t2 = t * t;		// Square for frequent use
+            const double t3 = t2 * t;		// Cube for frequent use
+            double pt = 2415020.75933 // Mean time of phase
+                + synmonth * k
+                + 0.0001178 * t2
+                - 0.000000155 * t3
+                + 0.00033 * std::sin(deg2rad(166.56 + 132.87 * t - 0.009173 * t2));
+
+            const double m = 359.2242 + 29.10535608 * k - 0.0000333 * t2 - 0.00000347 * t3;			// Sun's mean anomaly
+            const double mprime = 306.0253 + 385.81691806 * k + 0.0107306 * t2 + 0.00001236 * t3;	// Moon's mean anomaly
+            const double f = 21.2964 + 390.67050646 * k - 0.0016528 * t2 - 0.00000239 * t3;			// Moon's argument of latitude
+
+            if (phase < 0.01 || std::abs(phase - 0.5) < 0.01) {
+                // Corrections for New and Full Moon
+                pt += (0.1734 - 0.000393 * t) * std::sin(deg2rad(m))
+                    + 0.0021 * std::sin(deg2rad(2 * m))
+                    - 0.4068 * std::sin(deg2rad(mprime))
+                    + 0.0161 * std::sin(deg2rad(2 * mprime))
+                    - 0.0004 * std::sin(deg2rad(3 * mprime))
+                    + 0.0104 * std::sin(deg2rad(2 * f))
+                    - 0.0051 * std::sin(deg2rad(m + mprime))
+                    - 0.0074 * std::sin(deg2rad(m - mprime))
+                    + 0.0004 * std::sin(deg2rad(2 * f + m))
+                    - 0.0004 * std::sin(deg2rad(2 * f - m))
+                    - 0.0006 * std::sin(deg2rad(2 * f + mprime))
+                    + 0.0010 * std::sin(deg2rad(2 * f - mprime))
+                    + 0.0005 * std::sin(deg2rad(m + 2 * mprime));
+
+                apcor = true;
+            } else
+            if (std::abs(phase - 0.25) < 0.01 || std::abs(phase - 0.75) < 0.01) {
+                pt += (0.1721 - 0.0004 * t) * std::sin(deg2rad(m))
+                    + 0.0021 * std::sin(deg2rad(2 * m))
+                    - 0.6280 * std::sin(deg2rad(mprime))
+                    + 0.0089 * std::sin(deg2rad(2 * mprime))
+                    - 0.0004 * std::sin(deg2rad(3 * mprime))
+                    + 0.0079 * std::sin(deg2rad(2 * f))
+                    - 0.0119 * std::sin(deg2rad(m + mprime))
+                    - 0.0047 * std::sin(deg2rad(m - mprime))
+                    + 0.0003 * std::sin(deg2rad(2 * f + m))
+                    - 0.0004 * std::sin(deg2rad(2 * f - m))
+                    - 0.0006 * std::sin(deg2rad(2 * f + mprime))
+                    + 0.0021 * std::sin(deg2rad(2 * f - mprime))
+                    + 0.0003 * std::sin(deg2rad(m + 2 * mprime))
+                    + 0.0004 * std::sin(deg2rad(m - 2 * mprime))
+                    - 0.0003 * std::sin(deg2rad(2 * m + mprime));
+
+                // First and last quarter corrections
+                if (phase < 0.5) {
+                    pt += 0.0028 - 0.0004 * std::cos(deg2rad(m)) + 0.0003 * std::cos(deg2rad(mprime));
+                }
+                else {
+                    pt += -0.0028 + 0.0004 * std::cos(deg2rad(m)) - 0.0003 * std::cos(deg2rad(mprime));
+                }
+                apcor = true;
+            }
+            return apcor ? pt : 0.0d;
+        }
+
+
+        void phasehunt(const xtime::timestamp_t timestamp) noexcept {
+            const double sdate = get_julian_date(timestamp);
+            double adate = sdate - 45;
+            const double ats = timestamp - 86400 * 45;
+            const double yy = get_year(ats);
+            const double mm = get_month(ats);
+
+            double k1 = std::floor((yy + ((mm - 1) * (1 / 12)) - 1900) * 12.3685);
+            double k2;
+            double nt1;
+            adate = nt1 = meanphase(adate, k1);
+
+            while (true) {
+                adate += synmonth;
+                k2 = k1 + 1;
+                double nt2 = meanphase(adate, k2);
+
+                // If nt2 is close to sdate, then mean phase isn't good enough, we have to be more accurate
+                if (std::abs(nt2 - sdate) < 0.75) {
+                    nt2 = truephase(k2, 0.0);
+                }
+
+                if (nt1 <= sdate && nt2 > sdate){
+                    break;
+                }
+
+                nt1 = nt2;
+                k1 = k2;
+            }
+
+            // Results in Julian dates
+            double dates[8] = {
+                truephase(k1, 0.0),
+                truephase(k1, 0.25),
+                truephase(k1, 0.5),
+                truephase(k1, 0.75),
+                truephase(k2, 0.0),
+                truephase(k2, 0.25),
+                truephase(k2, 0.5),
+                truephase(k2, 0.75)
+            };
+            // Convert to UNIX time
+            for (size_t i = 0; i < 8; ++i) {
+                quarters[i] = (dates[i] - 2440587.5) * 86400;
+            }
+        }
+
+        bool is_new_moon(const xtime::ftimestamp_t timestamp) noexcept {
+            if (quarters[0] == 0 || timestamp > quarters[4] || timestamp < quarters[0]) {
+                phasehunt(timestamp);
+            }
+            const uint64_t m = get_minute(timestamp);
+            if (xtime::get_minute(quarters[0]) == m || get_minute(quarters[4]) == m) return true;
+            return false;
+        }
+
+        /** \brief Проверить, является в данную минуту Луна Полной
+         * \param timestamp Метка времени
+         * \return Вернет true, если Луна полная
+         */
+        bool is_full_moon(const xtime::ftimestamp_t timestamp) noexcept {
+            if (quarters[2] == 0 || timestamp > quarters[6] || timestamp < quarters[2]) {
+                phasehunt(timestamp);
+            }
+            const uint64_t m = get_minute(timestamp);
+            if (xtime::get_minute(quarters[2]) == m || get_minute(quarters[6]) == m) return true;
+            return false;
+        }
+
+        /** \brief Посчитать Фазу Луны, основываясь на датах новолуния
+         * \param timestamp Метка времени
+         * \return Вернет Фазу Луны
+         */
+        const double calc_phase_v3(const xtime::ftimestamp_t timestamp) noexcept {
+            if (quarters[0] == 0 || timestamp > quarters[4] || timestamp < quarters[0]) {
+                phasehunt(timestamp);
+            }
+            return (timestamp - quarters[0]) / (quarters[4] - quarters[0]);
+        }
+
+        const uint32_t MAX_MOON_MINUTE = 42523; /**< Максимальное количество Лунных минут */
+
+        /** \brief Получить Лунную минуту
+         * \param timestamp Метка времени
+         * \return Лунная минута (от 0 до 42523)
+         */
+        const uint32_t get_moon_minute(const xtime::ftimestamp_t timestamp) noexcept {
+            const uint32_t temp = calc_phase_v3(timestamp) * synmonth * 24 * 60;
+            return temp > MAX_MOON_MINUTE ? MAX_MOON_MINUTE : temp;
+        }
+    };
+
+    inline double get_moon_phase_v2(const ftimestamp_t timestamp) noexcept {
+        MoonPhase moon_phase;
+        moon_phase.init_only_phase(timestamp);
+        return moon_phase.phase;
+    }
+};
 
 #endif // XTIME_HPP_INCLUDED
