@@ -45,15 +45,21 @@
 ## Перечисления и константы
 
 ```cpp
-    const oadate_t OADATE_MAX = 9223372036854775807; ///< Максимально возможное значение даты автоматизации (OADate)
-    const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
-
+    const timestamp_t TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFF;   ///< Максимально возможное значение для типа timestamp_t
+    const oadate_t OADATE_MAX = 9223372036854775807;        ///< Максимально возможное значение даты автоматизации (OADate)
+    const double AVERAGE_DAYS_IN_YEAR = 365.25;             ///< Среднее количество дней за год
+	
     /// Различные периоды
     enum {
-        SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
+        MILLISECONDS_IN_SECOND = 1000,		///< Количество миллисекунд в одной секунде
+        MILLISECONDS_IN_MINUTE = 60000,		///< Количество миллисекунд в одной минуте
+        MILLISECONDS_IN_HALF_HOUR = 1800000,///< Количество миллисекунд в получасе
+        MILLISECONDS_IN_HOUR = 3600000,     ///< Количество миллисекунд в часе
+        MILLISECONDS_IN_DAY = 86400000,     ///< Количество миллисекунд в одном дне
+		SECONDS_IN_MINUTE = 60,	            ///< Количество секунд в одной минуте
         SECONDS_IN_HALF_HOUR = 1800,        ///< Количество секунд в получасе
-        SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в одном часе
-        SECONDS_IN_DAY = 86400,	            ///< Количество секунд в одном дне
+        SECONDS_IN_HOUR = 3600,	            ///< Количество секунд в часе
+        SECONDS_IN_DAY = 86400,	            ///< Количество секунд в дне
         SECONDS_IN_YEAR = 31536000,	        ///< Количество секунд за год
         SECONDS_IN_LEAP_YEAR = 31622400,	///< Количество секунд за високосный год
         AVERAGE_SECONDS_IN_YEAR = 31557600, ///< Среднее количество секунд за год
@@ -98,6 +104,18 @@
         OCT,        ///< Октябрь
         NOV,        ///< Ноябрь
         DEC,        ///< Декабрь
+    };
+	
+	/// Фазы Луны
+    enum {
+        WAXING_CRESCENT_MOON,
+        FIRST_QUARTER_MOON,
+        WAXING_GIBBOUS_MOON,
+        FULL_MOON,
+        WANING_GIBBOUS_MOON,
+        LAST_QUARTER_MOON,
+        WANING_CRESCENT_MOON,
+        NEW_MOON,
     };
 
     const std::array<std::string, MONTHS_IN_YEAR> month_name_long = {
@@ -239,15 +257,17 @@ cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31
 
 (Формат строки: DD.MM.YYYY HH:MM:SS)
 
-### Преобразование строки в метку времени
+### Преобразование строки в метку времени или секунду дня
 
-* xtime::ftimestamp_t convert_iso_to_ftimestamp(const std::string &str_datetime) - Конвертировать строку в формате ISO в метку времени
-* bool convert_iso(const std::string &str_datetime, DateTime& t) - Конвертировать строку в формате ISO в данные класса DateTime
-* bool convert_str_to_timestamp(std::string str, timestamp_t& t) - Преобразует строку в timestamp
+* xtime::timestamp_t to_timestamp(std::string str_datetime)							- (Рекомендовано) Преобразует строку даты и времени в timestamp
+* int to_second_day(std::string str_time)											- (Рекомендовано) Преобразует строку времени в секунду дня
+* xtime::ftimestamp_t convert_iso_to_ftimestamp(const std::string &str_datetime) 	- Конвертировать строку в формате ISO в метку времени
+* bool convert_iso(const std::string &str_datetime, DateTime& t) 					- Конвертировать строку в формате ISO в данные класса DateTime
+* bool convert_str_to_timestamp(std::string str, timestamp_t& t) 					- Преобразует строку в timestamp
 
-Функция *convert_str_to_timestamp* подерживает следующий список разделителей чисел (/\_:-.,<пробел>) 
+Функции *convert_str_to_timestamp, to_timestamp, to_second_day* подерживают следующий список разделителей чисел (/\_:-.,<пробел>) 
 
-Данная функия способна распрасить время и дату и поддерживает следующие форматы времени:
+Функции *convert_str_to_timestamp, to_timestamp* способны распрасить время и дату и поддерживает следующие форматы времени:
 
 	- HH:MM:SS DD MM YY Пример: 20:25:00, 29 Aug 19
 	- HH:MM:SS DD MM YY Пример: 20:25:00, 29 Aug 2019
@@ -257,6 +277,19 @@ cout << "to_string " << xtime::to_string("%hh:%mm.%sss",xtime::get_ftimestamp(31
 	- YYYY.MM.DD hh:mm:ss Пример: 2013.02.25 18:25:10
 	- YYYY.MM.DD Пример: 2013.02.25
 	- DD.MM.YYYY Пример: 21.09.2018
+	
+Функция *to_timestamp* также поддерживает:
+
+	- YYYY-MM-DD hh:mm	Пример: 2013-02-25 18:25
+	- YYYY.MM.DD hh:mm	Пример: 2013.02.25 18:25
+	- DD-MM-YYYY hh:mm	Пример: 25-02-2013 18:25	
+	- DD.MM.YYYY hh:mm	Пример: 25.02.2013 18:25
+	
+Функция *to_second_day* оддерживает:
+
+	- HH:MM:SS	Пример: 20:25:00
+	- HH:MM		Пример: 20:25
+	- HH		Пример: 20
 	
 ### Различные преобразования
 

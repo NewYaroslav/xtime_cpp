@@ -42,8 +42,8 @@ namespace xtime {
     typedef double oadate_t;                ///< Тип даты автоматизации (OADate) с плавающей точкой
 
     const timestamp_t TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFF;   ///< Максимально возможное значение для типа timestamp_t
-    const oadate_t OADATE_MAX = 9223372036854775807;    ///< Максимально возможное значение даты автоматизации (OADate)
-    const double AVERAGE_DAYS_IN_YEAR = 365.25; ///< Среднее количество дней за год
+    const oadate_t OADATE_MAX = 9223372036854775807;        ///< Максимально возможное значение даты автоматизации (OADate)
+    const double AVERAGE_DAYS_IN_YEAR = 365.25;             ///< Среднее количество дней за год
 
     /// Различные периоды
     enum {
@@ -792,10 +792,37 @@ namespace xtime {
         DateTime& t);
 
     /** \brief Конвертировать строку в формате ISO в метку времени с дробной частью
-     * \param str_datetime строка в формате ISO, например 2013-12-06T15:23:01+00:00
+     * \param str_datetime  Строка в формате ISO, например 2013-12-06T15:23:01+00:00
      * \return Вернет метку времени, если преобразование завершилось успешно, или 0 в случае провала
      */
     xtime::ftimestamp_t convert_iso_to_ftimestamp(const std::string &str_datetime);
+
+    /** \brief Преобразовать строку с датой в timestamp
+     *
+     * Данная функция поддерживает форматы времени:
+     * HH:MM:SS DD MM YY Пример: 20:25:00, 29 Aug 19
+     * HH:MM:SS DD MM YY Пример: 20:25:00, 29 Aug 2019
+     * HH:MM:SS DD.MM.YYYY Пример: 00:59:59 30.08.2019
+     * HH:MM:SS DD-MM-YYYY Пример: 00:59:59 30-08-2019
+     * YYYY-MM-DD hh:mm:ss Пример: 2013-02-25 18:25:10
+     * YYYY.MM.DD hh:mm:ss Пример: 2013.02.25 18:25:10
+     * YYYY.MM.DD Пример: 2013.02.25
+     * DD.MM.YYYY Пример: 21.09.2018
+     * \param str_datetime  Время в формате строки
+     * \return Вернет метку времени, если преобразование завершилось успешно, или 0 в случае провала
+     */
+    xtime::timestamp_t to_timestamp(std::string str_datetime);
+
+    /** \brief Преобразовать строку с временем дня в секунду дня
+     *
+     * Данная функция поддерживает форматы времени:
+     * HH:MM:SS Пример: 23:25:59
+     * HH:MM    Пример: 23:25
+     * HH       Пример: 23
+     * \param str_time  Время в формате строки
+     * \return Вернет секунду дня, если преобразование завершилось успешно, или -1 в случае провала
+     */
+    int to_second_day(std::string str_time);
 
     /** \brief Получить день недели
      * \param day день
@@ -1411,7 +1438,7 @@ namespace xtime {
      * \return Метка времени в секундах
      */
     template<class T1, class T2>
-    inline to_timestamp(const T2 timestamp_ms) noexcept {
+    inline T1 to_timestamp(const T2 timestamp_ms) noexcept {
         return (T1)timestamp_ms / (T1)MILLISECONDS_IN_SECOND;
     }
 

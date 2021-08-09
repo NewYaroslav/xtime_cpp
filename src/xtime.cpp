@@ -471,6 +471,141 @@ namespace xtime {
         return true;
     }
 
+    xtime::timestamp_t to_timestamp(std::string str_datetime) {
+        int day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0;
+        str_datetime += "_";
+        std::vector<std::string> arguments;
+        std::size_t start_pos = 0;
+
+        while(true) {
+            std::size_t found_beg = str_datetime.find_first_of("/\\_:-., ", start_pos);
+            if(found_beg != std::string::npos) {
+                std::size_t len = found_beg - start_pos;
+                if(len > 0)
+                    arguments.push_back(str_datetime.substr(start_pos, len));
+                start_pos = found_beg + 1;
+            } else break;
+        }
+
+        if(arguments.size() >= 3) {
+            // если аргументов больше или 3
+
+            if(arguments[0].size() >= 4) {
+                // если год в самом начале
+
+                year = std::stoi(arguments[0]);
+                month = std::stoi(arguments[1]);
+                day = std::stoi(arguments[2]);
+
+                if(arguments.size() == 6) {
+                    hour = std::stoi(arguments[3]);
+                    minute = std::stoi(arguments[4]);
+                    second = std::stoi(arguments[5]);
+                } else
+                if(arguments.size() == 5) {
+                    hour = std::stoi(arguments[3]);
+                    minute = std::stoi(arguments[4]);
+                }
+            } else
+            if(arguments[2].size() >= 4) {
+                // если год в конце
+
+                day = std::stoi(arguments[0]);
+                month = std::stoi(arguments[1]);
+                year = std::stoi(arguments[2]);
+
+                if(arguments.size() == 6) {
+                    hour = std::stoi(arguments[3]);
+                    minute = std::stoi(arguments[4]);
+                    second = std::stoi(arguments[5]);
+                } else
+                if(arguments.size() == 5) {
+                    hour = std::stoi(arguments[3]);
+                    minute = std::stoi(arguments[4]);
+                }
+            } else
+            if (arguments.size() >= 3 &&
+                arguments[0].size() == arguments[1].size() &&
+                arguments[1].size() == arguments[2].size() &&
+                arguments[2].size() == 2) {
+                // если сначала идет время, а потом дата
+
+                hour = std::stoi(arguments[0]);
+                minute = std::stoi(arguments[1]);
+                second = std::stoi(arguments[2]);
+
+                if (arguments.size() >= 6) {
+                    if (arguments[5].size() >= 4 && arguments[4].size() == 2) {
+                        day = std::stoi(arguments[3]);
+                        month = std::stoi(arguments[4]);
+                        year = std::stoi(arguments[5]);
+                    } else
+                    if (arguments[5].size() == 2 && arguments[4].size() >= 3) {
+                        day = std::stoi(arguments[3]);
+                        month = get_month(arguments[4]);
+                        year = std::stoi(arguments[5]) + 2000;
+                    } else
+                    if (arguments[5].size() == 4 && arguments[4].size() >= 3) {
+                        day = std::stoi(arguments[3]);
+                        month = get_month(arguments[4]);
+                        year = std::stoi(arguments[5]);
+                    } else
+                    if (arguments[5].size() == 2 && arguments[4].size() == 2) {
+                        day = std::stoi(arguments[3]);
+                        month = std::stoi(arguments[4]);
+                        year = std::stoi(arguments[5]) + 2000;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        } else {
+            return 0;
+        }
+        if (day >= 32 || day <= 0 || minute >= 60 ||
+            second >= 60 || hour >= 24 ||
+            year < 1970 || month > 12 || month <= 0) {
+            return 0;
+        }
+        return get_timestamp(day, month, year, hour, minute, second);
+    }
+
+    int to_second_day(std::string str_time) {
+        int hour = 0, minute = 0, second = 0;
+        str_time += "_";
+        std::vector<std::string> arguments;
+        std::size_t start_pos = 0;
+
+        while(true) {
+            std::size_t found_beg = str_time.find_first_of("/\\_:-., ", start_pos);
+            if(found_beg != std::string::npos) {
+                std::size_t len = found_beg - start_pos;
+                if(len > 0)
+                    arguments.push_back(str_time.substr(start_pos, len));
+                start_pos = found_beg + 1;
+            } else break;
+        }
+
+        if(arguments.size() == 1) {
+            hour = std::stoi(arguments[0]);
+        } else
+        if(arguments.size() == 2) {
+            hour = std::stoi(arguments[0]);
+            minute = std::stoi(arguments[1]);
+        } else
+        if(arguments.size() == 3) {
+            hour = std::stoi(arguments[0]);
+            minute = std::stoi(arguments[1]);
+            second = std::stoi(arguments[2]);
+        }
+        if (hour >= 24 || hour < 0 ||
+            minute >= 60 || minute < 0 ||
+            second >= 60 || second < 0) {
+            return -1;
+        }
+        return (int)(hour * xtime::SECONDS_IN_HOUR + minute * xtime::SECONDS_IN_MINUTE + second);
+    }
+
     DateTime convert_timestamp_to_datetime(const timestamp_t timestamp) {
         DateTime outTime;
         timestamp_t _secs;
