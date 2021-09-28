@@ -1,4 +1,7 @@
 # xtime
+
+**Проект перенесен в новый репозиторий с новым именем [ztime](https://github.com/NewYaroslav/ztime-cpp)**
+
 ![logo](doc/logo.png)
 > boost::posix_time, std, boost ::chrono... надо учиться эффективно использовать чужие велосипеды, иначе легко завязнуть в своих...
 
